@@ -249,7 +249,7 @@ const loginUser = async () => {
   // 🔐 Execute reCAPTCHA
   const token = await executeRecaptcha('login');
   try {
-    const recaptchaRes = await fetch("https://ecomist-flask.onrender.com:10000/verify-recaptcha", {
+    const recaptchaRes = await fetch("https://ecomist-flask.onrender.com/verify-recaptcha", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token }),

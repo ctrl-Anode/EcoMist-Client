@@ -348,7 +348,7 @@ const idToken = await auth.currentUser.getIdToken();
           );
 
           // 📧 SMTP email notification
-          await fetch('https://ecomist-flask.onrender.com:10000/breach-email', {
+          await fetch('https://ecomist-flask.onrender.com/breach-email', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

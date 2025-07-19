@@ -399,7 +399,7 @@ const sendReply = async () => {
     formData.append('file', attachedFile.value);
   }
 
-  const res = await fetch('https://ecomist-flask.onrender.com:10000/send-reply', {
+  const res = await fetch('https://ecomist-flask.onrender.com/send-reply', {
     method: 'POST',
     body: formData,
     headers: {

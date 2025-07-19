@@ -121,7 +121,7 @@ export const sendSecureNotification = async (fcmToken, title, body) => {
 
     const idToken = await user.getIdToken();
 
-    const response = await fetch("https://ecomist-flask.onrender.com:10000/send-notification", {
+    const response = await fetch("https://ecomist-flask.onrender.com/send-notification", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

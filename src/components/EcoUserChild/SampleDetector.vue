@@ -1170,7 +1170,7 @@ const analyzeImage = async () => {
 
     const token = await auth.currentUser.getIdToken();
 
-    const response = await fetch('https://ecomist-flask.onrender.com:10000/predict', {
+    const response = await fetch('https://ecomist-flask.onrender.com/predict', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`
@@ -1234,7 +1234,7 @@ const modelInfo = vueRef(null);
 
 const fetchModelInfo = async () => {
   try {
-    const response = await fetch(`https://ecomist-flask.onrender.com:10000/model-info?model=${selectedModel.value}`);
+    const response = await fetch(`https://ecomist-flask.onrender.com/model-info?model=${selectedModel.value}`);
     const data = await response.json();
     modelInfo.value = data;
   } catch (err) {
@@ -1794,7 +1794,7 @@ const analyzeComparison = async () => {
       formData.append('file', file);
       formData.append('model', selectedModel.value);
 
-      const res = await fetch('https://ecomist-flask.onrender.com:10000/predict', {
+      const res = await fetch('https://ecomist-flask.onrender.com/predict', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData
