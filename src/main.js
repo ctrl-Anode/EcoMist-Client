@@ -8,7 +8,7 @@ import { requestFcmToken, onMessageListener } from "./firebase";
 
 import { VueReCaptcha } from 'vue-recaptcha-v3'
 
-const SITE_KEY = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI';
+const SITE_KEY = '6LfFuogrAAAAADRk-T66fiCdwI2SP3aMgx-ergog';
 
 import App from './App.vue'
 
