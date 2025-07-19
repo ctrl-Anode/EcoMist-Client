@@ -1,0 +1,51 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environment variables and virtual environments
+.env
+*.env
+venv/
+ENV/
+env/
+
+# Firebase credentials
+firebase-admin-sdk.json
+
+# Node.js dependencies
+functions/node_modules/
+functions/package-lock.json
+
+# Logs
+*.log
+logs/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.old
+*.orig
+
+# Byte-compiled files
+*.pyc
+
+# TensorFlow model files
+*.h5
+*.pb
+saved_model/
+
+# Firebase emulators and cache
+firebase-debug.log
+.firebaserc
+.firebase/
+node_modules
