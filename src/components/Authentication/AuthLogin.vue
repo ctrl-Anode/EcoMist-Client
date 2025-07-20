@@ -115,15 +115,10 @@
         :disabled="loading || !loginForm.email || !loginForm.password"
       >
         <span v-if="!loading">Login</span>
-        <span v-else class="flex items-center justify-center">
-          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
-               viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          Logging in...
-        </span>
+  <span v-else class="flex items-center justify-center">
+    <EcoSpinner size="16px" color="#fff" :centered="false" class="mr-2" />
+    Logging in...
+  </span>
       </button>
 
       <!-- Resend Email Verification -->
@@ -146,15 +141,10 @@
       >
         <img src="/google-icon.png" alt="Google Icon" class="w-5 h-5" />
         <span v-if="!loading">Sign in with Google</span>
-        <span v-else class="flex items-center justify-center">
-          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none"
-               viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          Signing in...
-        </span>
+  <span v-else class="flex items-center justify-center">
+    <EcoSpinner size="16px" color="#444" :centered="false" class="mr-2" />
+    Signing in...
+  </span>
       </button>
 
       <!-- Toggle View Prompt -->
@@ -197,6 +187,9 @@ import ResetPasswordModal from "./AuthResetPassword.vue";
 import { useToast } from "vue-toastification";
 import { useReCaptcha } from 'vue-recaptcha-v3';
 import { logAuthEvent } from "../../utils/logAuthEvent";
+
+import EcoSpinner from "../EcoLoader/EcoSpinner.vue"; // adjust path as needed
+
 
 const { executeRecaptcha } = useReCaptcha();
 
@@ -401,16 +394,22 @@ const handleGoogleSignIn = async () => {
 });
     router.push(userSnap.exists() && userSnap.data().role === "admin" ? "/admin/dashboard" : "/user/dashboard");
   } catch (error) {
-    await logAuthEvent({
-  type: "login",
-  status: "failed",
-  email: loginForm.email,
-  reason: error.code || "unknown-error",
-});
-
-    console.error(error);
-    alert(error.message || "Google Sign-In failed!");
+  // Don't log or alert for expected cancelation
+  if (error.code === "auth/popup-closed-by-user") {
+    console.warn("Google Sign-In popup closed by user.");
+    return; // silently return without logging or alerting
   }
+
+  await logAuthEvent({
+    type: "login",
+    status: "failed",
+    email: loginForm.email,
+    reason: error.code || "unknown-error",
+  });
+
+  console.error(error);
+  alert(error.message || "Google Sign-In failed!");
+}
 };
 
 const showResetPasswordModal = ref(false);

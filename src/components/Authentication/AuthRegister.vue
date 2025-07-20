@@ -48,10 +48,7 @@
       <p v-if="profileImageError" class="text-xs text-red-400">{{ profileImageError }}</p>
     </div>
     <div v-if="uploadingImage" class="flex items-center gap-2 text-green-300 text-xs">
-  <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24">
-    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-  </svg>
+  <EcoSpinner size="14px" color="#22c55e" :centered="false" />
   Uploading profile image...
 </div>
 
@@ -316,7 +313,7 @@
             :disabled="loading || !registerForm.agreeToTerms">
       <span v-if="!loading">Create Account</span>
       <span v-else class="flex items-center justify-center gap-2">
-        <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" /><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" /></svg>
+        <EcoSpinner size="16px" color="#fff" :centered="false" />
         Creating...
       </span>
     </button>
@@ -335,7 +332,7 @@
         <img src="/google-icon.png" alt="Google" class="w-5 h-5" />
         <span v-if="!loading">Sign Up with Google</span>
         <span v-else class="flex items-center justify-center">
-          <svg class="animate-spin h-4 w-4 text-gray-700" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" /><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+          <EcoSpinner size="16px" color="#444" :centered="false" />
           Signing up...
         </span>
       </button>
@@ -361,6 +358,8 @@ import { auth, db } from "../../firebase"; // Adjust path as needed
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useToast } from "vue-toastification";
 import { logAuthEvent } from "../../utils/logAuthEvent";
+
+import EcoSpinner from "../EcoLoader/EcoSpinner.vue"; // adjust path as needed
 const toast = useToast();
 
 
@@ -596,6 +595,10 @@ const handleGoogleSignUp = async () => {
 
     router.push("/user/dashboard");
   } catch (err) {
+    if (err.code === "auth/popup-closed-by-user") {
+      console.warn("Google Sign-Up popup closed by user.");
+      return;
+    }
     await logAuthEvent({
   type: "register",
   status: "failed",
