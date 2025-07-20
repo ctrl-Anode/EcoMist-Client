@@ -28,3 +28,18 @@ messaging.onBackgroundMessage((payload) => {
     icon: "/eco-mist-logo.png", // Replace with your app's icon
   });
 });
+self.addEventListener('fetch', (event) => {
+  event.respondWith((async () => {
+    const preloadResponse = await event.preloadResponse;
+    if (preloadResponse) {
+      return preloadResponse;
+    }
+
+    // Fallback to network or cache
+    return fetch(event.request);
+  })());
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(self.registration.navigationPreload.enable());
+});
