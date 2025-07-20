@@ -28,17 +28,29 @@ messaging.onBackgroundMessage((payload) => {
     icon: "/eco-mist-logo.png", // Replace with your app's icon
   });
 });
-self.addEventListener('fetch', (event) => {
-  event.respondWith((async () => {
-    const preloadResponse = await event.preloadResponse;
-    if (preloadResponse) {
-      return preloadResponse;
-    }
 
-    // Fallback to network or cache
-    return fetch(event.request);
-  })());
+self.addEventListener('fetch', (event) => {
+  // Only handle navigation requests
+  if (event.request.mode === 'navigate') {
+    event.respondWith((async () => {
+      const preloadResponse = await event.preloadResponse;
+      if (preloadResponse) {
+        return preloadResponse;
+      }
+
+      try {
+        return await fetch(event.request);
+      } catch (error) {
+        return new Response('Offline', {
+          status: 503,
+          statusText: 'Service Unavailable',
+          headers: { 'Content-Type': 'text/plain' },
+        });
+      }
+    })());
+  }
 });
+
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(self.registration.navigationPreload.enable());
