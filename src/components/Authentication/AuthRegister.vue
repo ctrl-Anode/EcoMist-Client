@@ -253,12 +253,13 @@
 </div>
 <!-- Confirm Password Field -->
 <div class="relative">
+  <!-- Input Field -->
   <input
     :type="showConfirmPassword ? 'text' : 'password'"
     v-model="registerForm.confirmPassword"
     @input="validateConfirmPassword"
     placeholder="Confirm Password"
-    :class="[
+    :class="[ 
       'w-full rounded-lg px-4 py-3 pr-12 transition-all focus:outline-none focus:ring-1',
       registerErrors.confirmPassword
         ? 'border-red-500 bg-red-100/40'
@@ -267,51 +268,54 @@
         ? 'border-green-500 bg-green-100/40'
         : 'bg-white/20 border-white/30 text-white placeholder-white/50'
     ]"
+    style="padding-right: 3rem;"
     :disabled="loading"
     required
   />
 
   <!-- Toggle Visibility Button -->
-  <button
-    type="button"
-    @click="toggleConfirmPassword"
-    class="absolute top-1/2 right-3 -translate-y-1/2 flex items-center justify-center w-8 h-8 bg-white/20 rounded-full hover:bg-white/30 transition"
-    :aria-label="showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'"
-  >
-    <svg
-      v-if="!showConfirmPassword"
-      xmlns="http://www.w3.org/2000/svg"
-      class="w-5 h-5 text-white"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      stroke-width="2"
+  <div class="absolute inset-y-0 right-3 flex items-center">
+    <button
+      type="button"
+      @click="toggleConfirmPassword"
+      class="w-8 h-8 flex items-center justify-center bg-white/20 rounded-full hover:bg-white/30 transition-all"
+      :aria-label="showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'"
     >
-      <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-      <path
-        d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7
-           -1.274 4.057-2.548 5.389M15.536 15.536A9.004 9.004 0 0112 17
-           c-4.477 0-8.268-2.943-9.542-7
-           .274-.857.682-1.664 1.198-2.389"
-      />
-    </svg>
-    <svg
-      v-else
-      xmlns="http://www.w3.org/2000/svg"
-      class="w-5 h-5 text-white"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      stroke-width="2"
-    >
-      <path
-        d="M13.875 18.825a9.004 9.004 0 01-3.536-.964
-           c-4.477 0-8.268-2.943-9.542-7
-           .274-.857.682-1.664 1.198-2.389"
-      />
-      <path d="M12 12a3 3 0 11-6 0 3 3 0 016 0z" />
-    </svg>
-  </button>
+      <svg
+        v-if="!showConfirmPassword"
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-5 h-5 text-white"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path
+          d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7
+             -1.274 4.057-2.548 5.389M15.536 15.536A9.004 9.004 0 0112 17
+             c-4.477 0-8.268-2.943-9.542-7
+             .274-.857.682-1.664 1.198-2.389"
+        />
+      </svg>
+      <svg
+        v-else
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-5 h-5 text-white"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          d="M13.875 18.825a9.004 9.004 0 01-3.536-.964
+             c-4.477 0-8.268-2.943-9.542-7
+             .274-.857.682-1.664 1.198-2.389"
+        />
+        <path d="M12 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+    </button>
+  </div>
 
   <!-- Feedback -->
   <p v-if="registerErrors.confirmPassword" class="text-red-400 text-xs mt-1">
@@ -324,9 +328,22 @@
     ✓ Passwords match!
   </p>
 </div>
+
+<!-- Toggle Button -->
+<button
+  type="button"
+  class="text-xs text-green-300 hover:underline mb-1"
+  @click="showPasswordRequirements = !showPasswordRequirements"
+>
+  {{ showPasswordRequirements ? 'Hide' : 'Show' }} password requirements
+</button>
+
 <!-- Password Requirements Note -->
-<p class="text-white/60 text-xs mb-1">
-  Must be at least 8 characters, include a number and an uppercase letter.
+<p
+  v-if="showPasswordRequirements"
+  class="text-white/60 text-xs mb-1"
+>
+  Must be at least 8 characters, include a special character, a number, and an uppercase letter.
 </p>
 
 <!-- Password Strength Note -->
@@ -485,6 +502,7 @@ const showVerificationPrompt = ref(false);
 const uploadingImage = ref(false);
 
 const isDeviceCompatible = ref(true);
+const showPasswordRequirements = ref(false);
 
 const validatePassword = () => {
   const pw = registerForm.password;
