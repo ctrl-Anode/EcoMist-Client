@@ -4,7 +4,7 @@
   >
     <!-- Header -->
     <header class="flex flex-col items-center mb-6 text-center">
-      <img src="/eco-mist-logo.png" alt="Eco-Mist Logo" class="w-12 h-12 mb-2" />
+      <img src="/ecomist-hero.png" alt="Eco-Mist Logo" class="w-15 h-15 mb-2" />
       <h1 class="text-xl font-bold text-white">Login</h1>
       <p class="text-white/80 text-sm mt-2">
         Log in to access your Eco-Mist dashboard and monitor your aeroponics system.
