@@ -328,22 +328,9 @@
     ✓ Passwords match!
   </p>
 </div>
-
-<!-- Toggle Button -->
-<button
-  type="button"
-  class="text-xs text-green-300 hover:underline mb-1"
-  @click="showPasswordRequirements = !showPasswordRequirements"
->
-  {{ showPasswordRequirements ? 'Hide' : 'Show' }} password requirements
-</button>
-
 <!-- Password Requirements Note -->
-<p
-  v-if="showPasswordRequirements"
-  class="text-white/60 text-xs mb-1"
->
-  Must be at least 8 characters, include a special character, a number, and an uppercase letter.
+<p class="text-white/60 text-xs mb-1">
+  Must be at least 8 characters, include a special character, a number and an uppercase letter.
 </p>
 
 <!-- Password Strength Note -->
