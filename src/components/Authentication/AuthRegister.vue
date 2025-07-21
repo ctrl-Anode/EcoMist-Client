@@ -194,175 +194,161 @@
 
     <!-- Password and Confirm Password -->
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-  <!-- Password Field -->
-  <div class="relative">
-    <input
-      :type="showPassword ? 'text' : 'password'"
-      v-model="registerForm.password"
-      @input="validatePassword"
-      placeholder="Password"
-      :class="[
-        'w-full rounded-lg px-4 py-3 pr-12 transition-all focus:outline-none focus:ring-1',
-        registerErrors.password
-          ? 'border-red-500 bg-red-100/40'
-          : passwordStrength.score >= 3
-          ? 'border-green-500 bg-green-100/40'
-          : 'bg-white/20 border-white/30 text-white placeholder-white/50'
-      ]"
-      :disabled="loading"
-      required
-      title="Must be at least 8 characters with 1 uppercase and 1 number"
-    />
+  <!-- Password Strength Note -->
+<p v-if="registerErrors.password" class="text-red-400 text-xs mt-1">
+  {{ registerErrors.password }}
+</p>
+<p v-else class="text-xs mt-1" :class="{
+  'text-red-400': passwordStrength.score < 2,
+  'text-yellow-400': passwordStrength.score === 2,
+  'text-green-400': passwordStrength.score >= 3
+}">
+  Password Strength: {{ passwordStrength.feedback }}
+</p>
 
-    <!-- Password Visibility Toggle (Password field) -->
-<button
-  type="button"
-  @click="togglePassword"
-  class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 bg-white/20 rounded-full hover:bg-white/30 transition-all"
-  :aria-label="showPassword ? 'Hide password' : 'Show password'"
->
-  <svg
-    v-if="!showPassword"
-    xmlns="http://www.w3.org/2000/svg"
-    class="w-5 h-5 text-white"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-    stroke-width="2"
+<!-- Strength Bar -->
+<div class="w-full h-1 mt-1 rounded-full bg-gray-300">
+  <div
+    :class="{
+      'bg-red-400': passwordStrength.score < 2,
+      'bg-yellow-400': passwordStrength.score === 2,
+      'bg-green-400': passwordStrength.score >= 3
+    }"
+    :style="{ width: passwordStrength.score * 33 + '%' }"
+    class="h-full rounded-full transition-all"
+  ></div>
+</div>
+  <!-- Password Input Field -->
+<div class="relative">
+  <input
+    :type="showPassword ? 'text' : 'password'"
+    v-model="registerForm.password"
+    class="w-full rounded-lg px-4 py-3 pr-12 transition-all focus:outline-none focus:ring-1 bg-white/20 border-white/30 text-white placeholder-white/50"
+    placeholder="Password"
+    required
+  />
+
+  <!-- Toggle Button aligned right-center -->
+  <button
+    type="button"
+    @click="togglePassword"
+    class="absolute top-1/2 right-3 -translate-y-1/2 flex items-center justify-center w-8 h-8 bg-white/20 rounded-full hover:bg-white/30 transition"
+    aria-label="Toggle password visibility"
   >
-    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-    <path
-      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7
-         -.274.857-.682 1.664-1.198 2.389M15.536 15.536a9.004 9.004 0
-         01-3.536.964c-4.477 0-8.268-2.943-9.542-7
-         .274-.857.682-1.664 1.198-2.389"
-    />
-  </svg>
-  <svg
-    v-else
-    xmlns="http://www.w3.org/2000/svg"
-    class="w-5 h-5 text-white"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-    stroke-width="2"
-  >
-    <path
-      d="M13.875 18.825a9.004 9.004 0 01-3.536-.964
-         c-4.477 0-8.268-2.943-9.542-7
-         .274-.857.682-1.664 1.198-2.389M9.464 9.464a9.004 9.004 0
-         013.536-.964M15.536 15.536a9.004 9.004 0 01-3.536.964M2.458
-         12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7
-         -.274.857-.682 1.664-1.198 2.389"
-    />
-    <path d="M12 12a3 3 0 11-6 0 3 3 0 016 0z" />
-  </svg>
-</button>
-
-
-    <!-- Feedback Message -->
-    <p v-if="registerErrors.password" class="text-red-400 text-xs mt-1">
-      {{ registerErrors.password }}
-    </p>
-    <p v-else class="text-xs mt-1" :class="{
-      'text-red-400': passwordStrength.score < 2,
-      'text-yellow-400': passwordStrength.score === 2,
-      'text-green-400': passwordStrength.score >= 3
-    }">
-      Password Strength: {{ passwordStrength.feedback }}
-    </p>
-
-    <!-- Strength Bar -->
-    <div class="w-full h-1 mt-1 rounded-full bg-gray-300">
-      <div
-        :class="{
-          'bg-red-400': passwordStrength.score < 2,
-          'bg-yellow-400': passwordStrength.score === 2,
-          'bg-green-400': passwordStrength.score >= 3
-        }"
-        :style="{ width: passwordStrength.score * 33 + '%' }"
-        class="h-full rounded-full transition-all"
-      ></div>
-    </div>
-  </div>
-
-  <!-- Confirm Password Field -->
-  <div class="relative">
-    <input
-      :type="showConfirmPassword ? 'text' : 'password'"
-      v-model="registerForm.confirmPassword"
-      @input="validateConfirmPassword"
-      placeholder="Confirm Password"
-      :class="[
-        'w-full rounded-lg px-4 py-3 pr-12 transition-all focus:outline-none focus:ring-1',
-        registerErrors.confirmPassword
-          ? 'border-red-500 bg-red-100/40'
-          : registerForm.confirmPassword &&
-            registerForm.confirmPassword === registerForm.password
-          ? 'border-green-500 bg-green-100/40'
-          : 'bg-white/20 border-white/30 text-white placeholder-white/50'
-      ]"
-      :disabled="loading"
-      required
-    />
-
-    <!-- Toggle Visibility for Confirm Password -->
-<button
-  type="button"
-  @click="toggleConfirmPassword"
-  class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 bg-white/20 rounded-full hover:bg-white/30 transition-all"
-  :aria-label="showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'"
->
-  <svg
-    v-if="!showConfirmPassword"
-    xmlns="http://www.w3.org/2000/svg"
-    class="w-5 h-5 text-white"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-    stroke-width="2"
-  >
-    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-    <path
-      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7
-         -.274.857-.682 1.664-1.198 2.389M15.536 15.536a9.004 9.004 0
-         01-3.536.964c-4.477 0-8.268-2.943-9.542-7
-         .274-.857.682-1.664 1.198-2.389"
-    />
-  </svg>
-  <svg
-    v-else
-    xmlns="http://www.w3.org/2000/svg"
-    class="w-5 h-5 text-white"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-    stroke-width="2"
-  >
-    <path
-      d="M13.875 18.825a9.004 9.004 0 01-3.536-.964
-         c-4.477 0-8.268-2.943-9.542-7
-         .274-.857.682-1.664 1.198-2.389M9.464 9.464a9.004 9.004 0
-         013.536-.964M15.536 15.536a9.004 9.004 0 01-3.536.964M2.458
-         12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7
-         -.274.857-.682 1.664-1.198 2.389"
-    />
-    <path d="M12 12a3 3 0 11-6 0 3 3 0 016 0z" />
-  </svg>
-</button>
-
-
-    <!-- Confirm Password Feedback -->
-    <p v-if="registerErrors.confirmPassword" class="text-red-400 text-xs mt-1">
-      {{ registerErrors.confirmPassword }}
-    </p>
-    <p
-      v-else-if="registerForm.confirmPassword && registerForm.confirmPassword === registerForm.password"
-      class="text-green-400 text-xs mt-1"
+    <svg
+      v-if="!showPassword"
+      xmlns="http://www.w3.org/2000/svg"
+      class="w-5 h-5 text-white"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
     >
-      ✓ Passwords match!
-    </p>
-  </div>
+      <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      <path
+        d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7
+           -1.274 4.057-2.548 5.389M15.536 15.536A9.004 9.004 0 0112 17
+           c-4.477 0-8.268-2.943-9.542-7
+           .274-.857.682-1.664 1.198-2.389"
+      />
+    </svg>
+    <svg
+      v-else
+      xmlns="http://www.w3.org/2000/svg"
+      class="w-5 h-5 text-white"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
+    >
+      <path
+        d="M13.875 18.825a9.004 9.004 0 01-3.536-.964
+           c-4.477 0-8.268-2.943-9.542-7
+           .274-.857.682-1.664 1.198-2.389"
+      />
+      <path d="M12 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+  </button>
+
+  <!-- Error message -->
+  <p v-if="registerErrors.password" class="text-red-400 text-xs mt-1">
+    {{ registerErrors.password }}
+  </p>
+</div>
+<!-- Confirm Password Field -->
+<div class="relative">
+  <input
+    :type="showConfirmPassword ? 'text' : 'password'"
+    v-model="registerForm.confirmPassword"
+    @input="validateConfirmPassword"
+    placeholder="Confirm Password"
+    :class="[
+      'w-full rounded-lg px-4 py-3 pr-12 transition-all focus:outline-none focus:ring-1',
+      registerErrors.confirmPassword
+        ? 'border-red-500 bg-red-100/40'
+        : registerForm.confirmPassword &&
+          registerForm.confirmPassword === registerForm.password
+        ? 'border-green-500 bg-green-100/40'
+        : 'bg-white/20 border-white/30 text-white placeholder-white/50'
+    ]"
+    :disabled="loading"
+    required
+  />
+
+  <!-- Toggle Visibility Button -->
+  <button
+    type="button"
+    @click="toggleConfirmPassword"
+    class="absolute top-1/2 right-3 -translate-y-1/2 flex items-center justify-center w-8 h-8 bg-white/20 rounded-full hover:bg-white/30 transition"
+    :aria-label="showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'"
+  >
+    <svg
+      v-if="!showConfirmPassword"
+      xmlns="http://www.w3.org/2000/svg"
+      class="w-5 h-5 text-white"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
+    >
+      <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      <path
+        d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7
+           -1.274 4.057-2.548 5.389M15.536 15.536A9.004 9.004 0 0112 17
+           c-4.477 0-8.268-2.943-9.542-7
+           .274-.857.682-1.664 1.198-2.389"
+      />
+    </svg>
+    <svg
+      v-else
+      xmlns="http://www.w3.org/2000/svg"
+      class="w-5 h-5 text-white"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="2"
+    >
+      <path
+        d="M13.875 18.825a9.004 9.004 0 01-3.536-.964
+           c-4.477 0-8.268-2.943-9.542-7
+           .274-.857.682-1.664 1.198-2.389"
+      />
+      <path d="M12 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+  </button>
+
+  <!-- Feedback -->
+  <p v-if="registerErrors.confirmPassword" class="text-red-400 text-xs mt-1">
+    {{ registerErrors.confirmPassword }}
+  </p>
+  <p
+    v-else-if="registerForm.confirmPassword && registerForm.confirmPassword === registerForm.password"
+    class="text-green-400 text-xs mt-1"
+  >
+    ✓ Passwords match!
+  </p>
+</div>
+
 </div>
 
 
