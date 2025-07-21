@@ -101,6 +101,7 @@
   <input
     v-model="registerForm.birthday"
     type="date"
+    placeholder="Birthday"
     :class="[
       'w-full rounded-lg px-4 py-3 text-white transition-all focus:outline-none focus:ring-1',
       registerForm.birthday
@@ -201,7 +202,7 @@
       @input="validatePassword"
       placeholder="Password"
       :class="[
-        'w-full rounded-lg px-4 py-3 transition-all focus:outline-none focus:ring-1',
+        'w-full rounded-lg px-4 py-3 pr-12 transition-all focus:outline-none focus:ring-1',
         registerErrors.password
           ? 'border-red-500 bg-red-100/40'
           : passwordStrength.score >= 3
@@ -213,14 +214,28 @@
       title="Must be at least 8 characters with 1 uppercase and 1 number"
     />
 
-    <!-- Toggle Visibility -->
+    <!-- Toggle Visibility for Password -->
     <button
       type="button"
-      class="absolute right-3 inset-y-0 my-auto text-gray-200 hover:text-green-300"
+      class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-200 hover:text-green-300"
       @click="togglePassword"
       :disabled="loading"
       aria-label="Toggle password visibility"
     >
+      <lord-icon
+        v-if="!showPassword"
+        src="https://cdn.lordicon.com/dxjqoygy.json"
+        trigger="hover"
+        colors="primary:#ffffff"
+        style="width:28px;height:28px"
+      />
+      <lord-icon
+        v-else
+        src="https://cdn.lordicon.com/dnmvmpfk.json"
+        trigger="hover"
+        colors="primary:#ffffff"
+        style="width:28px;height:28px"
+      />
     </button>
 
     <!-- Feedback Message -->
@@ -249,15 +264,15 @@
     </div>
   </div>
 
-  <!-- Confirm Password -->
-  <div>
+  <!-- Confirm Password Field -->
+  <div class="relative">
     <input
-      :type="showPassword ? 'text' : 'password'"
+      :type="showConfirmPassword ? 'text' : 'password'"
       v-model="registerForm.confirmPassword"
       @input="validateConfirmPassword"
       placeholder="Confirm Password"
       :class="[
-        'w-full rounded-lg px-4 py-3 transition-all focus:outline-none focus:ring-1',
+        'w-full rounded-lg px-4 py-3 pr-12 transition-all focus:outline-none focus:ring-1',
         registerErrors.confirmPassword
           ? 'border-red-500 bg-red-100/40'
           : registerForm.confirmPassword &&
@@ -269,16 +284,43 @@
       required
     />
 
-    <!-- Feedback -->
+    <!-- Toggle Visibility for Confirm Password -->
+    <button
+      type="button"
+      class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-200 hover:text-green-300"
+      @click="toggleConfirmPassword"
+      :disabled="loading"
+      aria-label="Toggle confirm password visibility"
+    >
+      <lord-icon
+        v-if="!showConfirmPassword"
+        src="https://cdn.lordicon.com/dxjqoygy.json"
+        trigger="hover"
+        colors="primary:#ffffff"
+        style="width:28px;height:28px"
+      />
+      <lord-icon
+        v-else
+        src="https://cdn.lordicon.com/dnmvmpfk.json"
+        trigger="hover"
+        colors="primary:#ffffff"
+        style="width:28px;height:28px"
+      />
+    </button>
+
+    <!-- Confirm Password Feedback -->
     <p v-if="registerErrors.confirmPassword" class="text-red-400 text-xs mt-1">
       {{ registerErrors.confirmPassword }}
     </p>
-    <p v-else-if="registerForm.confirmPassword && registerForm.confirmPassword === registerForm.password"
-       class="text-green-400 text-xs mt-1">
+    <p
+      v-else-if="registerForm.confirmPassword && registerForm.confirmPassword === registerForm.password"
+      class="text-green-400 text-xs mt-1"
+    >
       ✓ Passwords match!
     </p>
   </div>
 </div>
+
 
     <!-- Terms -->
 <div class="flex flex-col w-full text-xs text-gray-100">
@@ -401,6 +443,7 @@ const registerErrors = reactive({});
 const profileImagePreview = ref(null);
 const profileImageError = ref("");
 const showPassword = ref(false);
+const showConfirmPassword = ref(false)
 const loading = ref(false);
 const globalAlert = reactive({ show: false, message: "", type: "success" });
 const showVerificationPrompt = ref(false);
@@ -556,10 +599,12 @@ toast.error(error.message || "❗ Registration failed.");
   }
 };
 
-const togglePassword = () => {
-  showPassword.value = !showPassword.value;
-};
-
+function togglePassword() {
+  showPassword.value = !showPassword.value
+}
+function toggleConfirmPassword() {
+  showConfirmPassword.value = !showConfirmPassword.value
+}
 const handleGoogleSignUp = async () => {
   loading.value = true;
   globalAlert.show = false;

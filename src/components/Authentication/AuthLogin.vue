@@ -32,10 +32,16 @@
           />
           <div
   v-if="loginForm.email && !loginErrors.email && loginForm.email.includes('@')"
-  class="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 bg-white rounded-full p-1 shadow"
+  class="flex items-center justify-center w-10 h-10 rounded-full bg-green-100"
 >
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
-       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <svg xmlns="http://www.w3.org/2000/svg"
+       class="w-5 h-5 text-green-600"
+       fill="none"
+       viewBox="0 0 24 24"
+       stroke="currentColor"
+       stroke-width="2"
+       stroke-linecap="round"
+       stroke-linejoin="round">
     <path d="M22 4 12 14.01 9 11.01" />
   </svg>
 </div>
@@ -66,6 +72,7 @@
   type="button"
   @click="togglePassword"
   class="absolute right-3 top-1/2 -translate-y-1/2"
+  :aria-label="showPassword ? 'Hide password' : 'Show password'"
 >
   <lord-icon
     v-if="!showPassword"
@@ -77,12 +84,13 @@
 
   <lord-icon
     v-else
-    src="https://cdn.lordicon.com/dnmvmpfk.json" 
+    src="https://cdn.lordicon.com/dnmvmpfk.json"
     trigger="hover"
     colors="primary:#ffffff"
     style="width:28px;height:28px"
   ></lord-icon>
 </button>
+
 
 </div>
 
