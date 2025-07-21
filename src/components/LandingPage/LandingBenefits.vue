@@ -10,7 +10,7 @@
       </div>
 
       <div class="space-y-8 sm:space-y-12">
-        <!-- Benefit 1: Resource Efficiency -->
+        <!-- Benefit  -->
         <div class="bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-green-100 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden">
           <div class="flex flex-col lg:flex-row">
             <!-- Content -->
@@ -59,21 +59,8 @@
                 </li>
               </ul>
             </div>
-            
-            <!-- Icon/Visual -->
-            <div class="lg:w-80 bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center p-8 lg:p-12">
-              <div class="relative">
-                <div class="absolute inset-0 bg-green-200/30 rounded-full blur-2xl"></div>
-                <div class="relative bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
-                  <Droplets class="w-16 h-16 sm:w-20 sm:h-20 text-green-600" />
-                </div>
-              </div>
-            </div>
           </div>
-        </div>
 
-        <!-- Benefit 2: Smart Technology -->
-        <div class="bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-blue-100 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden">
           <div class="flex flex-col lg:flex-row-reverse">
             <!-- Content -->
             <div class="flex-1 p-6 sm:p-8 lg:p-10">
@@ -121,22 +108,7 @@
                 </li>
               </ul>
             </div>
-            
-            <!-- Icon/Visual -->
-            <div class="lg:w-80 bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center p-8 lg:p-12">
-              <div class="relative">
-                <div class="absolute inset-0 bg-blue-200/30 rounded-full blur-2xl"></div>
-                <div class="relative bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
-                  <Brain class="w-16 h-16 sm:w-20 sm:h-20 text-blue-600" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Benefit 3: Sustainable Growth -->
-        <div class="bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-emerald-100 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden">
-          <div class="flex flex-col lg:flex-row">
+            <div class="flex flex-col lg:flex-row">
             <!-- Content -->
             <div class="flex-1 p-6 sm:p-8 lg:p-10">
               <div class="flex items-start gap-4 mb-6">
@@ -184,17 +156,10 @@
               </ul>
             </div>
             
-            <!-- Icon/Visual -->
-            <div class="lg:w-80 bg-gradient-to-br from-emerald-50 to-green-50 flex items-center justify-center p-8 lg:p-12">
-              <div class="relative">
-                <div class="absolute inset-0 bg-emerald-200/30 rounded-full blur-2xl"></div>
-                <div class="relative bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
-                  <Leaf class="w-16 h-16 sm:w-20 sm:h-20 text-emerald-600" />
-                </div>
-              </div>
-            </div>
+          </div>
           </div>
         </div>
+
       </div>
     </div>
   </section>
