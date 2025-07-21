@@ -218,7 +218,7 @@
     <button
       type="button"
       @click="togglePassword"
-      class="absolute right-3 top-1/2 -translate-y-1/2"
+      class="absolute inset-y-0 right-3 flex items-center justify-center w-8 h-8 bg-transparent rounded-full hover:bg-white/30 transition-all"
       :aria-label="showPassword ? 'Hide password' : 'Show password'"
     >
       <lord-icon
@@ -287,7 +287,7 @@
     <button
       type="button"
       @click="toggleConfirmPassword"
-      class="absolute right-3 top-1/2 -translate-y-1/2"
+      class="absolute inset-y-0 right-3 flex items-center justify-center w-8 h-8 bg-transparent rounded-full hover:bg-white/30 transition-all"
       :aria-label="showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'"
     >
       <lord-icon
