@@ -251,34 +251,41 @@
                 </svg>
                 User Feedback
               </h2>
-              <div class="flex items-center gap-2">
-                <div class="relative">
-                  <select 
-                    v-model="feedbackFilter" 
-                    class="pl-3 pr-8 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  >
-                    <option value="all">All Types</option>
-                    <option value="suggestion">Suggestions</option>
-                    <option value="bug">Bug Reports</option>
-                    <option value="question">Questions</option>
-                    <option value="other">Other</option>
-                  </select>
-                  <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400">
-                      <path d="m6 9 6 6 6-6"/>
-                    </svg>
-                  </div>
-                </div>
-                <button @click="refreshFeedback" class="px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="{ 'animate-spin': refreshingFeedback }">
-                    <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                    <path d="M3 3v5h5"></path>
-                    <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path>
-                    <path d="M16 16h5v5"></path>
-                  </svg>
-                  Refresh
-                </button>
-              </div>
+              <div class="flex flex-col sm:flex-row sm:items-center gap-3 w-full">
+  <!-- Select Dropdown -->
+  <div class="relative w-full sm:w-auto">
+    <select 
+      v-model="feedbackFilter" 
+      class="pl-3 pr-8 py-2 w-full sm:w-auto border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+    >
+      <option value="all">All Types</option>
+      <option value="suggestion">Suggestions</option>
+      <option value="bug">Bug Reports</option>
+      <option value="question">Questions</option>
+      <option value="other">Other</option>
+    </select>
+    <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path d="m6 9 6 6 6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Refresh Button -->
+  <button 
+    @click="refreshFeedback" 
+    class="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" :class="{ 'animate-spin': refreshingFeedback }">
+      <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M3 3v5h5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M16 16h5v5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Refresh
+  </button>
+</div>
+
             </div>
             <div v-if="loadingFeedback" class="flex items-center justify-center min-h-[200px]">
               <div class="spinner">
@@ -350,20 +357,24 @@
 
           <!-- Contact Messages Section -->
           <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
-            <div class="flex items-center justify-between mb-4">
-              <h2 class="text-xl font-bold text-green-700 flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                </svg>
-                Contact Messages
-              </h2>
-              <input  
-                v-model="searchEmail" 
-                type="email" 
-                placeholder="Search by email"
-                class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              />
-            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+  <!-- Heading with Icon -->
+  <h2 class="text-xl font-bold text-green-700 flex items-center gap-2">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    Contact Messages
+  </h2>
+
+  <!-- Search Input -->
+  <input  
+    v-model="searchEmail" 
+    type="email" 
+    placeholder="Search by email"
+    class="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+  />
+</div>
+
             <div v-if="loadingMessages" class="flex items-center justify-center min-h-[200px]">
               <div class="spinner">
                 <div></div>

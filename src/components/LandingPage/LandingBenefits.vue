@@ -1,69 +1,209 @@
 <template>
-  <section id="benefits" class="px-4 sm:px-6 py-20 sm:py-24 relative z-10">
+  <section id="benefits" class="px-4 sm:px-6 py-16 sm:py-20 relative z-10">
     <div class="max-w-7xl mx-auto">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Benefits of Eco-Mist</h2>
-        <div class="w-24 h-1.5 bg-gradient-to-r from-green-600 to-green-400 mx-auto rounded-full"></div>
+      <!-- Header -->
+      <div class="text-center mb-12 sm:mb-16">
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
+          Benefits of Eco-Mist
+        </h2>
+        <div class="w-20 sm:w-24 h-1 sm:h-1.5 bg-gradient-to-r from-green-500 to-emerald-400 mx-auto rounded-full"></div>
       </div>
 
-      <div class="space-y-12">
-        <!-- Benefit 1 -->
-        <div class="bg-white/95 backdrop-blur-sm rounded-2xl border border-green-100 shadow-xl p-8 sm:p-10 hover:shadow-2xl transition-shadow">
-          <div class="flex flex-col lg:flex-row gap-8 items-center">
-            <!-- Icon on top (mobile) or right (desktop) -->
-            <div class="lg:order-2 lg:w-1/3 flex justify-center">
-              <div class="bg-green-50 p-6 rounded-full flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-32 h-32 text-green-600 filter drop-shadow-[0_0_10px_rgba(22,163,74,0.3)]">
-                  <path d="M2 22c1.25-1.25 2.5-2.5 3.5-4.5 1.5 1 2.5 1 4.5.5 2-2 3-4 3-6 0-1-.5-2.5-2-3 0 0 2 0 4 2 0-3.5-2-6.5-2-8 0-.5 0-1 .5-1 .5 0 1 .5 1.5 2 2-3 2.5-4 3-6 .5 2 1.5 3 2.5 5 1-1.5 1.5-3 1.5-4.5.5 1.5 1 3 1 4.5 1-1 2-2 3-2.5 0 1-1 2-1 3 1 .5 2 1 2.5 2-1 1-2 1.5-3 2 1 2 1 4.5 0 6.5-1.5 1-3 1.5-4.5 2 1 1.5 2 3 3 4.5-1.5-.5-3-1-4.5-1.5-1 1-2 2-3 2.5 0-1 .5-2.5 1-3.5-1.5-.5-3-1-4.5-1.5-1 1.5-2 3-3.5 4.5z"/>
-                </svg>
-              </div>
-            </div>
-
+      <div class="space-y-8 sm:space-y-12">
+        <!-- Benefit 1: Resource Efficiency -->
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-green-100 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden">
+          <div class="flex flex-col lg:flex-row">
             <!-- Content -->
-            <div class="lg:w-2/3 text-center lg:text-left">
-              <h3 class="text-green-800 text-2xl font-semibold mb-4">Resource Efficiency</h3>
-              <p class="text-gray-700 mb-6 text-lg">
-                Eco-Mist's precision control system reduces water usage by up to 95% compared to traditional farming methods.
+            <div class="flex-1 p-6 sm:p-8 lg:p-10">
+              <div class="flex items-start gap-4 mb-6">
+                <div class="bg-gradient-to-br from-green-500 to-emerald-600 p-3 rounded-xl shadow-lg flex-shrink-0">
+                  <Droplets class="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                </div>
+                <div>
+                  <h3 class="text-green-800 text-xl sm:text-2xl font-bold mb-2">Resource Efficiency</h3>
+                  <p class="text-gray-600 text-sm sm:text-base leading-relaxed">
+                    Eco-Mist's precision control system reduces water usage by up to 95% compared to traditional farming methods.
+                  </p>
+                </div>
+              </div>
+              
+              <p class="text-gray-700 mb-6 text-sm sm:text-base leading-relaxed">
                 Our smart nutrient delivery ensures plants receive exactly what they need, minimizing waste and maximizing efficiency.
               </p>
-
-              <!-- Bullet list -->
-              <ul class="space-y-3">
-                <li class="flex items-center gap-3 text-gray-600 text-lg">
-                  <span class="flex items-center justify-center text-green-600 bg-green-100 rounded-full p-1 flex-shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                  </span>
-                  <span>Reduced water consumption</span>
+              
+              <!-- Benefits List -->
+              <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <li class="flex items-center gap-3 text-gray-700">
+                  <div class="bg-green-100 p-1.5 rounded-full flex-shrink-0">
+                    <Check class="w-4 h-4 text-green-600" />
+                  </div>
+                  <span class="text-sm sm:text-base">Reduced water consumption</span>
                 </li>
-                <li class="flex items-center gap-3 text-gray-600 text-lg">
-                  <span class="flex items-center justify-center text-green-600 bg-green-100 rounded-full p-1 flex-shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                  </span>
-                  <span>Optimized nutrient usage</span>
+                <li class="flex items-center gap-3 text-gray-700">
+                  <div class="bg-green-100 p-1.5 rounded-full flex-shrink-0">
+                    <Check class="w-4 h-4 text-green-600" />
+                  </div>
+                  <span class="text-sm sm:text-base">Optimized nutrient usage</span>
                 </li>
-                <li class="flex items-center gap-3 text-gray-600 text-lg">
-                  <span class="flex items-center justify-center text-green-600 bg-green-100 rounded-full p-1 flex-shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                  </span>
-                  <span>Lower energy requirements</span>
+                <li class="flex items-center gap-3 text-gray-700">
+                  <div class="bg-green-100 p-1.5 rounded-full flex-shrink-0">
+                    <Check class="w-4 h-4 text-green-600" />
+                  </div>
+                  <span class="text-sm sm:text-base">Lower energy requirements</span>
                 </li>
-                <li class="flex items-center gap-3 text-gray-600 text-lg">
-                  <span class="flex items-center justify-center text-green-600 bg-green-100 rounded-full p-1 flex-shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                  </span>
-                  <span>Minimal environmental impact</span>
+                <li class="flex items-center gap-3 text-gray-700">
+                  <div class="bg-green-100 p-1.5 rounded-full flex-shrink-0">
+                    <Check class="w-4 h-4 text-green-600" />
+                  </div>
+                  <span class="text-sm sm:text-base">Minimal environmental impact</span>
                 </li>
               </ul>
+            </div>
+            
+            <!-- Icon/Visual -->
+            <div class="lg:w-80 bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center p-8 lg:p-12">
+              <div class="relative">
+                <div class="absolute inset-0 bg-green-200/30 rounded-full blur-2xl"></div>
+                <div class="relative bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+                  <Droplets class="w-16 h-16 sm:w-20 sm:h-20 text-green-600" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Additional benefits can be similarly structured below -->
+        <!-- Benefit 2: Smart Technology -->
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-blue-100 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden">
+          <div class="flex flex-col lg:flex-row-reverse">
+            <!-- Content -->
+            <div class="flex-1 p-6 sm:p-8 lg:p-10">
+              <div class="flex items-start gap-4 mb-6">
+                <div class="bg-gradient-to-br from-blue-500 to-cyan-600 p-3 rounded-xl shadow-lg flex-shrink-0">
+                  <Brain class="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                </div>
+                <div>
+                  <h3 class="text-blue-800 text-xl sm:text-2xl font-bold mb-2">Smart Technology</h3>
+                  <p class="text-gray-600 text-sm sm:text-base leading-relaxed">
+                    AI-powered monitoring and automated adjustments ensure optimal growing conditions 24/7.
+                  </p>
+                </div>
+              </div>
+              
+              <p class="text-gray-700 mb-6 text-sm sm:text-base leading-relaxed">
+                Real-time sensors and machine learning algorithms continuously optimize your growing environment for maximum yield.
+              </p>
+              
+              <!-- Benefits List -->
+              <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <li class="flex items-center gap-3 text-gray-700">
+                  <div class="bg-blue-100 p-1.5 rounded-full flex-shrink-0">
+                    <Check class="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span class="text-sm sm:text-base">AI-powered monitoring</span>
+                </li>
+                <li class="flex items-center gap-3 text-gray-700">
+                  <div class="bg-blue-100 p-1.5 rounded-full flex-shrink-0">
+                    <Check class="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span class="text-sm sm:text-base">Automated adjustments</span>
+                </li>
+                <li class="flex items-center gap-3 text-gray-700">
+                  <div class="bg-blue-100 p-1.5 rounded-full flex-shrink-0">
+                    <Check class="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span class="text-sm sm:text-base">Real-time analytics</span>
+                </li>
+                <li class="flex items-center gap-3 text-gray-700">
+                  <div class="bg-blue-100 p-1.5 rounded-full flex-shrink-0">
+                    <Check class="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span class="text-sm sm:text-base">Predictive maintenance</span>
+                </li>
+              </ul>
+            </div>
+            
+            <!-- Icon/Visual -->
+            <div class="lg:w-80 bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center p-8 lg:p-12">
+              <div class="relative">
+                <div class="absolute inset-0 bg-blue-200/30 rounded-full blur-2xl"></div>
+                <div class="relative bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+                  <Brain class="w-16 h-16 sm:w-20 sm:h-20 text-blue-600" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Benefit 3: Sustainable Growth -->
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-emerald-100 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden">
+          <div class="flex flex-col lg:flex-row">
+            <!-- Content -->
+            <div class="flex-1 p-6 sm:p-8 lg:p-10">
+              <div class="flex items-start gap-4 mb-6">
+                <div class="bg-gradient-to-br from-emerald-500 to-green-600 p-3 rounded-xl shadow-lg flex-shrink-0">
+                  <Leaf class="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                </div>
+                <div>
+                  <h3 class="text-emerald-800 text-xl sm:text-2xl font-bold mb-2">Sustainable Growth</h3>
+                  <p class="text-gray-600 text-sm sm:text-base leading-relaxed">
+                    Achieve higher yields while maintaining environmental responsibility and sustainability.
+                  </p>
+                </div>
+              </div>
+              
+              <p class="text-gray-700 mb-6 text-sm sm:text-base leading-relaxed">
+                Our eco-friendly approach ensures long-term soil health and biodiversity while maximizing crop production.
+              </p>
+              
+              <!-- Benefits List -->
+              <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <li class="flex items-center gap-3 text-gray-700">
+                  <div class="bg-emerald-100 p-1.5 rounded-full flex-shrink-0">
+                    <Check class="w-4 h-4 text-emerald-600" />
+                  </div>
+                  <span class="text-sm sm:text-base">Increased crop yields</span>
+                </li>
+                <li class="flex items-center gap-3 text-gray-700">
+                  <div class="bg-emerald-100 p-1.5 rounded-full flex-shrink-0">
+                    <Check class="w-4 h-4 text-emerald-600" />
+                  </div>
+                  <span class="text-sm sm:text-base">Soil health preservation</span>
+                </li>
+                <li class="flex items-center gap-3 text-gray-700">
+                  <div class="bg-emerald-100 p-1.5 rounded-full flex-shrink-0">
+                    <Check class="w-4 h-4 text-emerald-600" />
+                  </div>
+                  <span class="text-sm sm:text-base">Biodiversity support</span>
+                </li>
+                <li class="flex items-center gap-3 text-gray-700">
+                  <div class="bg-emerald-100 p-1.5 rounded-full flex-shrink-0">
+                    <Check class="w-4 h-4 text-emerald-600" />
+                  </div>
+                  <span class="text-sm sm:text-base">Carbon footprint reduction</span>
+                </li>
+              </ul>
+            </div>
+            
+            <!-- Icon/Visual -->
+            <div class="lg:w-80 bg-gradient-to-br from-emerald-50 to-green-50 flex items-center justify-center p-8 lg:p-12">
+              <div class="relative">
+                <div class="absolute inset-0 bg-emerald-200/30 rounded-full blur-2xl"></div>
+                <div class="relative bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+                  <Leaf class="w-16 h-16 sm:w-20 sm:h-20 text-emerald-600" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 </template>
 
 <script setup>
-// No script needed for static content
+import { Droplets, Brain, Leaf, Check } from 'lucide-vue-next'
 </script>
+
+<style scoped>
+/* Additional custom styles if needed */
+</style>
