@@ -463,6 +463,8 @@ const handleRegister = async () => {
   validateUsername();
   validatePassword();
   validateConfirmPassword();
+  toast.error("⚠️ Some fields are invalid. Please check your inputs.");
+
 
   if (
     registerErrors.username ||
@@ -478,7 +480,7 @@ const handleRegister = async () => {
 
   loading.value = true;
   globalAlert.show = false;
-
+ toast.info("Creating account...", { timeout: 1500 });
   try {
     // Step 1: Create Firebase user
     const userCredential = await createUserWithEmailAndPassword(
@@ -512,6 +514,7 @@ const handleRegister = async () => {
     globalAlert.type = "success";
     globalAlert.show = true;
     showVerificationPrompt.value = true;
+    
 
     await logAuthEvent({
   type: "register",
@@ -531,15 +534,19 @@ const handleRegister = async () => {
       globalAlert.show = true;
 showVerificationPrompt.value = true;
 
+
   emit('toggleView'); // ✅ This tells the parent to show the Login page
 }, 1000);
   } catch (error) {
+
     await logAuthEvent({
   type: "register",
   status: "failed",
   email: registerForm.email,
   reason: error.code || error.message,
 });
+toast.error(error.message || "❗ Registration failed.");
+
 
     globalAlert.message = error.message || "Registration failed.";
     globalAlert.type = "error";
@@ -556,6 +563,7 @@ const togglePassword = () => {
 const handleGoogleSignUp = async () => {
   loading.value = true;
   globalAlert.show = false;
+toast.info("🔓 Signing up with Google...", { timeout: 1500 });
 
   try {
     const provider = new GoogleAuthProvider();
@@ -579,6 +587,7 @@ const handleGoogleSignUp = async () => {
       authProvider: "google",
       loginCount: 1,
     });
+toast.success("✅ Signed up with Google!");
 
     globalAlert.message = "Signed up with Google successfully!";
     globalAlert.type = "success";
@@ -606,6 +615,7 @@ const handleGoogleSignUp = async () => {
   reason: err.code || err.message,
   method: "google",
 });
+toast.error(err.message || "Google Sign-Up failed.");
 
     globalAlert.message = err.message || "Google Sign-In failed.";
     globalAlert.type = "error";

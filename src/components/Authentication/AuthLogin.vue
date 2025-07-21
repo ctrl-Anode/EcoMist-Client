@@ -270,6 +270,7 @@ const loginUser = async () => {
   }
 
   loading.value = true;
+  toast.info("🔐 Logging in...", { timeout: 2000 });
   try {
     const { user } = await signInWithEmailAndPassword(auth, loginForm.email, loginForm.password);
 
@@ -309,6 +310,7 @@ const loginUser = async () => {
   uid: user.uid,
 });
 
+toast.success("✅ Login successful!");
 
       router.push(userRole === "admin" ? "/admin/dashboard" : "/user/dashboard");
     } else {
@@ -341,14 +343,20 @@ const loginUser = async () => {
     } else {
       if (error.code === "auth/user-not-found") {
         loginErrors.email = "No account found with this email.";
+        toast.error("🚫 Email not found.");
+
       } else if (error.code === "auth/wrong-password") {
         loginErrors.password = "Incorrect password.";
+        toast.error("🔐 Incorrect password.");
+
       } else {
         notification.value = {
           show: true,
           message: "Login failed. Please try again.",
           type: "error",
         };
+        toast.error("❗ Login failed. Please try again.");
+
       }
     }
   } finally {
@@ -363,6 +371,7 @@ const loginUser = async () => {
 const router = useRouter();
 
 const handleGoogleSignIn = async () => {
+   toast.info("🔓 Signing in with Google...", { timeout: 2000 });
   try {
     const provider = new GoogleAuthProvider();
     const { user } = await signInWithPopup(auth, provider);
@@ -381,6 +390,8 @@ const handleGoogleSignIn = async () => {
         authProvider: "google",
         loginCount: 1,
       });
+     
+
     } else {
       await updateDoc(userRef, { lastLogin: new Date().toISOString(), loginCount: increment(1) });
     }
@@ -392,6 +403,7 @@ const handleGoogleSignIn = async () => {
   email: loginForm.email,
   uid: user.uid,
 });
+toast.success("✅ Google Sign-In successful!");
     router.push(userSnap.exists() && userSnap.data().role === "admin" ? "/admin/dashboard" : "/user/dashboard");
   } catch (error) {
   // Don't log or alert for expected cancelation
@@ -408,7 +420,7 @@ const handleGoogleSignIn = async () => {
   });
 
   console.error(error);
-  alert(error.message || "Google Sign-In failed!");
+  toast.error("❗ Google Sign-In failed. " + (error.message || ""));
 }
 };
 
@@ -441,10 +453,16 @@ const resendEmailVerification = async () => {
     console.error(error);
     if (error.code === "auth/user-not-found") {
       loginErrors.email = "No account found with this email.";
+      toast.error("🚫 Email not found.");
+
     } else if (error.code === "auth/wrong-password") {
       loginErrors.password = "Incorrect password.";
+      toast.error("🔐 Incorrect password.");
+
     } else {
       showAlert("error", "Error", "Failed to resend verification email.");
+      toast.error("❗ Login failed. Please try again.");
+
     }
   } finally {
     loading.value = false;
