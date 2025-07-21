@@ -17,7 +17,7 @@
 
     <!-- Header -->
     <header class="text-center space-y-1">
-      <img src="/ecomist-hero.png" alt="Eco-Mist Logo" class="w-15 h-15 mx-auto" />
+      <img src="/ecomist-hero.png" alt="Eco-Mist Logo" class="w-30 h-30 mx-auto" />
       <h1 class="text-xl font-bold text-white">Register</h1>
       <p class="text-sm text-white/80">Create an account to get started</p>
     </header>
