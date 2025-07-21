@@ -214,28 +214,51 @@
       title="Must be at least 8 characters with 1 uppercase and 1 number"
     />
 
-    <!-- Toggle Visibility for Password -->
-    <button
-      type="button"
-      @click="togglePassword"
-      class="absolute inset-y-0 right-3 flex items-center justify-center w-8 h-8 bg-transparent rounded-full hover:bg-white/30 transition-all"
-      :aria-label="showPassword ? 'Hide password' : 'Show password'"
-    >
-      <lord-icon
-        v-if="!showPassword"
-        src="https://cdn.lordicon.com/dxjqoygy.json"
-        trigger="hover"
-        colors="primary:#ffffff"
-        style="width:28px;height:28px"
-      ></lord-icon>
-      <lord-icon
-        v-else
-        src="https://cdn.lordicon.com/dnmvmpfk.json"
-        trigger="hover"
-        colors="primary:#ffffff"
-        style="width:28px;height:28px"
-      ></lord-icon>
-    </button>
+    <!-- Password Visibility Toggle (Password field) -->
+<button
+  type="button"
+  @click="togglePassword"
+  class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 bg-white/20 rounded-full hover:bg-white/30 transition-all"
+  :aria-label="showPassword ? 'Hide password' : 'Show password'"
+>
+  <svg
+    v-if="!showPassword"
+    xmlns="http://www.w3.org/2000/svg"
+    class="w-5 h-5 text-white"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    stroke-width="2"
+  >
+    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    <path
+      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7
+         -.274.857-.682 1.664-1.198 2.389M15.536 15.536a9.004 9.004 0
+         01-3.536.964c-4.477 0-8.268-2.943-9.542-7
+         .274-.857.682-1.664 1.198-2.389"
+    />
+  </svg>
+  <svg
+    v-else
+    xmlns="http://www.w3.org/2000/svg"
+    class="w-5 h-5 text-white"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    stroke-width="2"
+  >
+    <path
+      d="M13.875 18.825a9.004 9.004 0 01-3.536-.964
+         c-4.477 0-8.268-2.943-9.542-7
+         .274-.857.682-1.664 1.198-2.389M9.464 9.464a9.004 9.004 0
+         013.536-.964M15.536 15.536a9.004 9.004 0 01-3.536.964M2.458
+         12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7
+         -.274.857-.682 1.664-1.198 2.389"
+    />
+    <path d="M12 12a3 3 0 11-6 0 3 3 0 016 0z" />
+  </svg>
+</button>
+
 
     <!-- Feedback Message -->
     <p v-if="registerErrors.password" class="text-red-400 text-xs mt-1">
@@ -284,27 +307,50 @@
     />
 
     <!-- Toggle Visibility for Confirm Password -->
-    <button
-      type="button"
-      @click="toggleConfirmPassword"
-      class="absolute inset-y-0 right-3 flex items-center justify-center w-8 h-8 bg-transparent rounded-full hover:bg-white/30 transition-all"
-      :aria-label="showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'"
-    >
-      <lord-icon
-        v-if="!showConfirmPassword"
-        src="https://cdn.lordicon.com/dxjqoygy.json"
-        trigger="hover"
-        colors="primary:#ffffff"
-        style="width:28px;height:28px"
-      ></lord-icon>
-      <lord-icon
-        v-else
-        src="https://cdn.lordicon.com/dnmvmpfk.json"
-        trigger="hover"
-        colors="primary:#ffffff"
-        style="width:28px;height:28px"
-      ></lord-icon>
-    </button>
+<button
+  type="button"
+  @click="toggleConfirmPassword"
+  class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 bg-white/20 rounded-full hover:bg-white/30 transition-all"
+  :aria-label="showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'"
+>
+  <svg
+    v-if="!showConfirmPassword"
+    xmlns="http://www.w3.org/2000/svg"
+    class="w-5 h-5 text-white"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    stroke-width="2"
+  >
+    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    <path
+      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7
+         -.274.857-.682 1.664-1.198 2.389M15.536 15.536a9.004 9.004 0
+         01-3.536.964c-4.477 0-8.268-2.943-9.542-7
+         .274-.857.682-1.664 1.198-2.389"
+    />
+  </svg>
+  <svg
+    v-else
+    xmlns="http://www.w3.org/2000/svg"
+    class="w-5 h-5 text-white"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    stroke-width="2"
+  >
+    <path
+      d="M13.875 18.825a9.004 9.004 0 01-3.536-.964
+         c-4.477 0-8.268-2.943-9.542-7
+         .274-.857.682-1.664 1.198-2.389M9.464 9.464a9.004 9.004 0
+         013.536-.964M15.536 15.536a9.004 9.004 0 01-3.536.964M2.458
+         12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7
+         -.274.857-.682 1.664-1.198 2.389"
+    />
+    <path d="M12 12a3 3 0 11-6 0 3 3 0 016 0z" />
+  </svg>
+</button>
+
 
     <!-- Confirm Password Feedback -->
     <p v-if="registerErrors.confirmPassword" class="text-red-400 text-xs mt-1">
