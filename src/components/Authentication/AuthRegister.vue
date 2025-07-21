@@ -97,11 +97,18 @@
   </p>
 </div>
 
-  <div>
+  <div class="relative w-full">
+  <!-- Label -->
+  <label for="birthday" class="block text-sm text-white/80 mb-1">
+    Birthday <span class="text-red-400">*</span>
+  </label>
+
+  <!-- Date Input -->
   <input
+    id="birthday"
     v-model="registerForm.birthday"
     type="date"
-    placeholder="Birthday"
+    :aria-label="'Birthday'"
     :class="[
       'w-full rounded-lg px-4 py-3 text-white transition-all focus:outline-none focus:ring-1',
       registerForm.birthday
@@ -317,7 +324,12 @@
     </button>
   </div>
 
-  <!-- Feedback -->
+</div>
+<!-- Password Requirements Note -->
+<p class="text-white/60 text-xs mb-1">
+  Must be at least 8 characters, include a special character, a number and an uppercase letter.
+</p>
+<!-- Feedback -->
   <p v-if="registerErrors.confirmPassword" class="text-red-400 text-xs mt-1">
     {{ registerErrors.confirmPassword }}
   </p>
@@ -327,12 +339,6 @@
   >
     ✓ Passwords match!
   </p>
-</div>
-<!-- Password Requirements Note -->
-<p class="text-white/60 text-xs mb-1">
-  Must be at least 8 characters, include a special character, a number and an uppercase letter.
-</p>
-
 <!-- Password Strength Note -->
 <p v-if="registerErrors.password" class="text-red-400 text-xs mt-1">
   {{ registerErrors.password }}
