@@ -35,25 +35,25 @@
               <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <li class="flex items-center gap-3 text-gray-700">
                   <div class="bg-green-100 p-1.5 rounded-full flex-shrink-0">
-                    <Check class="w-4 h-4 text-green-600" />
+                    <Check class="w-4 h-4 text-emerald-600" />
                   </div>
                   <span class="text-sm sm:text-base">Reduced water consumption</span>
                 </li>
                 <li class="flex items-center gap-3 text-gray-700">
                   <div class="bg-green-100 p-1.5 rounded-full flex-shrink-0">
-                    <Check class="w-4 h-4 text-green-600" />
+                    <Check class="w-4 h-4 text-emerald-600" />
                   </div>
                   <span class="text-sm sm:text-base">Optimized nutrient usage</span>
                 </li>
                 <li class="flex items-center gap-3 text-gray-700">
                   <div class="bg-green-100 p-1.5 rounded-full flex-shrink-0">
-                    <Check class="w-4 h-4 text-green-600" />
+                    <Check class="w-4 h-4 text-emerald-600" />
                   </div>
                   <span class="text-sm sm:text-base">Lower energy requirements</span>
                 </li>
                 <li class="flex items-center gap-3 text-gray-700">
                   <div class="bg-green-100 p-1.5 rounded-full flex-shrink-0">
-                    <Check class="w-4 h-4 text-green-600" />
+                    <Check class="w-4 h-4 text-emerald-600" />
                   </div>
                   <span class="text-sm sm:text-base">Minimal environmental impact</span>
                 </li>
@@ -65,11 +65,11 @@
             <!-- Content -->
             <div class="flex-1 p-6 sm:p-8 lg:p-10">
               <div class="flex items-start gap-4 mb-6">
-                <div class="bg-gradient-to-br from-blue-500 to-cyan-600 p-3 rounded-xl shadow-lg flex-shrink-0">
+                <div class="bg-gradient-to-br from-emerald-500 to-green-600 p-3 rounded-xl shadow-lg flex-shrink-0">
                   <Brain class="w-6 h-6 sm:w-7 sm:h-7 text-white" />
                 </div>
                 <div>
-                  <h3 class="text-blue-800 text-xl sm:text-2xl font-bold mb-2">Smart Technology</h3>
+                  <h3 class="text-emerald-800 text-xl sm:text-2xl font-bold mb-2">Smart Technology</h3>
                   <p class="text-gray-600 text-sm sm:text-base leading-relaxed">
                     AI-powered monitoring and automated adjustments ensure optimal growing conditions 24/7.
                   </p>
@@ -83,26 +83,26 @@
               <!-- Benefits List -->
               <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <li class="flex items-center gap-3 text-gray-700">
-                  <div class="bg-blue-100 p-1.5 rounded-full flex-shrink-0">
-                    <Check class="w-4 h-4 text-blue-600" />
+                  <div class="bg-emerald-100 p-1.5 rounded-full flex-shrink-0">
+                    <Check class="w-4 h-4 text-emerald-600" />
                   </div>
                   <span class="text-sm sm:text-base">AI-powered monitoring</span>
                 </li>
                 <li class="flex items-center gap-3 text-gray-700">
-                  <div class="bg-blue-100 p-1.5 rounded-full flex-shrink-0">
-                    <Check class="w-4 h-4 text-blue-600" />
+                  <div class="bg-emerald-100 p-1.5 rounded-full flex-shrink-0">
+                    <Check class="w-4 h-4 text-emerald-600" />
                   </div>
                   <span class="text-sm sm:text-base">Automated adjustments</span>
                 </li>
                 <li class="flex items-center gap-3 text-gray-700">
-                  <div class="bg-blue-100 p-1.5 rounded-full flex-shrink-0">
-                    <Check class="w-4 h-4 text-blue-600" />
+                  <div class="bg-emerald-100 p-1.5 rounded-full flex-shrink-0">
+                    <Check class="w-4 h-4 text-emerald-600" />
                   </div>
                   <span class="text-sm sm:text-base">Real-time analytics</span>
                 </li>
                 <li class="flex items-center gap-3 text-gray-700">
-                  <div class="bg-blue-100 p-1.5 rounded-full flex-shrink-0">
-                    <Check class="w-4 h-4 text-blue-600" />
+                  <div class="bg-emerald-100 p-1.5 rounded-full flex-shrink-0">
+                    <Check class="w-4 h-4 text-emerald-600" />
                   </div>
                   <span class="text-sm sm:text-base">Predictive maintenance</span>
                 </li>
