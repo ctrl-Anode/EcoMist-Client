@@ -218,7 +218,7 @@
     <button
       type="button"
       @click="togglePassword"
-      class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 bg-white/20 rounded-full hover:bg-white/30 transition-all"
+      class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 bg-transparent rounded-full hover:bg-white/30 transition-all"
       :aria-label="showPassword ? 'Hide password' : 'Show password'"
     >
       <svg
@@ -297,7 +297,7 @@
     <button
       type="button"
       @click="toggleConfirmPassword"
-      class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 bg-white/20 rounded-full hover:bg-white/30 transition-all"
+      class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 bg-transparent rounded-full hover:bg-white/30 transition-all"
       :aria-label="showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'"
     >
       <svg
@@ -310,7 +310,7 @@
         stroke-width="2"
       >
         <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-.274.857-.682 1.664-1.198 2.389M15.536 15.536a9.004 9.004 0 01-3.536.964c-4.477 0-8.268-2.943-9.542-7 .274-.857.682-1.664 1.198-2.389M9.464 9.464a9.004 9.004 0 013.536-.964" />
+        <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-.274.857-.682-1.664-1.198-2.389M15.536 15.536a9.004 9.004 0 01-3.536.964c-4.477 0-8.268-2.943-9.542-7 .274-.857.682-1.664 1.198-2.389M9.464 9.464a9.004 9.004 0 013.536-.964" />
       </svg>
       <svg
         v-else
