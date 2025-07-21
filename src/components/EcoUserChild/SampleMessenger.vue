@@ -181,7 +181,8 @@
                 <div class="space-y-3" role="list">
                   <div v-for="(user, index) in activeUsers" :key="index" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-slate-50/50 transition-all duration-200 cursor-pointer" role="listitem">
                     <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-sm font-bold shadow-lg" :aria-label="`${user.name} avatar`">
-                      {{ getInitials(user.name) }}
+                      <!-- {{ getInitials(user.name) }} -->
+                      {{ user.name }}
                     </div>
                     <div>
                       <div class="text-base font-semibold text-slate-800">{{ user.name }}</div>

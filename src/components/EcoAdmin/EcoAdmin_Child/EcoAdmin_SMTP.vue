@@ -87,7 +87,7 @@
           <p v-if="sender.email === defaultEmail" class="text-xs text-green-600 font-medium mt-1">🌟 Default</p>
         </div>
         <div class="flex gap-2">
-          <button v-if="sender.email !== defaultEmail" @click="setDefault(sender.email)" class="text-green-600 hover:underline text-sm">Make Default</button>
+          <button v-if="sender.email !== defaultEmail" @click="setDefault(sender.email)" class="text-green-600 hover:underline text-sm">Default</button>
           <button @click="deleteSender(index)" class="text-red-500 hover:underline text-sm">Delete</button>
         </div>
       </div>
