@@ -194,30 +194,6 @@
 
     <!-- Password and Confirm Password -->
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-  <!-- Password Strength Note -->
-<p v-if="registerErrors.password" class="text-red-400 text-xs mt-1">
-  {{ registerErrors.password }}
-</p>
-<p v-else class="text-xs mt-1" :class="{
-  'text-red-400': passwordStrength.score < 2,
-  'text-yellow-400': passwordStrength.score === 2,
-  'text-green-400': passwordStrength.score >= 3
-}">
-  Password Strength: {{ passwordStrength.feedback }}
-</p>
-
-<!-- Strength Bar -->
-<div class="w-full h-1 mt-1 rounded-full bg-gray-300">
-  <div
-    :class="{
-      'bg-red-400': passwordStrength.score < 2,
-      'bg-yellow-400': passwordStrength.score === 2,
-      'bg-green-400': passwordStrength.score >= 3
-    }"
-    :style="{ width: passwordStrength.score * 33 + '%' }"
-    class="h-full rounded-full transition-all"
-  ></div>
-</div>
   <!-- Password Input Field -->
 <div class="relative">
   <input
@@ -347,6 +323,35 @@
   >
     ✓ Passwords match!
   </p>
+</div>
+<!-- Password Requirements Note -->
+<p class="text-white/60 text-xs mb-1">
+  Must be at least 8 characters, include a number and an uppercase letter.
+</p>
+
+<!-- Password Strength Note -->
+<p v-if="registerErrors.password" class="text-red-400 text-xs mt-1">
+  {{ registerErrors.password }}
+</p>
+<p v-else class="text-xs mt-1" :class="{
+  'text-red-400': passwordStrength.score < 2,
+  'text-yellow-400': passwordStrength.score === 2,
+  'text-green-400': passwordStrength.score >= 3
+}">
+  Password Strength: {{ passwordStrength.feedback }}
+</p>
+
+<!-- Strength Bar -->
+<div class="w-full h-1 mt-1 rounded-full bg-gray-300">
+  <div
+    :class="{
+      'bg-red-400': passwordStrength.score < 2,
+      'bg-yellow-400': passwordStrength.score === 2,
+      'bg-green-400': passwordStrength.score >= 3
+    }"
+    :style="{ width: passwordStrength.score * 33 + '%' }"
+    class="h-full rounded-full transition-all"
+  ></div>
 </div>
 
 </div>
