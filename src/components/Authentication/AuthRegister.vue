@@ -218,33 +218,23 @@
     <button
       type="button"
       @click="togglePassword"
-      class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 bg-transparent rounded-full hover:bg-white/30 transition-all"
+      class="absolute right-3 top-1/2 -translate-y-1/2"
       :aria-label="showPassword ? 'Hide password' : 'Show password'"
     >
-      <svg
+      <lord-icon
         v-if="!showPassword"
-        xmlns="http://www.w3.org/2000/svg"
-        class="w-5 h-5 text-white"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        stroke-width="2"
-      >
-        <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-.274.857-.682 1.664-1.198 2.389M15.536 15.536a9.004 9.004 0 01-3.536.964c-4.477 0-8.268-2.943-9.542-7 .274-.857.682-1.664 1.198-2.389M9.464 9.464a9.004 9.004 0 013.536-.964" />
-      </svg>
-      <svg
+        src="https://cdn.lordicon.com/dxjqoygy.json"
+        trigger="hover"
+        colors="primary:#ffffff"
+        style="width:28px;height:28px"
+      ></lord-icon>
+      <lord-icon
         v-else
-        xmlns="http://www.w3.org/2000/svg"
-        class="w-5 h-5 text-white"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        stroke-width="2"
-      >
-        <path d="M13.875 18.825a9.004 9.004 0 01-3.536-.964c-4.477 0-8.268-2.943-9.542-7 .274-.857.682-1.664 1.198-2.389M9.464 9.464a9.004 9.004 0 013.536-.964M15.536 15.536a9.004 9.004 0 01-3.536.964M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268-2.943 9.542-7-.274-.857-.682-1.664-1.198-2.389" />
-        <path d="M12 12a3 3 0 11-6 0 3 3 0 016 0z" />
-      </svg>
+        src="https://cdn.lordicon.com/dnmvmpfk.json"
+        trigger="hover"
+        colors="primary:#ffffff"
+        style="width:28px;height:28px"
+      ></lord-icon>
     </button>
 
     <!-- Feedback Message -->
@@ -297,33 +287,23 @@
     <button
       type="button"
       @click="toggleConfirmPassword"
-      class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 bg-transparent rounded-full hover:bg-white/30 transition-all"
+      class="absolute right-3 top-1/2 -translate-y-1/2"
       :aria-label="showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'"
     >
-      <svg
+      <lord-icon
         v-if="!showConfirmPassword"
-        xmlns="http://www.w3.org/2000/svg"
-        class="w-5 h-5 text-white"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        stroke-width="2"
-      >
-        <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-.274.857-.682-1.664-1.198-2.389M15.536 15.536a9.004 9.004 0 01-3.536.964c-4.477 0-8.268-2.943-9.542-7 .274-.857.682-1.664 1.198-2.389M9.464 9.464a9.004 9.004 0 013.536-.964" />
-      </svg>
-      <svg
+        src="https://cdn.lordicon.com/dxjqoygy.json"
+        trigger="hover"
+        colors="primary:#ffffff"
+        style="width:28px;height:28px"
+      ></lord-icon>
+      <lord-icon
         v-else
-        xmlns="http://www.w3.org/2000/svg"
-        class="w-5 h-5 text-white"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        stroke-width="2"
-      >
-        <path d="M13.875 18.825a9.004 9.004 0 01-3.536-.964c-4.477 0-8.268-2.943-9.542-7 .274-.857.682-1.664 1.198-2.389M9.464 9.464a9.004 9.004 0 013.536-.964M15.536 15.536a9.004 9.004 0 01-3.536.964M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268-2.943 9.542-7-.274-.857-.682-1.664-1.198-2.389" />
-        <path d="M12 12a3 3 0 11-6 0 3 3 0 016 0z" />
-      </svg>
+        src="https://cdn.lordicon.com/dnmvmpfk.json"
+        trigger="hover"
+        colors="primary:#ffffff"
+        style="width:28px;height:28px"
+      ></lord-icon>
     </button>
 
     <!-- Confirm Password Feedback -->
@@ -709,6 +689,26 @@ onMounted(() => {
 });
 </script>
 
+
+<style>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+.slide-fade-enter-active, .slide-fade-leave-active {
+  transition: all 0.5s ease;
+}
+.slide-fade-enter-from {
+  transform: translateY(-10px);
+  opacity: 0;
+}
+.slide-fade-leave-to {
+  transform: translateY(10px);
+  opacity: 0;
+}
+</style>
 
 <style>
 .fade-enter-active, .fade-leave-active {
