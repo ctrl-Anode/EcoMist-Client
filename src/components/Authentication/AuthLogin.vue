@@ -9,7 +9,22 @@
       <p class="text-white/80 text-sm mt-2">
         Log in to access your Eco-Mist dashboard and monitor your aeroponics system.
       </p>
-    </header><div class="flex items-center gap-1 mt-2">
+    </header>
+    <div v-if="showBrowserWarning" class="mt-4 text-yellow-100 text-sm text-center bg-yellow-700/80 p-4 rounded-lg">
+  <p>🚫 Google Sign-In is not supported in this browser.</p>
+  <p class="mt-1">
+    Please <strong>open this app in Chrome or Safari</strong> to continue.
+  </p>
+  <a
+    href="https://ecomist-rosy.vercel.app/"
+    target="_blank"
+    class="underline text-yellow-300 hover:text-yellow-200"
+  >
+    Tap here to open in browser
+  </a>
+</div>
+
+    <div class="flex items-center gap-1 mt-2">
     <p class="text-sm text-gray-600">Having trouble signing in?</p>
 
     <!-- Tooltip Trigger -->
@@ -434,6 +449,8 @@ toast.success("✅ Login successful!");
     }, 3000);
   }
 };
+const showBrowserWarning = ref(false);
+
 const handleGoogleSignIn = async () => {
   if (loading.value) return; 
   loading.value = true;
@@ -443,15 +460,9 @@ const handleGoogleSignIn = async () => {
   try {
     if (isMobileDevice()) {
        if (isUnsupportedBrowser()) {
+         showBrowserWarning.value = true;
         toast.error("🚫 Google Sign-In is not supported in this browser. Please open in Chrome or Safari.");
-        <a
-  href="https://ecomist-rosy.vercel.app/"
-  target="_blank"
-  class="text-sm text-yellow-400 underline hover:text-yellow-300 block mt-2"
->
-  Tap here to open in browser.
-</a>
-
+        
         loading.value = false; // Reset loading
         return;
       }
