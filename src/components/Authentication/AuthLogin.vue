@@ -219,6 +219,7 @@ const COOLDOWN_SECONDS = 30;
 const getLoginAttempts = () => parseInt(localStorage.getItem("loginAttempts") || "0");
 const getCooldownTime = () => parseInt(localStorage.getItem("cooldownTime") || "0");
 
+const router = useRouter();
 
 // Define reactive state for login errors
 const loginErrors = reactive({
@@ -381,9 +382,6 @@ toast.success("✅ Login successful!");
     }, 3000);
   }
 };
-
-
-const router = useRouter();
 
 const handleGoogleSignIn = async () => {
    toast.info("🔓 Signing in with Google...", { timeout: 2000 });
