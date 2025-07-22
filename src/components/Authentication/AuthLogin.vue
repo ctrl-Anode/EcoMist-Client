@@ -10,7 +10,25 @@
         Log in to access your Eco-Mist dashboard and monitor your aeroponics system.
       </p>
     </header>
+ <div class="relative inline-block ml-2">
+    <!-- Icon -->
+    <span
+      class="text-yellow-300 text-sm font-bold cursor-pointer"
+      @click="toggleTooltip"
+      @mouseenter="showTip = true"
+      @mouseleave="hideTooltip"
+    >?</span>
 
+    <!-- Tooltip -->
+    <transition name="fade">
+      <div
+        v-if="showTip"
+        class="absolute z-10 w-72 bg-yellow-100 text-yellow-800 text-xs rounded-md p-3 shadow-lg mt-1 left-1/2 -translate-x-1/2"
+      >
+        Having trouble signing in? Make sure you're using Chrome, Safari, or Firefox. Avoid using in-app browsers like Facebook or Instagram.
+      </div>
+    </transition>
+  </div>
     <!-- Form -->
     <form @submit.prevent="loginUser" class="w-full space-y-6" aria-label="Login Form">
       <div class="space-y-4">
@@ -213,6 +231,11 @@ import { getRedirectResult } from "firebase/auth";
 function isMobileDevice() {
   return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 }
+function isUnsupportedBrowser() {
+  const ua = navigator.userAgent;
+  return /FBAN|FBAV|Instagram|Line|TikTok/i.test(ua);
+}
+
 
 const checkingRedirect = ref(true);
 onMounted(async () => {
@@ -415,6 +438,11 @@ const handleGoogleSignIn = async () => {
 
   try {
     if (isMobileDevice()) {
+       if (isUnsupportedBrowser()) {
+        toast.error("🚫 Google Sign-In is not supported in this browser. Please open in Chrome or Safari.");
+        loading.value = false; // Reset loading
+        return;
+      }
       await signInWithRedirect(auth, provider); // redirects away – no further code needed
        return;
     } else {
@@ -437,6 +465,7 @@ const handleGoogleSignIn = async () => {
     loading.value = false; // ✅ always reset loading state
   }
 };
+
 const handleGoogleUser = async (user) => {
   if (!user.email) {
     toast.error("Google Sign-In failed: no email found in Google account.");
@@ -533,6 +562,18 @@ const isCooldown = () => {
   return now < cooldownUntil;
 };
 
+const showTip = ref(false)
+
+const toggleTooltip = () => {
+  showTip.value = !showTip.value
+}
+
+const hideTooltip = () => {
+  // Only auto-hide on mouseleave, not on mobile
+  if (window.innerWidth >= 768) {
+    showTip.value = false
+  }
+}
 </script>
 
 <style>
@@ -544,4 +585,11 @@ const isCooldown = () => {
   right: 8px !important;
   z-index: 1000;
 }
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
 </style>
