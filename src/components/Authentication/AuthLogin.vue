@@ -161,6 +161,9 @@
     Signing in...
   </span>
       </button>
+<div v-if="checkingRedirect" class="text-white text-sm mt-4">
+  Restoring session...
+</div>
 
       <!-- Toggle View Prompt -->
       <p class="text-xs text-white/80 mt-4 text-center">
@@ -204,6 +207,24 @@ import { useReCaptcha } from 'vue-recaptcha-v3';
 import { logAuthEvent } from "../../utils/logAuthEvent";
 
 import EcoSpinner from "../EcoLoader/EcoSpinner.vue"; // adjust path as needed
+
+import { getRedirectResult } from "firebase/auth";
+
+function isMobileDevice() {
+  return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+}
+
+const checkingRedirect = ref(true);
+onMounted(async () => {
+  try {
+    const result = await getRedirectResult(auth);
+    if (result?.user) await handleGoogleUser(result.user);
+  } catch (error) {
+    toast.error("Google Sign-In failed via redirect.");
+  } finally {
+    checkingRedirect.value = false;
+  }
+});
 
 
 const { executeRecaptcha } = useReCaptcha();
@@ -382,60 +403,75 @@ toast.success("✅ Login successful!");
     }, 3000);
   }
 };
-
 const handleGoogleSignIn = async () => {
-   toast.info("🔓 Signing in with Google...", { timeout: 2000 });
+  if (loading.value) return; 
+  loading.value = true;
+  toast.info("🔓 Signing in with Google...", { timeout: 2000 });
+  const provider = new GoogleAuthProvider();
+
   try {
-    const provider = new GoogleAuthProvider();
-    const { user } = await signInWithPopup(auth, provider);
-    const userRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userRef);
-
-    if (!userSnap.exists()) {
-      await setDoc(userRef, {
-        username: user.displayName || "Google User",
-        email: user.email,
-        photoURL: user.photoURL,
-        role: "user",
-        status: "active",
-        createdAt: new Date().toISOString(),
-        emailVerified: user.emailVerified,
-        authProvider: "google",
-        loginCount: 1,
-      });
-     
-
+    if (isMobileDevice()) {
+      await signInWithRedirect(auth, provider); // redirects away – no further code needed
     } else {
-      await updateDoc(userRef, { lastLogin: new Date().toISOString(), loginCount: increment(1) });
+      const { user } = await signInWithPopup(auth, provider);
+      await handleGoogleUser(user);
     }
-
-    localStorage.setItem("userRole", userSnap.exists() ? userSnap.data().role : "user");
-    await logAuthEvent({
-  type: "login",
-  status: "success",
-  email: loginForm.email,
-  uid: user.uid,
-});
-toast.success("✅ Google Sign-In successful!");
-    router.push(userSnap.exists() && userSnap.data().role === "admin" ? "/admin/dashboard" : "/user/dashboard");
   } catch (error) {
-  // Don't log or alert for expected cancelation
-  if (error.code === "auth/popup-closed-by-user") {
-    console.warn("Google Sign-In popup closed by user.");
-    return; // silently return without logging or alerting
+    if (error.code === "auth/popup-closed-by-user") return;
+
+    await logAuthEvent({
+      type: "login",
+      status: "failed",
+      email: loginForm.email,
+      reason: error.code || "unknown-error",
+    });
+
+    console.error(error);
+    toast.error("❗ Google Sign-In failed. " + (error.message || ""));
+  }finally {
+    loading.value = false; // ✅ always reset loading state
+  }
+};
+const handleGoogleUser = async (user) => {
+  if (!user.email) {
+    toast.error("Google Sign-In failed: no email found in Google account.");
+    return;
+  }
+  
+  const userRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
+
+  if (!userSnap.exists()) {
+    await setDoc(userRef, {
+      username: user.displayName || "Google User",
+      email: user.email,
+      photoURL: user.photoURL,
+      role: "user",
+      status: "active",
+      createdAt: new Date().toISOString(),
+      emailVerified: user.emailVerified,
+      authProvider: "google",
+      loginCount: 1,
+    });
+  } else {
+    await updateDoc(userRef, {
+      lastLogin: new Date().toISOString(),
+      loginCount: increment(1),
+    });
   }
 
+  localStorage.setItem("userRole", userSnap.exists() ? userSnap.data().role : "user");
   await logAuthEvent({
     type: "login",
-    status: "failed",
-    email: loginForm.email,
-    reason: error.code || "unknown-error",
+    status: "success",
+    email: user.email,
+    uid: user.uid,
   });
 
-  console.error(error);
-  toast.error("❗ Google Sign-In failed. " + (error.message || ""));
-}
+  toast.success("✅ Google Sign-In successful!");
+  router.push(userSnap.exists() && userSnap.data().role === "admin" ? "/admin/dashboard" : "/user/dashboard");
 };
+
 
 const showResetPasswordModal = ref(false);
 
@@ -487,7 +523,6 @@ const isCooldown = () => {
   const cooldownUntil = getCooldownTime();
   return now < cooldownUntil;
 };
-
 
 </script>
 
