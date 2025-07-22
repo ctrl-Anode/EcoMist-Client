@@ -1303,7 +1303,7 @@ const stopCamera = () => {
 };
 const cameraActive = vueRef(false);
 
-const toggleCamera = () => {
+const toggleCameraStatus = () => {
   if (cameraActive.value) {
     stopCamera();
   } else {

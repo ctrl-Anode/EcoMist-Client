@@ -257,9 +257,13 @@
       <video ref="videoRef" autoplay playsinline class="w-full max-h-80 rounded-xl border border-gray-200 shadow-lg bg-black"></video>
       
       <div class="flex flex-wrap gap-3">
+        <button @click="toggleCamera" class="text-sm bg-white text-black px-2 py-1 rounded shadow hover:bg-gray-100">
+  Flip Camera ({{ facingMode === 'user' ? 'Front' : 'Back' }})
+</button>
+
         <button
           class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors duration-200"
-          @click="toggleCamera"
+          @click="toggleCameraStatus"
         >
           {{ cameraActive ? '🛑 Stop Camera' : '🎥 Start Camera' }}
         </button>
@@ -1140,6 +1144,7 @@ const insightsModelFilter = ref('');
 const insightsModeFilter = ref('');
 const startDate = ref('');
 const endDate = ref('');
+const facingMode = ref("environment"); // 'user' for front, 'environment' for back
 
 // Triggered on file selection
 
@@ -1261,6 +1266,25 @@ onMounted(() => {
   });
 });
 
+const startCamera = async () => {
+  if (mediaStream) {
+    mediaStream.getTracks().forEach(track => track.stop());
+  }
+
+  try {
+    mediaStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: facingMode.value },
+      audio: false,
+    });
+
+    if (videoRef.value) {
+      videoRef.value.srcObject = mediaStream;
+    }
+  } catch (err) {
+    console.error("Camera access error:", err);
+    toast.error("❌ Cannot access camera.");
+  }
+};
 const initCamera = async () => {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -1304,6 +1328,9 @@ const stopCamera = () => {
 const cameraActive = vueRef(false);
 
 const toggleCamera = () => {
+  facingMode.value = facingMode.value === "user" ? "environment" : "user";
+};
+const toggleCameraStatus = () => {
   if (cameraActive.value) {
     stopCamera();
   } else {
@@ -1311,6 +1338,15 @@ const toggleCamera = () => {
   }
   cameraActive.value = !cameraActive.value;
 };
+watch(facingMode, async () => {
+  await startCamera();
+});
+onMounted(() => {
+  if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    facingMode.value = 'environment';
+  }
+  startCamera();
+});
 
 const history = vueRef([]); // analysis history
 
