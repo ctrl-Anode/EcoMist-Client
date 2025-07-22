@@ -9,25 +9,29 @@
       <p class="text-white/80 text-sm mt-2">
         Log in to access your Eco-Mist dashboard and monitor your aeroponics system.
       </p>
-    </header>
- <div class="relative inline-block ml-2">
-    <!-- Icon -->
-    <span
-      class="text-yellow-300 text-sm font-bold cursor-pointer"
-      @click="toggleTooltip"
-      @mouseenter="showTip = true"
-      @mouseleave="hideTooltip"
-    >?</span>
+    </header><div class="flex items-center gap-1 mt-2">
+    <p class="text-sm text-gray-600">Having trouble signing in?</p>
 
-    <!-- Tooltip -->
-    <transition name="fade">
-      <div
-        v-if="showTip"
-        class="absolute z-10 w-72 bg-yellow-100 text-yellow-800 text-xs rounded-md p-3 shadow-lg mt-1 left-1/2 -translate-x-1/2"
-      >
-        Having trouble signing in? Make sure you're using Chrome, Safari, or Firefox. Avoid using in-app browsers like Facebook or Instagram.
-      </div>
-    </transition>
+    <!-- Tooltip Trigger -->
+    <div class="relative inline-block">
+      <span
+        class="text-yellow-400 font-bold cursor-pointer select-none"
+        @click="toggleTooltip"
+        @mouseenter="showTip = true"
+        @mouseleave="hideTooltip"
+      >?</span>
+
+      <!-- Tooltip Box -->
+      <transition name="fade">
+        <div
+          v-if="showTip"
+          class="absolute z-50 w-72 max-w-xs bg-yellow-100 text-yellow-800 text-xs rounded-md p-3 shadow-lg mt-2 left-1/2 -translate-x-1/2"
+        >
+          Make sure you're using <strong>Chrome, Safari, or Firefox</strong>.<br />
+          Avoid in-app browsers like Facebook or Instagram.
+        </div>
+      </transition>
+    </div>
   </div>
     <!-- Form -->
     <form @submit.prevent="loginUser" class="w-full space-y-6" aria-label="Login Form">
@@ -440,6 +444,14 @@ const handleGoogleSignIn = async () => {
     if (isMobileDevice()) {
        if (isUnsupportedBrowser()) {
         toast.error("🚫 Google Sign-In is not supported in this browser. Please open in Chrome or Safari.");
+        <a
+  href="https://ecomist-rosy.vercel.app/"
+  target="_blank"
+  class="text-sm text-yellow-400 underline hover:text-yellow-300 block mt-2"
+>
+  Tap here to open in browser.
+</a>
+
         loading.value = false; // Reset loading
         return;
       }
@@ -569,7 +581,6 @@ const toggleTooltip = () => {
 }
 
 const hideTooltip = () => {
-  // Only auto-hide on mouseleave, not on mobile
   if (window.innerWidth >= 768) {
     showTip.value = false
   }
