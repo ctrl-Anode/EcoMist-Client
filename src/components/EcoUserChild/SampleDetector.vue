@@ -239,8 +239,7 @@
               </div>
             </div>
 
-            <!-- Camera Section -->
-            <!-- Collapsible Camera Section -->
+           <!-- Camera Section -->
 <div class="bg-gray-50 rounded-xl p-6">
   <div class="flex justify-between items-center mb-4">
     <h3 class="text-xl font-semibold text-gray-900">📹 Live Camera</h3>
@@ -254,20 +253,50 @@
 
   <transition name="fade">
     <div v-if="showCameraSection" class="space-y-4">
-      <video ref="videoRef" autoplay playsinline class="w-full max-h-80 rounded-xl border border-gray-200 shadow-lg bg-black"></video>
-      
-      <div class="flex flex-wrap gap-3">
-        <button @click="toggleCamera" class="text-sm bg-white text-black px-2 py-1 rounded shadow hover:bg-gray-100">
-  Flip Camera ({{ facingMode === 'user' ? 'Front' : 'Back' }})
-</button>
+      <!-- Camera Video Preview -->
+      <video
+        ref="videoRef"
+        autoplay
+        playsinline
+        class="w-full max-h-80 rounded-xl border border-gray-200 shadow-lg bg-black"
+      ></video>
 
+      <!-- Device Selector for Desktop -->
+      <div v-if="availableVideoDevices.length > 1" class="flex gap-3">
+        <select
+          v-model="selectedDeviceId"
+          @change="startCamera"
+          class="px-3 py-2 border rounded-lg text-sm"
+        >
+          <option
+            v-for="device in availableVideoDevices"
+            :key="device.deviceId"
+            :value="device.deviceId"
+          >
+            {{ device.label || 'Camera ' + device.deviceId }}
+          </option>
+        </select>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <!-- Flip Button (mobile only) -->
+        <button
+          v-if="isMobile"
+          @click="flipCamera"
+          class="text-sm bg-white text-black px-3 py-2 rounded shadow hover:bg-gray-100"
+        >
+          Flip Camera ({{ facingMode === 'user' ? 'Front' : 'Back' }})
+        </button>
+
+        <!-- Start/Stop -->
         <button
           class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors duration-200"
-          @click="toggleCameraStatus"
+          @click="toggleCamera"
         >
           {{ cameraActive ? '🛑 Stop Camera' : '🎥 Start Camera' }}
         </button>
 
+        <!-- Capture -->
         <button
           class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
           @click="captureImage"
@@ -1144,10 +1173,16 @@ const insightsModelFilter = ref('');
 const insightsModeFilter = ref('');
 const startDate = ref('');
 const endDate = ref('');
-const facingMode = ref("environment"); // 'user' for front, 'environment' for back
-let mediaStream = null;
 // Triggered on file selection
+const videoRef = vueRef(null);
+const canvasRef = vueRef(null);
+const cameraActive = ref(false);
+const facingMode = ref('environment'); // back camera default
+const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
+const availableVideoDevices = ref([]);
+const selectedDeviceId = ref(null);
+let mediaStream = null;
 const filePreview = vueRef(null);
 
 const onFileChange = (e) => {
@@ -1249,8 +1284,6 @@ const fetchModelInfo = async () => {
 onMounted(() => {
   fetchModelInfo();
 });
-const videoRef = vueRef(null);
-const canvasRef = vueRef(null);
 
 // Start camera stream on mount
 onMounted(() => {
@@ -1266,25 +1299,6 @@ onMounted(() => {
   });
 });
 
-const startCamera = async () => {
-  if (mediaStream) {
-    mediaStream.getTracks().forEach(track => track.stop());
-  }
-
-  try {
-    mediaStream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: facingMode.value },
-      audio: false,
-    });
-
-    if (videoRef.value) {
-      videoRef.value.srcObject = mediaStream;
-    }
-  } catch (err) {
-    console.error("Camera access error:", err);
-    toast.error("❌ Cannot access camera.");
-  }
-};
 const initCamera = async () => {
   try {
     // Stop previous camera if exists
@@ -1305,55 +1319,89 @@ const initCamera = async () => {
   }
 };
 
+// List available video input devices
+const enumerateVideoDevices = async () => {
+  const devices = await navigator.mediaDevices.enumerateDevices();
+  availableVideoDevices.value = devices.filter(d => d.kind === 'videoinput');
 
-// Capture image from video
-const captureImage = () => {
-  const video = videoRef.value;
-  const canvas = canvasRef.value;
-
-  const width = video.videoWidth;
-  const height = video.videoHeight;
-
-  canvas.width = width;
-  canvas.height = height;
-
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(video, 0, 0, width, height);
-
-  // Convert canvas to blob → file
-  canvas.toBlob(blob => {
-    const capturedFile = new File([blob], `captured_${Date.now()}.jpg`, { type: 'image/jpeg' });
-    file.value = capturedFile;
-    filePreview.value = URL.createObjectURL(capturedFile);
-    console.log("📷 Captured image ready for analysis.");
-  }, 'image/jpeg', 0.95);
+  // Auto-select: use facingMode on mobile, or first camera on desktop
+  if (isMobile) {
+    selectedDeviceId.value = null; // use facingMode
+  } else {
+    selectedDeviceId.value = availableVideoDevices.value[0]?.deviceId || null;
+  }
 };
+
+// Start camera with either facingMode or deviceId
+const startCamera = async () => {
+  stopCamera();
+
+  try {
+    const constraints = selectedDeviceId.value
+      ? { video: { deviceId: selectedDeviceId.value } }
+      : { video: { facingMode: facingMode.value } };
+
+    mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+
+    if (videoRef.value) {
+      videoRef.value.srcObject = mediaStream;
+    }
+
+    cameraActive.value = true;
+    console.log('🎥 Camera started');
+  } catch (err) {
+    console.error('Camera error:', err);
+    showToast("Failed to access camera", 'bg-red-500');
+  }
+};
+
 const stopCamera = () => {
   const stream = videoRef.value?.srcObject;
   if (stream) {
     stream.getTracks().forEach(track => track.stop());
     videoRef.value.srcObject = null;
-    mediaStream = null; // Ensure mediaStream is cleared
-    console.log("📴 Camera stopped.");
+    mediaStream = null;
+    cameraActive.value = false;
+    console.log('📴 Camera stopped');
   }
-};
-const cameraActive = vueRef(false);
-
-const toggleCameraStatus = async () => {
-  if (cameraActive.value) {
-    stopCamera();
-  } else {
-    await initCamera();
-  }
-  cameraActive.value = !cameraActive.value;
 };
 
-const toggleCamera = async () => {
-  facingMode.value = facingMode.value === "user" ? "environment" : "user";
-  if (cameraActive.value) {
-    await initCamera(); // Reinitialize camera with new facing mode
-  }
+const toggleCamera = () => {
+  cameraActive.value ? stopCamera() : startCamera();
 };
+
+const flipCamera = () => {
+  facingMode.value = facingMode.value === 'user' ? 'environment' : 'user';
+  selectedDeviceId.value = null;
+  startCamera();
+};
+
+// Capture snapshot
+const captureImage = () => {
+  const video = videoRef.value;
+  const canvas = canvasRef.value;
+
+  if (!video || !canvas) return;
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0);
+
+  canvas.toBlob(blob => {
+    const fileBlob = new File([blob], `captured_${Date.now()}.jpg`, {
+      type: 'image/jpeg'
+    });
+    file.value = fileBlob;
+    filePreview.value = URL.createObjectURL(fileBlob);
+  }, 'image/jpeg');
+};
+
+onMounted(() => {
+  enumerateVideoDevices();
+});
+
 watch(facingMode, async () => {
   await startCamera();
 });
