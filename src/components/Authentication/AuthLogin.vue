@@ -218,11 +218,12 @@ const checkingRedirect = ref(true);
 onMounted(async () => {
   try {
     const result = await getRedirectResult(auth);
-    if (result?.user) await handleGoogleUser(result.user);
+    if (result?.user) {
+      await handleGoogleUser(result.user); // ✅ will route to dashboard
+    }
   } catch (error) {
+    console.error("Redirect error:", error);
     toast.error("Google Sign-In failed via redirect.");
-  } finally {
-    checkingRedirect.value = false;
   }
 });
 
@@ -438,22 +439,25 @@ const handleGoogleUser = async (user) => {
     toast.error("Google Sign-In failed: no email found in Google account.");
     return;
   }
-  
+
   const userRef = doc(db, "users", user.uid);
-  const userSnap = await getDoc(userRef);
+  let userSnap = await getDoc(userRef);
 
   if (!userSnap.exists()) {
     await setDoc(userRef, {
       username: user.displayName || "Google User",
       email: user.email,
       photoURL: user.photoURL,
-      role: "user",
+      role: "user", // default role
       status: "active",
       createdAt: new Date().toISOString(),
       emailVerified: user.emailVerified,
       authProvider: "google",
       loginCount: 1,
     });
+
+    // ❗ Re-fetch userSnap after creating doc
+    userSnap = await getDoc(userRef);
   } else {
     await updateDoc(userRef, {
       lastLogin: new Date().toISOString(),
@@ -461,7 +465,9 @@ const handleGoogleUser = async (user) => {
     });
   }
 
-  localStorage.setItem("userRole", userSnap.exists() ? userSnap.data().role : "user");
+  const role = userSnap.exists() ? userSnap.data().role : "user";
+  localStorage.setItem("userRole", role);
+
   await logAuthEvent({
     type: "login",
     status: "success",
@@ -470,9 +476,8 @@ const handleGoogleUser = async (user) => {
   });
 
   toast.success("✅ Google Sign-In successful!");
-  router.push(userSnap.exists() && userSnap.data().role === "admin" ? "/admin/dashboard" : "/user/dashboard");
+  router.push(role === "admin" ? "/admin/dashboard" : "/user/dashboard");
 };
-
 
 const showResetPasswordModal = ref(false);
 
