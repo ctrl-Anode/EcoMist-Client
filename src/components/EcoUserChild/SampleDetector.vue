@@ -932,6 +932,14 @@
     </div>
   </div>
 </div>
+<!-- ✅ Handle { description + steps } format -->
+<div v-else-if="selectedItem.recommendations?.steps">
+  <h4 class="text-md font-semibold text-emerald-700 mb-2">Recommendations</h4>
+  <p class="text-sm text-gray-600 mb-2">{{ selectedItem.recommendations.description }}</p>
+  <ul class="list-disc list-inside text-sm text-gray-700">
+    <li v-for="(step, idx) in selectedItem.recommendations.steps" :key="idx">{{ step }}</li>
+  </ul>
+</div>
 
 <!-- Fallback -->
 <div v-else>
