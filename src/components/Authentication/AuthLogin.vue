@@ -412,6 +412,7 @@ const handleGoogleSignIn = async () => {
   try {
     if (isMobileDevice()) {
       await signInWithRedirect(auth, provider); // redirects away – no further code needed
+       return;
     } else {
       const { user } = await signInWithPopup(auth, provider);
       await handleGoogleUser(user);
