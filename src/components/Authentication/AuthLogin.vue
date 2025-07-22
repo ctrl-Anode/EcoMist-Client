@@ -197,7 +197,7 @@
 <script setup>
 import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { signInWithEmailAndPassword, sendEmailVerification, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { signInWithEmailAndPassword, sendEmailVerification, signOut, GoogleAuthProvider, signInWithPopup, signInWithRedirect } from "firebase/auth";
 import { auth } from "../../firebase";
 import { doc, getDoc, setDoc, updateDoc, increment } from "firebase/firestore"; // Added updateDoc and increment
 import { db } from "../../firebase";
