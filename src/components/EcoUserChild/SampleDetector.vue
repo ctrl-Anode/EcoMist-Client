@@ -929,7 +929,7 @@
           >
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+          </svg>
           </button>
         </div>
 
@@ -1286,12 +1286,10 @@ const startCamera = async () => {
   }
 };
 const initCamera = async () => {
-  // Stop previous camera if exists
-  if (mediaStream) {
-    mediaStream.getTracks().forEach(track => track.stop());
-  }
-
   try {
+    // Stop previous camera if exists
+    stopCamera();
+
     mediaStream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: facingMode.value },
       audio: false
@@ -1300,9 +1298,10 @@ const initCamera = async () => {
     if (videoRef.value) {
       videoRef.value.srcObject = mediaStream;
     }
+    console.log("🎥 Camera initialized.");
   } catch (err) {
     console.error('Camera error:', err);
-    toast.error("❌ Can't access camera.");
+    showToast("❌ Can't access camera.", 'bg-red-500');
   }
 };
 
@@ -1334,21 +1333,26 @@ const stopCamera = () => {
   if (stream) {
     stream.getTracks().forEach(track => track.stop());
     videoRef.value.srcObject = null;
+    mediaStream = null; // Ensure mediaStream is cleared
     console.log("📴 Camera stopped.");
   }
 };
 const cameraActive = vueRef(false);
 
-const toggleCamera = () => {
-  facingMode.value = facingMode.value === "user" ? "environment" : "user";
-};
-const toggleCameraStatus = () => {
+const toggleCameraStatus = async () => {
   if (cameraActive.value) {
     stopCamera();
   } else {
-    initCamera();
+    await initCamera();
   }
   cameraActive.value = !cameraActive.value;
+};
+
+const toggleCamera = async () => {
+  facingMode.value = facingMode.value === "user" ? "environment" : "user";
+  if (cameraActive.value) {
+    await initCamera(); // Reinitialize camera with new facing mode
+  }
 };
 watch(facingMode, async () => {
   await startCamera();
