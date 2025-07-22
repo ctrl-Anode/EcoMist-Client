@@ -1145,7 +1145,7 @@ const insightsModeFilter = ref('');
 const startDate = ref('');
 const endDate = ref('');
 const facingMode = ref("environment"); // 'user' for front, 'environment' for back
-
+let mediaStream = null;
 // Triggered on file selection
 
 const filePreview = vueRef(null);
@@ -1286,14 +1286,26 @@ const startCamera = async () => {
   }
 };
 const initCamera = async () => {
+  // Stop previous camera if exists
+  if (mediaStream) {
+    mediaStream.getTracks().forEach(track => track.stop());
+  }
+
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    videoRef.value.srcObject = stream;
+    mediaStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: facingMode.value },
+      audio: false
+    });
+
+    if (videoRef.value) {
+      videoRef.value.srcObject = mediaStream;
+    }
   } catch (err) {
-    console.error("❌ Failed to access camera:", err);
-    alert("Camera not supported or permission denied.");
+    console.error('Camera error:', err);
+    toast.error("❌ Can't access camera.");
   }
 };
+
 
 // Capture image from video
 const captureImage = () => {
@@ -1341,11 +1353,16 @@ const toggleCameraStatus = () => {
 watch(facingMode, async () => {
   await startCamera();
 });
+watch(facingMode, () => {
+  initCamera();
+});
+
 onMounted(() => {
   if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
     facingMode.value = 'environment';
   }
   startCamera();
+  initCamera();
 });
 
 const history = vueRef([]); // analysis history
