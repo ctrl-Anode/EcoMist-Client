@@ -25,7 +25,6 @@
 </div>
 
     <div class="flex items-center gap-1 mt-2">
-    <p class="text-sm text-gray-600">Having trouble signing in?</p>
 
     <!-- Tooltip Trigger -->
     <div class="relative inline-block">
@@ -67,6 +66,29 @@
             placeholder="Email"
             :disabled="loading"
           />
+          <!-- Tooltip Trigger -->
+          <div class="absolute top-1/2 right-12 -translate-y-1/2">
+    <div class="relative inline-block">
+      <span
+        class="text-yellow-400 font-bold cursor-pointer select-none"
+        @click="toggleTooltip"
+        @mouseenter="showTip = true"
+        @mouseleave="hideTooltip"
+      >?</span>
+
+      <!-- Tooltip Box -->
+      <transition name="fade">
+        <div
+          v-if="showTip"
+          class="absolute z-50 w-72 max-w-xs bg-yellow-100 text-yellow-800 text-xs rounded-md p-3 shadow-lg mt-2 left-1/2 -translate-x-1/2"
+        >
+          Make sure you're using <strong>Chrome, Safari, or Firefox</strong>.<br />
+          Avoid in-app browsers like Facebook or Instagram.
+        </div>
+      </transition>
+    </div>
+  </div>
+
           <div
             v-if="loginForm.email && !loginErrors.email && loginForm.email.includes('@')"
             class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-green-100"
@@ -462,7 +484,6 @@ const handleGoogleSignIn = async () => {
        if (isUnsupportedBrowser()) {
          showBrowserWarning.value = true;
         toast.error("🚫 Google Sign-In is not supported in this browser. Please open in Chrome or Safari.");
-        
         loading.value = false; // Reset loading
         return;
       }
