@@ -23,27 +23,29 @@
     Tap here to open in browser
   </a>
 </div>
+<!-- Tooltip Trigger Positioned in Top Right -->
+<div class="absolute top-2 right-2">
+  <span
+    class="text-yellow-300 font-bold text-xs cursor-pointer"
+    @click="toggleTooltip"
+    @mouseenter="showTip = true"
+    @mouseleave="hideTooltip"
+  >
+    ?
+  </span>
 
-    <!-- Tooltip Trigger -->
-    <div class="relative inline-block">
-      <span
-        class="text-yellow-400 font-bold cursor-pointer select-none"
-        @click="toggleTooltip"
-        @mouseenter="showTip = true"
-        @mouseleave="hideTooltip"
-      >?</span>
-
-      <!-- Tooltip Box -->
-      <transition name="fade">
-        <div
-          v-if="showTip"
-          class="absolute z-50 w-72 max-w-xs bg-yellow-100 text-yellow-800 text-xs rounded-md p-3 shadow-lg mt-2 left-1/2 -translate-x-1/2"
-        >
-          Make sure you're using <strong>Chrome, Safari, or Firefox</strong>.<br />
-          Avoid in-app browsers like Facebook or Instagram.
-        </div>
-      </transition>
+  <!-- Tooltip Box -->
+  <transition name="fade">
+    <div
+      v-if="showTip"
+      class="absolute z-50 w-72 bg-yellow-100 text-yellow-800 text-xs rounded-md p-3 shadow-lg mt-2 right-0"
+    >
+      Make sure you're using <strong>Chrome, Safari, or Firefox</strong>.<br />
+      Avoid in-app browsers like Facebook or Instagram.
     </div>
+  </transition>
+</div>
+
     <!-- Form -->
     <form @submit.prevent="loginUser" class="w-full space-y-6" aria-label="Login Form">
       <div class="space-y-4">
