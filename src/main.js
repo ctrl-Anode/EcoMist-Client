@@ -8,7 +8,7 @@ import { requestFcmToken, onMessageListener } from "./firebase";
 
 import { VueReCaptcha } from 'vue-recaptcha-v3'
 
-const SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY ||'6LcvkosrAAAAAElwju8Ll6njy-Sf85qH357rQ1h-';
+const SITE_KEY ='6LcvkosrAAAAAElwju8Ll6njy-Sf85qH357rQ1h-';
 
 import App from './App.vue'
 
@@ -34,7 +34,13 @@ onAuthStateChanged(auth, () => {
     app = createApp(App)
       .use(router)
       .use(Toast, toastOptions)
-      .use(VueReCaptcha, { siteKey: SITE_KEY })
+      .use(VueReCaptcha, {
+  siteKey: SITE_KEY,
+  loaderOptions: {
+    useRecaptchaNet: true, // ← important!
+    autoHideBadge: true,
+  },
+})
       .mount("#app");
 
       router.afterEach((to) => {
