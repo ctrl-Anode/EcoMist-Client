@@ -103,10 +103,24 @@ const router = createRouter({
     }
   }
 });
+let isAuthChecked = false;
 
 // 🔹 Navigation Guard to Protect Routes
+
 router.beforeEach(async (to, from, next) => {
   const auth = getAuth();
+
+  // ✅ Wait for Firebase to initialize
+  if (!isAuthChecked) {
+    await new Promise((resolve) => {
+      const unsubscribe = onAuthStateChanged(auth, () => {
+        unsubscribe(); // run only once
+        isAuthChecked = true;
+        resolve();
+      });
+    });
+  }
+
   const user = auth.currentUser;
 
   if (to.matched.some((record) => record.meta.requiresAuth)) {

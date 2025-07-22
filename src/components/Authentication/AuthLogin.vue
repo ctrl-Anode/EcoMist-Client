@@ -219,13 +219,16 @@ onMounted(async () => {
   try {
     const result = await getRedirectResult(auth);
     if (result?.user) {
-      await handleGoogleUser(result.user); // ✅ will route to dashboard
+      await handleGoogleUser(result.user); // ✅ will handle routing
     }
   } catch (error) {
     console.error("Redirect error:", error);
     toast.error("Google Sign-In failed via redirect.");
+  } finally {
+    checkingRedirect.value = false; // ✅ make sure this runs
   }
 });
+
 
 
 const { executeRecaptcha } = useReCaptcha();
