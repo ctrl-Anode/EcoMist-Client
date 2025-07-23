@@ -114,29 +114,24 @@ export async function requestFcmToken() {
   }
 };
 
-export const sendSecureNotification = async (fcmToken, title, body) => {
+export async function sendSecureNotification(token, title, body) {
   try {
-    const user = getAuth().currentUser;
-    if (!user) throw new Error("User not authenticated");
+    const idToken = await getAuth().currentUser.getIdToken()
 
-    const idToken = await user.getIdToken();
-
-    const response = await fetch("https://ecomist-flask.onrender.com/send-notification", {
-      method: "POST",
+    const res = await fetch('https://ecomist-flask.onrender.com/send-notification', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${idToken}`
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${idToken}`
       },
-      body: JSON.stringify({ token: fcmToken, title, body })
-    });
+      body: JSON.stringify({ token, title, body })
+    })
 
-    const result = await response.json();
-    console.log("🔔 Notification Result:", result);
-    return result;
-
-  } catch (err) {
-    console.error("❌ Error sending secure notification:", err);
-    return null;
+    const data = await res.json()
+    return data // <-- MUST return an object with .success
+  } catch (error) {
+    console.error('❌ Error sending secure notification:', error)
+    return { success: false, error: error.message || 'Unknown error' }
   }
 };
 

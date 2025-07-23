@@ -121,14 +121,15 @@ const submit = async () => {
     try {
       const adminFcmToken = 'dvZ0L4ZDWFDTNtCu_kO6ZN:APA91bHJW37QVWUZVD54HMxBRJ7Mo15cetDwLMaEWC2wfk-v3WqxcbCbmp4bDVwKv-_wcFw8yO5mE29tnhd9X_DGm9c1NGjwtpxFcF6iXPB56vZCFR-Co4w'
       const result = await sendSecureNotification(
-        adminFcmToken,
-        '📬 New Feedback Received',
-        `${username} sent a ${type.value}.`
-      )
+  adminFcmToken,
+  '📬 New Feedback Received',
+  `${username} sent a ${type.value}.`
+)
 
-      if (!result?.success) {
-        console.warn('FCM Notification failed:', result?.error || 'Unknown error')
-      }
+if (!result?.success) {
+  console.warn('⚠️ FCM Notification failed:', result?.error || 'Unknown error')
+}
+
     } catch (notifyErr) {
       console.warn('Notification sending error (ignored):', notifyErr)
     }
