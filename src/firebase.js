@@ -127,10 +127,17 @@ export async function sendSecureNotification(token, title, body) {
       body: JSON.stringify({ token, title, body })
     })
 
+    // 🔐 Defensive: If response is not OK (CORS/network), throw before .json()
+    if (!res.ok) {
+      const errorText = await res.text()
+      throw new Error(`Server returned ${res.status}: ${errorText}`)
+    }
+
     const data = await res.json()
-    return data
+    return data || { success: false, error: 'Empty response from server' }
   } catch (err) {
-    return { success: false, error: err.message || 'Unknown error' }
+    console.error('❌ Secure notification error:', err)
+    return { success: false, error: err.message || 'Unknown error' } // ✅ Always return an object
   }
 };
 
