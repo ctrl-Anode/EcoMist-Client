@@ -1,15 +1,10 @@
 <template>
   <div class="fixed inset-0 z-50 flex items-center justify-center">
-    <!-- Fullscreen blurred background -->
-    <div
-      class="absolute inset-0 bg-gray-900/40 backdrop-blur-lg transition-opacity duration-300"
-      @click="handleCancel"
-    ></div>
+    <!-- Blurred background -->
+    <div class="absolute inset-0 bg-gray-900/40 backdrop-blur-lg" @click="handleCancel"></div>
 
-    <!-- Modal content -->
-    <div
-      class="bg-white rounded-xl p-8 max-w-lg mx-auto w-full relative z-10 shadow-2xl"
-    >
+    <!-- Modal -->
+    <div class="bg-white rounded-xl p-8 max-w-lg mx-auto w-full relative z-10 shadow-2xl">
       <h3 class="text-xl font-semibold text-gray-900 mb-4">Give Feedback</h3>
       <p class="text-gray-600 mb-6">
         We value your feedback! Please let us know how we can improve your experience.
@@ -55,11 +50,11 @@
         </button>
         <button
           @click="submit"
-          class="px-5 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition relative"
+          class="px-5 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition"
           :disabled="submitting"
         >
           <span v-if="!submitting">Submit Feedback</span>
-          <span v-else class="flex items-center justify-center gap-2">
+          <span v-else class="flex items-center gap-2">
             <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
             Submitting...
           </span>
@@ -68,62 +63,65 @@
     </div>
   </div>
 </template>
+
 <script setup>
-import { ref } from 'vue';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { ref } from 'vue'
+import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
-
-
-const auth = getAuth()
-
 
 const props = defineProps({
   username: String
-});
-const emit = defineEmits(['close', 'submitted']);
+})
+const emit = defineEmits(['submitted', 'close'])
 
-const db = getFirestore();
+const db = getFirestore()
+const auth = getAuth()
 
-const type = ref('suggestion');
-const message = ref('');
-const submitting = ref(false);
+const type = ref('suggestion')
+const message = ref('')
+const submitting = ref(false)
 
-// Only cancel if not submitting
-const handleCancel = () => {
-  if (!submitting.value) emit('close');
-};
-
-// Always close regardless of submitting state
-const forceClose = () => {
-  emit('close');
-};
 const submit = async () => {
   if (!message.value.trim()) {
-    emit('submitted', { success: false, message: 'Please enter your feedback message.' });
-    return;
+    alert('Please enter your feedback message.')
+    return
   }
 
-  submitting.value = true;
+  submitting.value = true
   try {
-    const auth = getAuth(); // ✅ define it here
+    const user = auth.currentUser
+    if (!user) throw new Error('User not logged in')
+
+    // Save feedback to Firestore
     await addDoc(collection(db, 'feedback'), {
       type: type.value,
       message: message.value,
-      username: props.username || 'Anonymous',
-      userId: auth.currentUser.uid, // ✅ use securely
-      timestamp: new Date()
-    });
-    emit('submitted', { success: true });
+      userId: user.uid,
+      username: props.username || user.email,
+      timestamp: serverTimestamp(),
+      status: 'pending',
+      reply: null,
+      repliedAt: null,
+      readByUser: false
+    })
 
-    type.value = 'suggestion';
-    message.value = '';
-    forceClose();
-  } catch (error) {
-    console.error('Feedback submit error:', error);
-    emit('submitted', { success: false, message: 'Failed to submit feedback. Please try again.' });
+    // Optional: trigger admin notification (can be watched by admin)
+    await addDoc(collection(db, 'feedback_notifications'), {
+      type: 'new_feedback',
+      message: `New ${type.value} submitted by ${props.username}`,
+      seen: false,
+      timestamp: serverTimestamp()
+    })
+
+    emit('submitted')
+    emit('close')
+  } catch (err) {
+    console.error('Feedback submission error:', err)
+    alert('Failed to submit feedback. Please try again.')
   } finally {
-    submitting.value = false;
+    submitting.value = false
   }
-};
+}
 
+const handleCancel = () => emit('close')
 </script>

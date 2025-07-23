@@ -34,6 +34,7 @@ import EcoAdmin_Logger from './components/EcoAdmin/EcoAdmin_Child/EcoAdmin_Logge
 
 import EcoUnAuth from './components/EcoUnauthorized.vue';
 import EcoAdmin_CropAnalytics from './components/EcoAdmin/EcoAdmin_Child/EcoAdmin_CropAnalytics.vue';
+import EcoAdmin_ManageFeedback from './components/EcoAdmin/EcoAdmin_Child/EcoAdmin_ManageFeedback.vue';
 
 const routes = [
   { path: '/', name: 'LandingPage', component: LandingPage },
@@ -85,6 +86,7 @@ const routes = [
        { path: 'smtp-settings', component: EcoAdmin_SMTP, meta: { requiresAuth: true, role: 'admin' } },
        { path: 'logger', component: EcoAdmin_Logger, meta: { requiresAuth: true, role: 'admin' } },
        { path: 'crop-analysis-analytics-management', component: EcoAdmin_CropAnalytics, meta: { requiresAuth: true, role: 'admin' } },
+       { path: 'manage-feedback', component: EcoAdmin_ManageFeedback, meta: { requiresAuth: true, role: 'admin' } },
      ]
   },
 ];
