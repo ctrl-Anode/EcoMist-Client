@@ -851,8 +851,11 @@
     </div>
 
     <!-- Confirmation Modal -->
-   <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
-  <div class="bg-white rounded-lg p-6 max-w-sm mx-auto">
+  <div
+  v-if="showModal"
+  class="fixed inset-0 bg-black/40 backdrop-blur-sm backdrop-saturate-150 flex items-center justify-center z-50 transition-opacity duration-300 ease-out"
+>
+  <div class="bg-white rounded-lg p-6 max-w-sm mx-auto shadow-xl">
     <h3 class="text-lg font-medium text-gray-900 mb-4">{{ modalTitle }}</h3>
     <p class="text-gray-500 mb-4">{{ modalMessage }}</p>
     <div class="flex justify-end gap-2">
@@ -865,6 +868,7 @@
     </div>
   </div>
 </div>
+
 
     <!-- Logout Confirmation Modal -->
     <div v-if="showLogoutModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
