@@ -63,6 +63,7 @@
     </div>
   </div>
 </template>
+
 <script setup>
 import { ref } from 'vue'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
@@ -120,18 +121,20 @@ const submit = async () => {
     // Send FCM push notification
     try {
       const adminFcmToken = 'dvZ0L4ZDWFDTNtCu_kO6ZN:APA91bHJW37QVWUZVD54HMxBRJ7Mo15cetDwLMaEWC2wfk-v3WqxcbCbmp4bDVwKv-_wcFw8yO5mE29tnhd9X_DGm9c1NGjwtpxFcF6iXPB56vZCFR-Co4w'
+
       const result = await sendSecureNotification(
-  adminFcmToken,
-  '📬 New Feedback Received',
-  `${username} sent a ${type.value}.`
-)
+        adminFcmToken,
+        '📬 New Feedback Received',
+        `${username} sent a ${type.value}.`
+      )
 
-if (!result?.success) {
-  console.warn('⚠️ FCM Notification failed:', result?.error || 'Unknown error')
-}
-
+      if (!result || !result.success) {
+        console.warn('⚠️ FCM notification failed:', result?.error || 'Unknown error')
+      } else {
+        console.log('✅ Notification sent:', result.response)
+      }
     } catch (notifyErr) {
-      console.warn('Notification sending error (ignored):', notifyErr)
+      console.warn('⚠️ Notification sending error (ignored):', notifyErr)
     }
 
     emit('submitted')

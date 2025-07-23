@@ -128,10 +128,9 @@ export async function sendSecureNotification(token, title, body) {
     })
 
     const data = await res.json()
-    return data // <-- MUST return an object with .success
-  } catch (error) {
-    console.error('❌ Error sending secure notification:', error)
-    return { success: false, error: error.message || 'Unknown error' }
+    return data
+  } catch (err) {
+    return { success: false, error: err.message || 'Unknown error' }
   }
 };
 
