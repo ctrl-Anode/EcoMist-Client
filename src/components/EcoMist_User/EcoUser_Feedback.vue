@@ -80,7 +80,7 @@ const type = ref('suggestion')
 const message = ref('')
 const submitting = ref(false)
 
-// Core logic
+// Firebase Auth instance
 const auth = getAuth()
 
 const submit = async () => {
@@ -94,12 +94,14 @@ const submit = async () => {
     const user = auth.currentUser
     if (!user) throw new Error('User not logged in')
 
+    const username = props.username || user.email
+
     // Save feedback in Firestore
-    const feedbackRef = await addDoc(collection(db, 'feedback'), {
+    await addDoc(collection(db, 'feedback'), {
       type: type.value,
       message: message.value,
       userId: user.uid,
-      username: props.username || user.email,
+      username,
       timestamp: serverTimestamp(),
       status: 'pending',
       reply: null,
@@ -107,26 +109,34 @@ const submit = async () => {
       readByUser: false
     })
 
-    // Optional Firestore notification doc for logging
+    // Log Firestore notification
     await addDoc(collection(db, 'feedback_notifications'), {
       type: 'new_feedback',
-      message: `New ${type.value} submitted by ${props.username || user.email}`,
+      message: `New ${type.value} submitted by ${username}`,
       seen: false,
       timestamp: serverTimestamp()
     })
 
-    // Send FCM push notification to admin (assumes you hardcoded or fetched the admin FCM token)
-    const adminFcmToken = 'dvZ0L4ZDWFDTNtCu_kO6ZN:APA91bHJW37QVWUZVD54HMxBRJ7Mo15cetDwLMaEWC2wfk-v3WqxcbCbmp4bDVwKv-_wcFw8yO5mE29tnhd9X_DGm9c1NGjwtpxFcF6iXPB56vZCFR-Co4w'// or fetch from Firestore
-    await sendSecureNotification(
-      adminFcmToken,
-      '📬 New Feedback Received',
-      `${props.username || user.email} sent a ${type.value}.`
-    )
+    // Send FCM push notification
+    try {
+      const adminFcmToken = 'dvZ0L4ZDWFDTNtCu_kO6ZN:APA91bHJW37QVWUZVD54HMxBRJ7Mo15cetDwLMaEWC2wfk-v3WqxcbCbmp4bDVwKv-_wcFw8yO5mE29tnhd9X_DGm9c1NGjwtpxFcF6iXPB56vZCFR-Co4w'
+      const result = await sendSecureNotification(
+        adminFcmToken,
+        '📬 New Feedback Received',
+        `${username} sent a ${type.value}.`
+      )
+
+      if (!result?.success) {
+        console.warn('FCM Notification failed:', result?.error || 'Unknown error')
+      }
+    } catch (notifyErr) {
+      console.warn('Notification sending error (ignored):', notifyErr)
+    }
 
     emit('submitted')
     emit('close')
   } catch (err) {
-    console.error('Feedback submission error:', err)
+    console.error('❌ Feedback submission error:', err)
     alert('Failed to submit feedback. Please try again.')
   } finally {
     submitting.value = false
