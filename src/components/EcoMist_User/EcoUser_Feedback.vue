@@ -63,23 +63,25 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref } from 'vue'
-import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore'
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
+import { db, sendSecureNotification } from '../../firebase'
 
+// Props and emit
 const props = defineProps({
   username: String
 })
 const emit = defineEmits(['submitted', 'close'])
 
-const db = getFirestore()
-const auth = getAuth()
-
+// States
 const type = ref('suggestion')
 const message = ref('')
 const submitting = ref(false)
+
+// Core logic
+const auth = getAuth()
 
 const submit = async () => {
   if (!message.value.trim()) {
@@ -92,8 +94,8 @@ const submit = async () => {
     const user = auth.currentUser
     if (!user) throw new Error('User not logged in')
 
-    // Save feedback to Firestore
-    await addDoc(collection(db, 'feedback'), {
+    // Save feedback in Firestore
+    const feedbackRef = await addDoc(collection(db, 'feedback'), {
       type: type.value,
       message: message.value,
       userId: user.uid,
@@ -105,13 +107,21 @@ const submit = async () => {
       readByUser: false
     })
 
-    // Optional: trigger admin notification (can be watched by admin)
+    // Optional Firestore notification doc for logging
     await addDoc(collection(db, 'feedback_notifications'), {
       type: 'new_feedback',
-      message: `New ${type.value} submitted by ${props.username}`,
+      message: `New ${type.value} submitted by ${props.username || user.email}`,
       seen: false,
       timestamp: serverTimestamp()
     })
+
+    // Send FCM push notification to admin (assumes you hardcoded or fetched the admin FCM token)
+    const adminFcmToken = 'dvZ0L4ZDWFDTNtCu_kO6ZN:APA91bHJW37QVWUZVD54HMxBRJ7Mo15cetDwLMaEWC2wfk-v3WqxcbCbmp4bDVwKv-_wcFw8yO5mE29tnhd9X_DGm9c1NGjwtpxFcF6iXPB56vZCFR-Co4w'// or fetch from Firestore
+    await sendSecureNotification(
+      adminFcmToken,
+      '📬 New Feedback Received',
+      `${props.username || user.email} sent a ${type.value}.`
+    )
 
     emit('submitted')
     emit('close')
