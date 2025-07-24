@@ -626,16 +626,16 @@ showVerificationPrompt.value = true;
   emit('toggleView'); // ✅ This tells the parent to show the Login page
 }, 1000);
   } catch (error) {
-
+    if (error.code === "auth/email-already-in-use") {
+      toast.error("❗ Email is already in use. Please use a different email.");
+    }
     await logAuthEvent({
-  type: "register",
-  status: "failed",
-  email: registerForm.email,
-  reason: error.code || error.message,
-});
-toast.error(error.message || "❗ Registration failed.");
-
-
+      type: "register",
+      status: "failed",
+      email: registerForm.email,
+      reason: error.code || error.message,
+    });
+    toast.error(error.message || "❗ Registration failed.");
     globalAlert.message = error.message || "Registration failed.";
     globalAlert.type = "error";
     globalAlert.show = true;
