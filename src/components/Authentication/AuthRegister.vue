@@ -552,7 +552,6 @@ const handleRegister = async () => {
   validateUsername();
   validatePassword();
   validateConfirmPassword();
-  toast.error("⚠️ Some fields are invalid. Please check your inputs.");
 
 
   if (
