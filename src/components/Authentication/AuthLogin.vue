@@ -24,7 +24,7 @@
   </a>
 </div>
 <!-- Tooltip Trigger Positioned in Top Right -->
-<div class="absolute top-2 right-2">
+<div class="relative backdrop-blur-md absolute top-2 right-2">
   <span
     class="text-yellow-300 font-bold text-xs cursor-pointer"
     @click="toggleTooltip"
@@ -196,9 +196,11 @@
     Signing in...
   </span>
       </button>
-<div v-if="checkingRedirect" class="text-white text-sm mt-4">
+      <div v-if="checkingRedirect" class="text-white text-sm mt-4 flex items-center gap-2">
+  <EcoSpinner size="16px" color="#fff" />
   Restoring session...
 </div>
+
 
       <!-- Toggle View Prompt -->
       <p class="text-xs text-white/80 mt-4 text-center">
@@ -230,7 +232,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { signInWithEmailAndPassword, sendEmailVerification, signOut, GoogleAuthProvider, signInWithPopup, signInWithRedirect } from "firebase/auth";
 import { auth } from "../../firebase";
@@ -243,35 +245,53 @@ import { logAuthEvent } from "../../utils/logAuthEvent";
 
 import EcoSpinner from "../EcoLoader/EcoSpinner.vue"; // adjust path as needed
 
-import { getRedirectResult } from "firebase/auth";
+import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
 
 function isMobileDevice() {
   return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 }
 function isUnsupportedBrowser() {
   const ua = navigator.userAgent;
-  return /FBAN|FBAV|Instagram|Line|TikTok/i.test(ua);
+  return /FBAN|FBAV|Instagram|Line|TikTok/i.test(ua) && !/Chrome|Edg/i.test(ua);
 }
 
-
 const checkingRedirect = ref(true);
+const { executeRecaptcha } = useReCaptcha();
 onMounted(async () => {
   try {
     const result = await getRedirectResult(auth);
+
     if (result?.user) {
-      await handleGoogleUser(result.user); // ✅ will handle routing
+      console.log("✅ Google Sign-In redirect detected:", result.user.email);
+      await handleGoogleUser(result.user); // ✅ handle routing directly
+      return; // Stop further execution
     }
   } catch (error) {
     console.error("Redirect error:", error);
     toast.error("Google Sign-In failed via redirect.");
   } finally {
-    checkingRedirect.value = false; // ✅ make sure this runs
+    checkingRedirect.value = false;
+  }
+
+  // Optional: log user agent
+  console.log("User Agent:", navigator.userAgent);
+  console.log("Mobile:", isMobileDevice(), "Unsupported:", isUnsupportedBrowser());
+
+  // In-app browser detection
+  if (isMobileDevice() && isUnsupportedBrowser()) {
+    showBrowserWarning.value = true;
+
+    navigator.clipboard.writeText("https://ecomist-rosy.vercel.app/")
+      .then(() => {
+        console.log("📋 Link copied to clipboard");
+        toast.info("📋 Link copied! Paste it into Chrome or Safari.");
+      })
+      .catch((err) => {
+        console.warn("❌ Clipboard copy failed:", err);
+      });
   }
 });
 
-
-
-const { executeRecaptcha } = useReCaptcha();
 
 
 const email = ref("");
@@ -450,25 +470,24 @@ toast.success("✅ Login successful!");
 const showBrowserWarning = ref(false);
 
 const handleGoogleSignIn = async () => {
-  if (loading.value) return; 
+  if (loading.value) return;
   loading.value = true;
-  toast.info("🔓 Signing in with Google...", { timeout: 2000 });
+
   const provider = new GoogleAuthProvider();
+  toast.info("🔓 Signing in with Google...", { timeout: 2000 });
 
   try {
+    // ✅ Always use redirect on mobile browsers (iOS/Android)
     if (isMobileDevice()) {
-       if (isUnsupportedBrowser()) {
-         showBrowserWarning.value = true;
-        toast.error("🚫 Google Sign-In is not supported in this browser. Please open in Chrome or Safari.");
-        loading.value = false; // Reset loading
-        return;
-      }
-      await signInWithRedirect(auth, provider); // redirects away – no further code needed
-       return;
-    } else {
-      const { user } = await signInWithPopup(auth, provider);
-      await handleGoogleUser(user);
+      toast.info("🔁 Redirecting to Google Sign-In...");
+      await signInWithRedirect(auth, provider);
+      return; // Stop here — redirection will handle the rest
     }
+
+    // ✅ Use popup on desktop
+    const { user } = await signInWithPopup(auth, provider);
+    await handleGoogleUser(user);
+
   } catch (error) {
     if (error.code === "auth/popup-closed-by-user") return;
 
@@ -479,14 +498,16 @@ const handleGoogleSignIn = async () => {
       reason: error.code || "unknown-error",
     });
 
-    console.error(error);
+    console.error("Google Sign-In Error:", error);
     toast.error("❗ Google Sign-In failed. " + (error.message || ""));
-  }finally {
-    loading.value = false; // ✅ always reset loading state
+  } finally {
+    loading.value = false;
   }
 };
 
+
 const handleGoogleUser = async (user) => {
+  console.log("👤 Handling Google user:", user.email); 
   if (!user.email) {
     toast.error("Google Sign-In failed: no email found in Google account.");
     return;
@@ -518,6 +539,7 @@ const handleGoogleUser = async (user) => {
   }
 
   const role = userSnap.exists() ? userSnap.data().role : "user";
+  console.log("🔀 Redirecting to:", role === "admin" ? "/admin/dashboard" : "/user/dashboard");
   localStorage.setItem("userRole", role);
 
   await logAuthEvent({
@@ -543,11 +565,13 @@ const resendEmailVerification = async () => {
   try {
     const { user } = await signInWithEmailAndPassword(auth, loginForm.email, loginForm.password);
     if (user.emailVerified) {
-      showAlert("info", "Already Verified", "Your email is already verified.");
+      //showAlert("info", "Already Verified", "Your email is already verified.");
+      toast.info("📩 Your email is already verified.");
       return;
     }
     await sendEmailVerification(user);
-    showAlert("success", "Verification Email Sent", "Please check your inbox.");
+    //showAlert("success", "Verification Email Sent", "Please check your inbox.");
+    toast.success("✅ Verification email sent.");
     await signOut(auth);
   } catch (error) {
     await logAuthEvent({
@@ -567,8 +591,8 @@ const resendEmailVerification = async () => {
       toast.error("🔐 Incorrect password.");
 
     } else {
-      showAlert("error", "Error", "Failed to resend verification email.");
-      toast.error("❗ Login failed. Please try again.");
+      //showAlert("error", "Error", "Failed to resend verification email.");
+      toast.error("❌ Failed to resend verification email.");
 
     }
   } finally {
@@ -593,6 +617,14 @@ const hideTooltip = () => {
     showTip.value = false
   }
 }
+
+
+watch(() => notification.value.show, (newVal) => {
+  if (newVal) {
+    setTimeout(() => (notification.value.show = false), 3000);
+  }
+});
+
 </script>
 
 <style>
