@@ -36,14 +36,14 @@
 
   <!-- Tooltip Box -->
   <transition name="fade">
-    <div
-      v-if="showTip"
-      class="absolute z-50 w-72 bg-yellow-100 text-yellow-800 text-xs rounded-md p-3 shadow-lg mt-2 right-0"
-    >
-      Make sure you're using <strong>Chrome, Safari, or Firefox</strong>.<br />
-      Avoid in-app browsers like Facebook or Instagram.
-    </div>
-  </transition>
+  <div
+    v-if="showTip"
+    class="fixed top-4 right-4 z-50 w-72 bg-yellow-100 text-yellow-800 text-xs rounded-md p-3 shadow-lg"
+  >
+    Make sure you're using <strong>Chrome, Safari, or Firefox</strong>.<br />
+    Avoid in-app browsers like Facebook or Instagram.
+  </div>
+</transition>
 </div>
 
     <!-- Form -->
