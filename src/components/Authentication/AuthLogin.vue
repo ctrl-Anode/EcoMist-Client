@@ -42,7 +42,8 @@
     >
       <strong>Browser Tip:</strong><br />
       Use <strong>Chrome, Safari, or Firefox</strong>.<br />
-      Avoid in-app browsers like Facebook or Instagram.
+      Avoid in-app browsers like Facebook or Instagram. <br />
+      <strong>Note: Google Sign-In in Mobile not yet supported.</strong>
     </div>
   </transition>
 </div>
