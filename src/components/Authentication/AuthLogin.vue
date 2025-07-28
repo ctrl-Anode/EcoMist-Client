@@ -24,7 +24,7 @@
   </a>
 </div>
 <!-- Tooltip Trigger Positioned in Top Right -->
-<div class="relative backdrop-blur-md absolute top-2 right-2">
+<div class="absolute top-4 right-4 z-50">
   <span
     class="text-yellow-300 font-bold text-xs cursor-pointer"
     @click="toggleTooltip"
@@ -36,15 +36,17 @@
 
   <!-- Tooltip Box -->
   <transition name="fade">
-  <div
-    v-if="showTip"
-    class="fixed top-4 right-4 z-50 w-72 bg-yellow-100 text-yellow-800 text-xs rounded-md p-3 shadow-lg"
-  >
-    Make sure you're using <strong>Chrome, Safari, or Firefox</strong>.<br />
-    Avoid in-app browsers like Facebook or Instagram.
-  </div>
-</transition>
+    <div
+      v-if="showTip"
+      class="absolute mt-2 right-0 w-[260px] sm:w-72 bg-yellow-100 border border-yellow-300 text-yellow-900 text-xs rounded-md p-3 shadow-lg"
+    >
+      <strong>Browser Tip:</strong><br />
+      Use <strong>Chrome, Safari, or Firefox</strong>.<br />
+      Avoid in-app browsers like Facebook or Instagram.
+    </div>
+  </transition>
 </div>
+
 
     <!-- Form -->
     <form @submit.prevent="loginUser" class="w-full space-y-6" aria-label="Login Form">
@@ -279,6 +281,7 @@ onMounted(async () => {
 
   // In-app browser detection
   if (isMobileDevice() && isUnsupportedBrowser()) {
+    showTip.value = true;
     showBrowserWarning.value = true;
 
     navigator.clipboard.writeText("https://ecomist-rosy.vercel.app/")
