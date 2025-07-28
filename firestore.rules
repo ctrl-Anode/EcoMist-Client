@@ -12,9 +12,9 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      let userDoc = get(/databases/$(database)/documents/users/$(request.auth.uid));
-      return userDoc.data.role == 'admin';
-    }
+  let path = /databases/$(database)/documents/users/$(request.auth.uid);
+  return exists(path) && get(path).data.role == 'admin';
+}
 
     function isValidTransaction() {
       let data = request.resource.data;
@@ -25,45 +25,26 @@ service cloud.firestore {
     }
 
     // ─── Users Collection ─────────────────────────────
-    match /users/{userId} {
+   match /users/{userId} {
   allow read: if isAuthenticated();
-  
+
   allow create: if isAuthenticated() && isOwner(userId) &&
-    request.resource.data.keys().hasOnly([
-      'username', 'email', 'profileImageUrl', 'completeName', 'birthday', 'cellphone',
-      'gender', 'address', 'role', 'status', 'createdAt', 'emailVerified',
-      'authProvider', 'loginCount'
-    ]) &&
-    request.resource.data.username is string &&
-    request.resource.data.email is string &&
-    request.resource.data.profileImageUrl is string &&
-    request.resource.data.completeName is string &&
-    request.resource.data.birthday is string && // stored as string (ISO) from your frontend
-    request.resource.data.cellphone is string &&
-    request.resource.data.gender in ['male', 'female', 'other'] &&
-    request.resource.data.address is string &&
-    request.resource.data.role in ['user', 'admin'] &&
-    request.resource.data.status == 'active' &&
-    request.resource.data.createdAt is string &&
-    request.resource.data.emailVerified is bool &&
-    request.resource.data.authProvider in ['email', 'google'] &&
-    request.resource.data.loginCount is int;
+  request.resource.data.email is string &&
+  request.resource.data.role in ['user', 'admin'];
 
   allow update: if isAuthenticated() && (isOwner(userId) || isAdmin());
 
-
       // ─── Transactions Subcollection ───────────────
-      match /transactions/{transactionId} {
-        allow read: if isAuthenticated() && (isOwner(userId) || isAdmin());
-        allow create, update: if isAuthenticated() && (isOwner(userId) || isAdmin()) && isValidTransaction();
-        allow delete: if isAuthenticated() && (isOwner(userId) || isAdmin());
-      }
-
+       match /transactions/{transactionId} {
+    allow read: if isAuthenticated() && (isOwner(userId) || isAdmin());
+    allow create, update: if isAuthenticated() && (isOwner(userId) || isAdmin()) && isValidTransaction();
+    allow delete: if isAuthenticated() && (isOwner(userId) || isAdmin());
+  }
       // ─── Budgets Subcollection ────────────────────
-      match /budgets/{monthId} {
-        allow read, write: if isAuthenticated() && isOwner(userId);
-      }
-    }
+     match /budgets/{monthId} {
+    allow read, write: if isAuthenticated() && isOwner(userId);
+  }
+}
 
     // ─── Contact Messages ────────────────────────────
     match /contact_messages/{messageId} {
@@ -150,7 +131,7 @@ service cloud.firestore {
     }
 
     // ─── Feedback ────────────────────────────────────
-   match /feedback/{feedbackId} {
+  match /feedback/{feedbackId} {
   allow read: if isAuthenticated() && (
     resource.data.userId == request.auth.uid || isAdmin()
   );
@@ -161,8 +142,14 @@ service cloud.firestore {
     request.resource.data.message.size() > 0 &&
     request.resource.data.userId == request.auth.uid &&
     request.resource.data.timestamp is timestamp;
-}
 
+  allow update: if isAuthenticated() && (
+    isAdmin() || (
+      request.resource.data.diff(resource.data).affectedKeys().hasOnly(['readByUser']) &&
+      resource.data.userId == request.auth.uid
+    )
+  );
+}
 
 
     // ─── System Logs ─────────────────────────────────
@@ -270,5 +257,38 @@ match /contact_logs/{logId} {
       allow create: if request.auth != null; // any authenticated user can log events
       allow read: if isAdmin() || resource.data.uid == request.auth.uid;
     }
+    
+match /feedback_notifications/{notificationId} {
+  allow create: if isAuthenticated();
+  
+  allow get: if request.auth != null && (isAdmin() || resource.data.userId == request.auth.uid);
+
+   allow list: if isAuthenticated();
+  
+  allow delete, update: if isAdmin();
+}
+
+// Admin tokens
+match /admin_settings/{adminId} {
+  allow write: if isAuthenticated() && request.auth.uid == adminId && isAdmin();
+  allow get: if isAuthenticated();
+  allow list: if isAuthenticated();
+}
+
+// User tokens
+match /user_settings/{userId} {
+  allow write: if isAuthenticated() && request.auth.uid == userId;
+  allow get: if isAuthenticated();
+  allow list: if isAuthenticated();
+}
+
+// Feedback Replies
+match /feedback_replies/{replyId} {
+  allow read, update: if isAuthenticated() && resource.data.userId == request.auth.uid;
+  allow create: if isAuthenticated() && isAdmin();
+  allow list: if isAuthenticated(); 
+}
+
+
   }
 }

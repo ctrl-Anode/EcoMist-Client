@@ -96,7 +96,7 @@ export async function requestFcmToken() {
     console.log('✅ Service worker ready:', readyRegistration);
 
     const token = await getToken(messaging, {
-      vapidKey: 'BLcoKHiPfFAMCNTzgqzgo3IXUQNpENK9NKaT-pMOv46ejmxujlFNKNnGXujiAMDdq2K4tYkMydNFu8_lfWcjKLw',
+      vapidKey: import.meta.env.VITE_VAPID_KEY,
       serviceWorkerRegistration: readyRegistration
     });
 
@@ -127,17 +127,16 @@ export async function sendSecureNotification(token, title, body) {
       body: JSON.stringify({ token, title, body })
     })
 
-    // 🔐 Defensive: If response is not OK (CORS/network), throw before .json()
     if (!res.ok) {
       const errorText = await res.text()
-      throw new Error(`Server returned ${res.status}: ${errorText}`)
+      return { success: false, error: `HTTP ${res.status}: ${errorText}` }
     }
 
     const data = await res.json()
     return data || { success: false, error: 'Empty response from server' }
   } catch (err) {
     console.error('❌ Secure notification error:', err)
-    return { success: false, error: err.message || 'Unknown error' } // ✅ Always return an object
+    return { success: false, error: err.message || 'Unknown error' }
   }
 };
 

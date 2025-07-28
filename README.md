@@ -4,11 +4,19 @@ This template should help get you started developing with Vue 3 in Vite. The tem
 
 Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
 
-UserFeedback
-EcoAdmin_ManageFeedback
-EcoUser_Feedback
-EcoAdminParent
-router.js
+feedback
 
-npm run build
--date-fns
+3 sounds
+ecoadmin
+-admin header
+-admin manage feedback
+ecomistuser
+-feedback
+-feedbacklist
+-topnavbar
+views
+-ecouserparent
+firebase.js
+main.js
+env.production
+firestore rules

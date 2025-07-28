@@ -8,7 +8,8 @@
       :userMenuOpen="userMenuOpen"
       @toggle-sidebar="toggleSidebar"
       @toggle-user-menu="toggleUserMenu"
-      @open-feedback="showFeedbackModal = true"
+      @open-feedback="showFeedbackFormModal = true"
+      @open-feedback-list="showFeedbackListModal = true"
       @confirm-logout="showLogoutModal = true"
       class="fixed top-0 left-0 right-0 z-50"
     />
@@ -41,11 +42,16 @@
     </div>
 
     <!-- Modals & Toasts -->
-    <EcoUser_Feedback 
-  v-if="showFeedbackModal" 
+   <EcoUser_Feedback 
+  v-if="showFeedbackFormModal" 
   :username="username" 
-  @close="showFeedbackModal = false"
+  @close="showFeedbackFormModal = false"
   @submitted="handleFeedbackSubmitted"
+/>
+
+<EcoUser_FeedbackList 
+  v-if="showFeedbackListModal" 
+  @close="showFeedbackListModal = false"
 />
 
     <EcoUser_LogOut
@@ -69,6 +75,8 @@ import EcoUser_SideBar from '../components/EcoMist_User/EcoUser_SideBar.vue';
 import EcoUser_Feedback from '../components/EcoMist_User/EcoUser_Feedback.vue';
 import EcoUser_LogOut from '../components/EcoMist_User/EcoUser_LogOut.vue';
 import EcoUser_Toast from '../components/EcoMist_User/EcoUser_Toast.vue';
+import EcoUser_FeedbackList from '../components/EcoMist_User/EcoUser_FeedbackList.vue'
+
 
 // User profile data
 const username = ref('');
@@ -100,7 +108,8 @@ provide('status', status);
 const sidebarOpen = ref(true);
 const userMenuOpen = ref(false);
 const notificationCount = ref(2);
-const showFeedbackModal = ref(false);
+const showFeedbackFormModal = ref(false);
+const showFeedbackListModal = ref(false);
 const showLogoutModal = ref(false);
 const toast = ref({ show: false, message: '', type: 'success' });
 

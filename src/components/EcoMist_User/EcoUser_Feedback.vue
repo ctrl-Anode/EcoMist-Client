@@ -32,16 +32,31 @@
             Your Feedback
           </label>
           <textarea
+          ref="feedbackTextarea"
             id="feedback-message"
             v-model="message"
             rows="5"
             class="block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
             placeholder="Please describe your feedback in detail..."
           ></textarea>
+          <!-- Anonymous Checkbox -->
+<div class="flex items-center space-x-2 mt-2">
+  <input type="checkbox" id="anonymous" v-model="anonymous" class="rounded text-emerald-600 border-gray-300" />
+  <label for="anonymous" class="text-sm text-gray-700">Send anonymously</label>
+</div>
         </div>
       </div>
 
-      <div class="flex justify-end gap-3 mt-8">
+      <!-- Reply Section -->
+      <div
+        v-if="feedback?.reply" 
+        class="mt-2 text-sm bg-green-50 p-2 rounded border border-green-200"
+        @mouseenter="() => markFeedbackAsRead(feedback.id, feedback.readByUser)"
+      >
+        <strong>Reply:</strong> {{ feedback.reply }}
+      </div>
+
+      <div class="flex justify-between gap-3 mt-8">
         <button
           @click="handleCancel"
           class="px-5 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition"
@@ -60,44 +75,60 @@
           </span>
         </button>
       </div>
+      <button
+        @click="showFeedbackListModal"
+        class="mt-4 px-5 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition w-full"
+      >
+        View My Feedback
+      </button>
     </div>
   </div>
+
+  <!-- Feedback List Modal -->
+  <EcoUser_FeedbackList v-if="showFeedbackList" @close="hideFeedbackListModal" />
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
+import { ref, onMounted } from 'vue'
+import { collection, addDoc, serverTimestamp, doc, updateDoc, getDoc, query, getDocs } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
 import { db, sendSecureNotification } from '../../firebase'
+import EcoUser_FeedbackList from './EcoUser_FeedbackList.vue'
+import { useToast } from 'vue-toastification'
 
-// Props and emit
-const props = defineProps({
-  username: String
-})
-const emit = defineEmits(['submitted', 'close'])
-
-// States
+const toast = useToast()
 const type = ref('suggestion')
 const message = ref('')
 const submitting = ref(false)
+const showFeedbackList = ref(false)
+const anonymous = ref(false)
+const feedbackTextarea = ref(null)
 
-// Firebase Auth instance
 const auth = getAuth()
+
+const props = defineProps({
+  username: String,
+  feedback: Object
+})
+const emit = defineEmits(['submitted', 'close'])
+
+const feedbackSound = new Audio('/sounds/feedback-submitted.mp3')
 
 const submit = async () => {
   if (!message.value.trim()) {
-    alert('Please enter your feedback message.')
+    toast.warning('✏️ Please enter your feedback message.')
     return
   }
 
   submitting.value = true
+  toast.info('Sending feedback...')
+
   try {
     const user = auth.currentUser
     if (!user) throw new Error('User not logged in')
 
-    const username = props.username || user.email
+    const username = anonymous.value ? 'Anonymous' : (props.username || user.email)
 
-    // Save feedback in Firestore
     await addDoc(collection(db, 'feedback'), {
       type: type.value,
       message: message.value,
@@ -110,7 +141,6 @@ const submit = async () => {
       readByUser: false
     })
 
-    // Log Firestore notification
     await addDoc(collection(db, 'feedback_notifications'), {
       type: 'new_feedback',
       message: `New ${type.value} submitted by ${username}`,
@@ -118,34 +148,81 @@ const submit = async () => {
       timestamp: serverTimestamp()
     })
 
-    // Send FCM push notification
+    // 🔐 Dynamically fetch any available admin FCM token from Firestore and validate token age
+    let adminFcmToken = null
     try {
-      const adminFcmToken = 'dvZ0L4ZDWFDTNtCu_kO6ZN:APA91bHJW37QVWUZVD54HMxBRJ7Mo15cetDwLMaEWC2wfk-v3WqxcbCbmp4bDVwKv-_wcFw8yO5mE29tnhd9X_DGm9c1NGjwtpxFcF6iXPB56vZCFR-Co4w'
+      const adminQuery = query(collection(db, 'admin_settings'))
+      const adminSnap = await getDocs(adminQuery)
 
-      const result = await sendSecureNotification(
-  adminFcmToken,
-  '📬 New Feedback Received',
-  `${username} sent a ${type.value}.`
-)
+      adminSnap.forEach(doc => {
+        const data = doc.data()
+        const tokenAge = data.updatedAt?.toDate?.() ?? new Date()
+        const isStale = (Date.now() - tokenAge.getTime()) > 30 * 24 * 60 * 60 * 1000 // 30 days
 
-if (!result?.success) {
-  console.warn('⚠️ Notification failed:', result?.error || 'Unknown error')
-}else {
-        console.log('✅ Notification sent:', result.response)
-      }
-    } catch (notifyErr) {
-      console.warn('⚠️ Notification sending error (ignored):', notifyErr)
+        if (data.fcmToken && !isStale) {
+          adminFcmToken = data.fcmToken
+          return // Exit loop once a valid token is found
+        } else if (isStale) {
+          console.warn(`⚠️ Token for ${data.email} is older than 30 days.`)
+        }
+      })
+    } catch (fetchErr) {
+      console.warn('⚠️ Could not fetch FCM token from Firestore:', fetchErr)
     }
 
-    emit('submitted')
+    if (adminFcmToken) {
+      const response = await sendSecureNotification(
+        adminFcmToken,
+        '📬 New Feedback Received',
+        `${username} sent a ${type.value}.`
+      ) || { success: false }
+
+      if (!response.success) {
+        console.error('❌ Notification failed:', response?.error || 'Unknown error')
+        return
+      }
+
+      console.log('✅ Notification sent successfully.')
+    }
+
+
+    feedbackSound.play().catch(err => console.warn('🔇 Audio playback failed:', err))
+    toast.success('✅ Feedback submitted successfully!')
+    emit('submitted', { success: true, message: 'Successfully submitted' })
     emit('close')
+
   } catch (err) {
-    console.error('❌ Feedback submission error:', err)
-    alert('Failed to submit feedback. Please try again.')
+    console.error('❌ Feedback submission error:', err.message || err)
+    toast.error('❌ Something went wrong while submitting your feedback.')
+    emit('submitted', { success: false, message: err.message || 'Failed' })
   } finally {
     submitting.value = false
   }
 }
 
 const handleCancel = () => emit('close')
+
+const markFeedbackAsRead = async (feedbackId, alreadyRead) => {
+  if (alreadyRead) return
+  try {
+    const fbRef = doc(db, 'feedback', feedbackId)
+    await updateDoc(fbRef, { readByUser: true })
+    console.log('✅ Marked as read')
+  } catch (err) {
+    console.error('❌ Failed to mark as read:', err)
+  }
+}
+
+const showFeedbackListModal = () => {
+  showFeedbackList.value = true
+}
+
+const hideFeedbackListModal = () => {
+  showFeedbackList.value = false
+}
+
+onMounted(() => {
+  feedbackTextarea.value?.focus()
+})
 </script>
+
