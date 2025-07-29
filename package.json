@@ -13,6 +13,7 @@
     "@tensorflow/tfjs": "^4.22.0",
     "@unhead/vue": "^2.0.12",
     "axios": "^1.8.3",
+    "bowser": "^2.11.0",
     "chart.js": "^4.4.9",
     "core-js": "^3.8.3",
     "date-fns": "^4.1.0",

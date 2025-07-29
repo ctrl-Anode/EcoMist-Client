@@ -11,6 +11,16 @@
       </p>
     </header>
     <div v-if="showBrowserWarning" class="mt-4 text-yellow-100 text-sm text-center bg-yellow-700/80 p-4 rounded-lg">
+
+      <!-- Dismiss button -->
+  <button
+    class="absolute top-2 right-2 text-yellow-200 hover:text-white text-sm"
+    @click="showBrowserWarning = false"
+    aria-label="Dismiss"
+  >
+    ✕
+  </button>
+
   <p>🚫 Google Sign-In is not supported in this browser.</p>
   <p class="mt-1">
     Please <strong>open this app in Chrome or Safari</strong> to continue.
@@ -199,6 +209,35 @@
     Signing in...
   </span>
       </button>
+
+      <!-- Warning and Chrome/Safari Redirect Link for In-App Browsers -->
+<div
+  v-if="getPlatformInfo().isInApp"
+  class="bg-yellow-100 border border-yellow-300 text-yellow-800 text-xs rounded-md p-3 mt-3 text-center"
+>
+  🚫 Google Sign-In may not work in this browser (e.g., Facebook, Instagram).<br />
+  Please open this app in <strong>Chrome</strong> or <strong>Safari</strong>.
+
+  <!-- Platform-aware link -->
+  <div class="mt-2">
+    <a
+      v-if="/Android/i.test(navigator.userAgent)"
+      href="intent://ecomist-rosy.vercel.app/#Intent;scheme=https;package=com.android.chrome;end"
+      class="text-blue-500 underline hover:text-blue-400"
+    >
+      👉 Open in Chrome (Android)
+    </a>
+    <a
+      v-else
+      href="https://ecomist-rosy.vercel.app/"
+      target="_blank"
+      class="text-blue-500 underline hover:text-blue-400"
+    >
+      👉 Open in Safari (iOS)
+    </a>
+  </div>
+</div>
+
       <div v-if="checkingRedirect" class="text-white text-sm mt-4 flex items-center gap-2">
   <EcoSpinner size="16px" color="#fff" />
   Restoring session...
@@ -245,10 +284,12 @@ import ResetPasswordModal from "./AuthResetPassword.vue";
 import { useToast } from "vue-toastification";
 import { useReCaptcha } from 'vue-recaptcha-v3';
 import { logAuthEvent } from "../../utils/logAuthEvent";
-
+import { useSmartGoogleSignIn } from '../../composables/useSmartGoogleSignIn';
 import EcoSpinner from "../EcoLoader/EcoSpinner.vue"; // adjust path as needed
-
+const router = useRouter();
 import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
+
+const { signInWithSmartGoogle, handleRedirectResult, getPlatformInfo } = useSmartGoogleSignIn(router);
 
 function isMobileDevice() {
   return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -261,42 +302,28 @@ function isUnsupportedBrowser() {
 const checkingRedirect = ref(true);
 const { executeRecaptcha } = useReCaptcha();
 onMounted(async () => {
-  try {
-    const result = await getRedirectResult(auth);
+  // 🔁 Handle mobile redirect sign-in
+  const redirectHandled = await handleRedirectResult();
+  if (!redirectHandled) checkingRedirect.value = false;
 
-    if (result?.user) {
-      console.log("✅ Google Sign-In redirect detected:", result.user.email);
-      await handleGoogleUser(result.user); // ✅ handle routing directly
-      return; // Stop further execution
-    }
-  } catch (error) {
-    console.error("Redirect error:", error);
-    toast.error("Google Sign-In failed via redirect.");
-  } finally {
-    checkingRedirect.value = false;
-  }
-
-  // Optional: log user agent
+  // ✅ Optional logging
   console.log("User Agent:", navigator.userAgent);
   console.log("Mobile:", isMobileDevice(), "Unsupported:", isUnsupportedBrowser());
 
-  // In-app browser detection
+  // ⚠️ In-app browser warning (e.g., Facebook, Instagram)
   if (isMobileDevice() && isUnsupportedBrowser()) {
     showTip.value = true;
     showBrowserWarning.value = true;
 
-    navigator.clipboard.writeText("https://ecomist-rosy.vercel.app/")
-      .then(() => {
-        console.log("📋 Link copied to clipboard");
-        toast.info("📋 Link copied! Paste it into Chrome or Safari.");
-      })
-      .catch((err) => {
-        console.warn("❌ Clipboard copy failed:", err);
-      });
+    try {
+      await navigator.clipboard.writeText("https://ecomist-rosy.vercel.app/");
+      console.log("📋 Link copied to clipboard");
+      toast.info("📋 Link copied! Paste it into Chrome or Safari.");
+    } catch (err) {
+      console.warn("❌ Clipboard copy failed:", err);
+    }
   }
 });
-
-
 
 const email = ref("");
 const password = ref("");
@@ -307,8 +334,6 @@ const COOLDOWN_SECONDS = 30;
 
 const getLoginAttempts = () => parseInt(localStorage.getItem("loginAttempts") || "0");
 const getCooldownTime = () => parseInt(localStorage.getItem("cooldownTime") || "0");
-
-const router = useRouter();
 
 // Define reactive state for login errors
 const loginErrors = reactive({
@@ -474,87 +499,7 @@ toast.success("✅ Login successful!");
 const showBrowserWarning = ref(false);
 
 const handleGoogleSignIn = async () => {
-  if (loading.value) return;
-  loading.value = true;
-
-  const provider = new GoogleAuthProvider();
-  toast.info("🔓 Signing in with Google...", { timeout: 2000 });
-
-  try {
-    // ✅ Always use redirect on mobile browsers (iOS/Android)
-    if (isMobileDevice()) {
-      toast.info("🔁 Redirecting to Google Sign-In...");
-      await signInWithRedirect(auth, provider);
-      return; // Stop here — redirection will handle the rest
-    }
-
-    // ✅ Use popup on desktop
-    const { user } = await signInWithPopup(auth, provider);
-    await handleGoogleUser(user);
-
-  } catch (error) {
-    if (error.code === "auth/popup-closed-by-user") return;
-
-    await logAuthEvent({
-      type: "login",
-      status: "failed",
-      email: loginForm.email,
-      reason: error.code || "unknown-error",
-    });
-
-    console.error("Google Sign-In Error:", error);
-    toast.error("❗ Google Sign-In failed. " + (error.message || ""));
-  } finally {
-    loading.value = false;
-  }
-};
-
-
-const handleGoogleUser = async (user) => {
-  console.log("👤 Handling Google user:", user.email); 
-  if (!user.email) {
-    toast.error("Google Sign-In failed: no email found in Google account.");
-    return;
-  }
-
-  const userRef = doc(db, "users", user.uid);
-  let userSnap = await getDoc(userRef);
-
-  if (!userSnap.exists()) {
-    await setDoc(userRef, {
-      username: user.displayName || "Google User",
-      email: user.email,
-      photoURL: user.photoURL,
-      role: "user", // default role
-      status: "active",
-      createdAt: new Date().toISOString(),
-      emailVerified: user.emailVerified,
-      authProvider: "google",
-      loginCount: 1,
-    });
-
-    // ❗ Re-fetch userSnap after creating doc
-    userSnap = await getDoc(userRef);
-  } else {
-    await updateDoc(userRef, {
-      lastLogin: new Date().toISOString(),
-      loginCount: increment(1),
-    });
-  }
-
-  const role = userSnap.exists() ? userSnap.data().role : "user";
-  console.log("🔀 Redirecting to:", role === "admin" ? "/admin/dashboard" : "/user/dashboard");
-  localStorage.setItem("userRole", role);
-
-  await logAuthEvent({
-    type: "login",
-    status: "success",
-    email: user.email,
-    uid: user.uid,
-  });
-
-  toast.success("✅ Google Sign-In successful!");
-  router.push(role === "admin" ? "/admin/dashboard" : "/user/dashboard");
+  await signInWithSmartGoogle();
 };
 
 const showResetPasswordModal = ref(false);
