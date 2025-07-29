@@ -60,7 +60,7 @@
                     <div class="space-y-4">
                       <div class="bg-gray-50/50 rounded-xl p-4 border border-gray-100">
                         <h5 class="font-medium text-gray-900 mb-2">1. Data Collection</h5>
-                        <p class="text-sm text-gray-600 mb-2">The Eco-Mist system collects the following data:</p>
+                        <p class="text-sm text-gray-600 mb-2">The EcoMist system collects the following data:</p>
                         <ul class="text-sm text-gray-600 space-y-1 ml-4">
                           <li>• Sensor data: pH levels, humidity, temperature, water level, nutrient status</li>
                           <li>• Image uploads: Used for crop health analysis and machine learning detection</li>
@@ -133,7 +133,7 @@
 
                       <div class="bg-red-50/50 rounded-xl p-4 border border-red-100">
                         <h5 class="font-medium text-gray-900 mb-2">3. Limitations</h5>
-                        <p class="text-sm text-gray-600 mb-2">The Eco-Mist system:</p>
+                        <p class="text-sm text-gray-600 mb-2">The EcoMist system:</p>
                         <ul class="text-sm text-gray-600 space-y-1 ml-4">
                           <li>• May experience interruptions if internet or sensor connectivity is unstable</li>
                           <li>• Requires periodic maintenance and recalibration of sensors</li>
@@ -144,7 +144,7 @@
                       <div class="bg-indigo-50/50 rounded-xl p-4 border border-indigo-100">
                         <h5 class="font-medium text-gray-900 mb-2">4. Feedback and Improvements</h5>
                         <p class="text-sm text-gray-600">
-                          User feedback through in-system forms or direct messages is encouraged for continuous improvement of the Eco-Mist platform. Developers will monitor performance and optimize based on end-user evaluations, using ISO 25010 and UTUAT standards.
+                          User feedback through in-system forms or direct messages is encouraged for continuous improvement of the EcoMist platform. Developers will monitor performance and optimize based on end-user evaluations, using ISO 25010 and UTUAT standards.
                         </p>
                       </div>
                     </div>

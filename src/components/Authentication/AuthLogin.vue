@@ -4,10 +4,10 @@
   >
     <!-- Header -->
     <header class="flex flex-col items-center mb-6 text-center">
-      <img src="/eco-mist-logo.png" alt="Eco-Mist Logo" class="w-20 h-20 mb-2 rounded-full object-cover" />
+      <img src="/eco-mist-logo.png" alt="EcoMist Logo" class="w-20 h-20 mb-2 rounded-full object-cover" />
       <h1 class="text-xl font-bold text-white">Login</h1>
       <p class="text-white/80 text-sm mt-2">
-        Log in to access your Eco-Mist dashboard and monitor your aeroponics system.
+        Log in to access your EcoMist dashboard and monitor your aeroponics system.
       </p>
     </header>
     <div v-if="showBrowserWarning" class="mt-4 text-yellow-100 text-sm text-center bg-yellow-700/80 p-4 rounded-lg">

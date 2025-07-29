@@ -28,8 +28,8 @@
 
       <!-- Branding -->
       <div class="flex items-center gap-2 sm:gap-3 mx-auto md:mx-0">
-        <img src="/eco-mist-logo.png" alt="Eco-Mist Logo" class="w-8 h-8 sm:w-10 sm:h-10 object-contain" loading="lazy" />
-        <span class="text-green-800 text-lg sm:text-xl md:text-2xl font-bold">Eco-Mist</span>
+        <img src="/eco-mist-index.png" alt="EcoMist Logo" class="w-8 h-8 sm:w-10 sm:h-10 object-contain" loading="lazy" />
+        <span class="text-green-800 text-lg sm:text-xl md:text-2xl font-bold">EcoMist</span>
       </div>
 
       <!-- Desktop Nav -->

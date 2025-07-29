@@ -8,7 +8,7 @@
           <div class="relative">
             <div class="absolute inset-0 bg-gradient-to-br from-green-400/20 to-green-600/20 rounded-full blur-3xl"></div>
             <div class="bg-white p-6 rounded-2xl shadow-2xl relative">
-              <img src="/ecomist-hero.png" alt="Eco-Mist System" class="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 filter drop-shadow-[0_0_30px_rgba(22,163,74,0.5)] animate-float-logo" loading="lazy" />
+              <img src="/ecomist-hero.png" alt="EcoMist System" class="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 filter drop-shadow-[0_0_30px_rgba(22,163,74,0.5)] animate-float-logo" loading="lazy" />
             </div>
           </div>
         </div>

@@ -23,24 +23,24 @@
 <script setup>
 const faqs = [
   {
-    question: "What is Eco-Mist?",
+    question: "What is EcoMist?",
     answer:
-      "Eco-Mist is an IoT-driven aeroponics farming system designed to optimize growth, reduce resource consumption, and provide real-time insights for sustainable agriculture.",
+      "EcoMist is an IoT-driven aeroponics farming system designed to optimize growth, reduce resource consumption, and provide real-time insights for sustainable agriculture.",
   },
   {
-    question: "How does Eco-Mist work?",
+    question: "How does EcoMist work?",
     answer:
-      "Eco-Mist uses IoT sensors to monitor environmental conditions and automate nutrient delivery and misting cycles for optimal plant growth. The system connects to your wireless network for seamless data transmission and control.",
+      "EcoMist uses IoT sensors to monitor environmental conditions and automate nutrient delivery and misting cycles for optimal plant growth. The system connects to your wireless network for seamless data transmission and control.",
   },
   {
-    question: "Is Eco-Mist suitable for all crops?",
+    question: "Is EcoMist suitable for all crops?",
     answer:
-      "Eco-Mist is ideal for a wide range of crops, particularly those that thrive in aeroponic systems, such as leafy greens, herbs, and many other high-value crops that benefit from precise environmental control.",
+      "EcoMist is ideal for a wide range of crops, particularly those that thrive in aeroponic systems, such as leafy greens, herbs, and many other high-value crops that benefit from precise environmental control.",
   },
   {
     question: "What kind of support do you offer?",
     answer:
-      "We provide comprehensive support including installation guidance, system training, regular software updates, and technical assistance to ensure your Eco-Mist system operates at peak performance.",
+      "We provide comprehensive support including installation guidance, system training, regular software updates, and technical assistance to ensure your EcoMist system operates at peak performance.",
   },
 ];
 </script>

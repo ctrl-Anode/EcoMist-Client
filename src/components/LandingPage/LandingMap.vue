@@ -100,8 +100,8 @@
 import { ref, watch } from 'vue';
 
 const searchQuery = ref('');
-const mapUrl = ref('https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=Eco-Mist+Headquarters&zoom=15');
-const directionsUrl = ref('https://www.google.com/maps/dir/?api=1&destination=Eco-Mist+Headquarters');
+const mapUrl = ref('https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=EcoMist+Headquarters&zoom=15');
+const directionsUrl = ref('https://www.google.com/maps/dir/?api=1&destination=EcoMist+Headquarters');
 const isSearching = ref(false);
 const isMapLoading = ref(true);
 const searchError = ref('');

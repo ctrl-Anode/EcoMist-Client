@@ -4,7 +4,7 @@
       <div class="max-w-3xl mx-auto bg-white/95 backdrop-blur-sm rounded-2xl border border-green-100 shadow-xl p-8 sm:p-10 text-center">
         <h2 class="text-3xl sm:text-4xl font-bold text-green-800 mb-4">Ready to Transform Your Farming?</h2>
         <p class="text-gray-700 mb-8 text-lg">
-          Get in touch with our team to schedule a demonstration or learn more about how Eco-Mist can revolutionize your aeroponic farming.
+          Get in touch with our team to schedule a demonstration or learn more about how EcoMist can revolutionize your aeroponic farming.
         </p>
 
         <form @submit.prevent="submitContactForm" class="text-left" aria-label="Contact form">

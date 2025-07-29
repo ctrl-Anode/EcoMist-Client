@@ -91,7 +91,7 @@
       <template #default>
         <p class="text-sm text-gray-500 mb-4">Last updated: May 7, 2025</p>
         <p class="text-sm text-gray-600">
-          By accessing or using Eco-Mist's services, you agree to be bound by these Terms of Service.
+          By accessing or using EcoMist's services, you agree to be bound by these Terms of Service.
         </p>
       </template>
     </AuthTerms>
