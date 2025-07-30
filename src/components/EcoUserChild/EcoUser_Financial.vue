@@ -1808,53 +1808,57 @@ const toggleCumulativeMode = () => {
 
 // Date Range Methods
 const setDateRange = (rangeId) => {
+  console.log('Range selected:', rangeId);
   selectedDateRange.value = rangeId;
   
   const now = new Date();
-  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
   switch (rangeId) {
-    case 'week':
-      // Start of current week (Sunday)
-      startDate.value = new Date(startOfDay);
-      startDate.value.setDate(startDate.value.getDate() - startDate.value.getDay());
-      endDate.value = new Date();
+    case 'week': {
+      const start = new Date(today);
+      start.setDate(today.getDate() - today.getDay()); // Sunday
+      startDate.value = start;
+      endDate.value = today;
       break;
-    case 'month':
-      // Start of current month
+    }
+    case 'month': {
       startDate.value = new Date(now.getFullYear(), now.getMonth(), 1);
-      endDate.value = new Date();
+      endDate.value = today;
       break;
-    case 'quarter':
-      // Start of current quarter
-      const quarter = Math.floor(now.getMonth() / 3);
-      startDate.value = new Date(now.getFullYear(), quarter * 3, 1);
-      endDate.value = new Date();
+    }
+    case 'quarter': {
+      const quarterStartMonth = Math.floor(now.getMonth() / 3) * 3;
+      startDate.value = new Date(now.getFullYear(), quarterStartMonth, 1);
+      endDate.value = today;
       break;
-    case 'year':
-      // Start of current year
+    }
+    case 'year': {
       startDate.value = new Date(now.getFullYear(), 0, 1);
-      endDate.value = new Date();
+      endDate.value = today;
       break;
+    }
     case 'custom':
-      // Don't change dates, just enable custom inputs
+      // Custom handled separately
       break;
   }
-  
   updateTrendChart();
 };
 
+
 const applyCustomDateRange = () => {
   if (customStartDate.value && customEndDate.value) {
-    if (new Date(customStartDate.value) > new Date(customEndDate.value)) {
+    const start = new Date(customStartDate.value);
+    const end = new Date(customEndDate.value);
+    if (start > end) {
       showError('Start date cannot be later than end date');
       return;
     }
-    startDate.value = new Date(customStartDate.value);
-    endDate.value = new Date(customEndDate.value);
-    updateTrendChart();
+    startDate.value = start;
+    endDate.value = end;
   }
 };
+
 
 // Budget Methods
 const saveBudgetLimits = async () => {
@@ -2516,6 +2520,12 @@ const exportBudgetToPDF = () => {
 
   doc.save(`Budget-${budgetMonth.value}.pdf`);
 };
+watch([startDate, endDate], () => {
+  updateTrendChart();
+  updateIncomeDistributionChart();
+  updateExpenseDistributionChart();
+});
+
 </script>
 
 <style>

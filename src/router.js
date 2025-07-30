@@ -12,15 +12,15 @@ import EcoTry from "./components/EcoTry.vue"
 
 
 ///User
-import EcoProfilePage from './components/EcoUserChild/EcoProfilePage.vue';
-import SampleDashboard from './components/EcoUserChild/SampleDashboard.vue';
-import SampleEditProfile from './components/EcoUserChild/SampleEditProfile.vue';
-import SampleMessenger from './components/EcoUserChild/SampleMessenger.vue';
-import SampleResetPassword from './components/EcoUserChild/SampleResetPassword.vue';
-import EcoSettingsParent from './components/EcoUserChild/EcoSettingsParent.vue';
-import SampleDetector from './components/EcoUserChild/SampleDetector.vue';
-import SampleFinancial from './components/EcoUserChild/SampleFinancial.vue';
-import SampleSensor from './components/EcoUserChild/SampleSensor.vue';
+import EcoUser_ProfilePage from './components/EcoUserChild/EcoUser_ProfilePage.vue';
+import EcoUser_Dashboard from './components/EcoUserChild/EcoUser_Dashboard.vue';
+import EcoUser_EditProfile from './components/EcoUserChild/EcoUser_EditProfile.vue';
+import EcoUser_Communication from './components/EcoUserChild/EcoUser_Communication.vue';
+import EcoUser_ResetPassword from './components/EcoUserChild/EcoUser_ResetPassword.vue';
+import EcoUser_SettingsParent from './components/EcoUserChild/EcoUser_SettingsParent.vue';
+import EcoUser_CropAnalysis from './components/EcoUserChild/EcoUser_CropAnalysis.vue';
+import EcoUser_Financial from './components/EcoUserChild/EcoUser_Financial.vue';
+import EcoUser_Device from './components/EcoUserChild/EcoUser_Device.vue';
 
 ///Admin
 import EcoAdmin_Dashboard from './components/EcoAdmin/EcoAdmin_Child/EcoAdmin_Dashboard.vue';
@@ -47,17 +47,17 @@ const routes = [
     component: EcoUserParent,
     meta: { requiresAuth: true, role: 'user' },
     children: [
-      { path: 'profile-display', component: EcoProfilePage, meta: { requiresAuth: true, role: 'user' }},
-      { path: 'dashboard', component: SampleDashboard, meta: { requiresAuth: true, role: 'user' } },
-      { path: 'messenger', component: SampleMessenger, meta: { requiresAuth: true, role: 'user' }},
-      { path: 'model', component: SampleDetector, meta: { requiresAuth: true, role: 'user' } },
-      { path: 'financial-management', component: SampleFinancial, meta: { requiresAuth: true, role: 'user' } },
-      { path: 'sensor_data', component: SampleSensor, meta: { requiresAuth: true, role: 'user' } },
-      { path: 'settings', component: EcoSettingsParent, meta: { requiresAuth: true, role: 'user' },
+      { path: 'profile-display', component: EcoUser_ProfilePage, meta: { requiresAuth: true, role: 'user' }},
+      { path: 'dashboard', component: EcoUser_Dashboard, meta: { requiresAuth: true, role: 'user' } },
+      { path: 'messenger', component: EcoUser_Communication, meta: { requiresAuth: true, role: 'user' }},
+      { path: 'model', component: EcoUser_CropAnalysis, meta: { requiresAuth: true, role: 'user' } },
+      { path: 'financial-management', component: EcoUser_Financial, meta: { requiresAuth: true, role: 'user' } },
+      { path: 'sensor_data', component: EcoUser_Device, meta: { requiresAuth: true, role: 'user' } },
+      { path: 'settings', component: EcoUser_SettingsParent, meta: { requiresAuth: true, role: 'user' },
         children: [
-         { path: 'profile-display', component: EcoProfilePage, meta: { requiresAuth: true, role: 'user' } },
-         { path: 'edit-profile', component: SampleEditProfile, meta: { requiresAuth: true, role: 'user' } },
-         { path: 'reset-password', component: SampleResetPassword, meta: { requiresAuth: true, role: 'user' } },
+         { path: 'profile-display', component: EcoUser_ProfilePage, meta: { requiresAuth: true, role: 'user' } },
+         { path: 'edit-profile', component: EcoUser_EditProfile, meta: { requiresAuth: true, role: 'user' } },
+         { path: 'reset-password', component: EcoUser_ResetPassword, meta: { requiresAuth: true, role: 'user' } },
       ]
        },
     ]
@@ -70,13 +70,13 @@ const routes = [
 
       { path: 'user-management', component: EcoAdmin_UserManagement, meta: { requiresAuth: true, role: 'admin'} },
       { path: 'dashboard', component: EcoAdmin_Dashboard, meta: { requiresAuth: true, role: 'admin'} },
-      { path: 'profile-display', component: EcoProfilePage, meta: { requiresAuth: true, role: 'admin'} },
-      { path: 'messenger', component: SampleMessenger, meta: { requiresAuth: true, role: 'admin'} },
-      { path: 'settings', component: EcoSettingsParent, meta: { requiresAuth: true, role: 'admin' },
+      { path: 'profile-display', component: EcoUser_ProfilePage, meta: { requiresAuth: true, role: 'admin'} },
+      { path: 'messenger', component: EcoUser_Communication, meta: { requiresAuth: true, role: 'admin'} },
+      { path: 'settings', component: EcoUser_SettingsParent, meta: { requiresAuth: true, role: 'admin' },
         children: [
-         { path: 'profile-display', component: EcoProfilePage, meta: { requiresAuth: true, role: 'admin' } },
-         { path: 'edit-profile', component: SampleEditProfile, meta: { requiresAuth: true, role: 'admin' } },
-         { path: 'reset-password', component: SampleResetPassword, meta: { requiresAuth: true, role: 'admin' } },
+         { path: 'profile-display', component: EcoUser_ProfilePage, meta: { requiresAuth: true, role: 'admin' } },
+         { path: 'edit-profile', component: EcoUser_EditProfile, meta: { requiresAuth: true, role: 'admin' } },
+         { path: 'reset-password', component: EcoUser_ResetPassword, meta: { requiresAuth: true, role: 'admin' } },
       ]
        },
        { path: 'guest-contacts', component: EcoAdmin_GuestContacts, meta: { requiresAuth: true, role: 'admin'} },

@@ -1,2267 +1,2549 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <!-- Header Section -->
-      <div class="bg-white rounded-2xl shadow-xl p-6 mb-8">
-        <div class="flex items-center justify-between mb-6">
-          <div>
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">🌱 Crop Disease Detection</h1>
-            <p class="text-gray-600">AI-powered Lettuce Health Analysis and Monitoring</p>
+  <div class="min-h-screen bg-gray-50 flex flex-col">
+    <!-- Main Content Area with Sidebar -->
+    <div class="flex flex-1 overflow-hidden">
+
+      <!-- Main Content -->
+      <main class="flex-1 overflow-y-auto bg-gray-50 p-4 md:p-6">
+        <!-- Page Header -->
+        <div class="mb-6">
+          <h1 class="text-2xl font-bold text-gray-800">Financial Management</h1>
+          <p class="text-gray-600">Track income, expenses, and financial performance</p>
+        </div>
+
+        <!-- Financial Summary Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <!-- Income Card -->
+          <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-green-500">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-sm font-medium text-gray-500">Total Income</p>
+                <h3 class="text-2xl font-bold text-gray-800 mt-1">₱{{ safeToLocaleString(totalIncome) }}</h3>
+                <div class="flex items-center mt-1">
+                  <span :class="[
+                    incomeGrowth >= 0 ? 'text-green-600' : 'text-red-600',
+                    'text-sm font-medium flex items-center'
+                  ]">
+                    <svg v-if="incomeGrowth >= 0" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414 3.707 6.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                    </svg>
+                    <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1V9a1 1 0 10-2 0v3.586l-4.293-4.293a1 1 0 00-1.414 0L8 10.586 3.707 6.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 10.414 14.586 14H12z" clip-rule="evenodd" />
+                    </svg>
+                    {{ Math.abs(incomeGrowth).toFixed(1) }}%
+                  </span>
+                  <span class="text-gray-500 text-xs ml-1">vs last month</span>
+                </div>
+              </div>
+              <div class="p-2 bg-green-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Expenses Card -->
+          <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-red-500">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-sm font-medium text-gray-500">Total Expenses</p>
+                <h3 class="text-2xl font-bold text-gray-800 mt-1">₱{{ safeToLocaleString(totalExpenses) }}</h3>
+                <div class="flex items-center mt-1">
+                  <span :class="[
+                    expenseGrowth <= 0 ? 'text-green-600' : 'text-red-600',
+                    'text-sm font-medium flex items-center'
+                  ]">
+                    <svg v-if="expenseGrowth <= 0" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1V9a1 1 0 10-2 0v3.586l-4.293-4.293a1 1 0 00-1.414 0L8 10.586 3.707 6.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 10.414 14.586 14H12z" clip-rule="evenodd" />
+                    </svg>
+                    <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                    </svg>
+                    {{ Math.abs(expenseGrowth).toFixed(1) }}%
+                  </span>
+                  <span class="text-gray-500 text-xs ml-1">vs last month</span>
+                </div>
+              </div>
+              <div class="p-2 bg-red-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Net Profit Card -->
+          <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-blue-500">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-sm font-medium text-gray-500">Net Profit</p>
+                <h3 class="text-2xl font-bold text-gray-800 mt-1">₱{{ safeToLocaleString(netProfit) }}</h3>
+                <div class="flex items-center mt-1">
+                  <span :class="[
+                    profitGrowth >= 0 ? 'text-green-600' : 'text-red-600',
+                    'text-sm font-medium flex items-center'
+                  ]">
+                    <svg v-if="profitGrowth >= 0" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                    </svg>
+                    <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1V9a1 1 0 10-2 0v3.586l-4.293-4.293a1 1 0 00-1.414 0L8 10.586 3.707 6.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 10.414 14.586 14H12z" clip-rule="evenodd" />
+                    </svg>
+                    {{ Math.abs(profitGrowth).toFixed(1) }}%
+                  </span>
+                  <span class="text-gray-500 text-xs ml-1">vs last month</span>
+                </div>
+              </div>
+              <div class="p-2 bg-blue-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Savings Rate Card -->
+          <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-purple-500">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-sm font-medium text-gray-500">Savings Rate</p>
+                <h3 class="text-2xl font-bold text-gray-800 mt-1">{{ savingsRate.toFixed(1) }}%</h3>
+                <div class="flex items-center mt-1">
+                  <span :class="[
+                    savingsRateGrowth >= 0 ? 'text-green-600' : 'text-red-600',
+                    'text-sm font-medium flex items-center'
+                  ]">
+                    <svg v-if="savingsRateGrowth >= 0" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                    </svg>
+                    <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1V9a1 1 0 10-2 0v3.586l-4.293-4.293a1 1 0 00-1.414 0L8 10.586 3.707 6.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 10.414 14.586 14H12z" clip-rule="evenodd" />
+                    </svg>
+                    {{ Math.abs(savingsRateGrowth).toFixed(1) }}%
+                  </span>
+                  <span class="text-gray-500 text-xs ml-1">vs last month</span>
+                </div>
+              </div>
+              <div class="p-2 bg-purple-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="mb-4">
-  <label for="modelSelect" class="block text-sm font-medium text-gray-700 mb-1">🧠 Choose Model</label>
-  <select
-    id="modelSelect"
-    v-model="selectedModel"
-    class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500"
-  >
-    <option value="v2">🌿 LettuceModel V2</option>
-    <option value="v3">🌿 LettuceModel V3</option>
-  </select>
-</div>
-
-        <!-- Model Information -->
-        <div v-if="modelInfo" class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-200">
-          <h3 class="text-lg font-semibold text-emerald-800 mb-3">Model Information</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-            <div class="bg-white rounded-lg p-3 shadow-sm">
-              <p class="text-gray-500 font-medium">Model</p>
-              <p class="text-gray-900 font-semibold">{{ modelInfo.model_name }}</p>
-            </div>
-            <div class="bg-white rounded-lg p-3 shadow-sm">
-              <p class="text-gray-500 font-medium">Version</p>
-              <p class="text-gray-900 font-semibold">{{ modelInfo.version }}</p>
-            </div>
-            <div class="bg-white rounded-lg p-3 shadow-sm">
-              <p class="text-gray-500 font-medium">Input Shape</p>
-              <p class="text-gray-900 font-semibold">[{{ modelInfo.input_shape.join(', ') }}]</p>
-            </div>
-            <div class="bg-white rounded-lg p-3 shadow-sm">
-              <p class="text-gray-500 font-medium">Classes</p>
-              <p class="text-gray-900 font-semibold">{{ modelInfo.classes.length }} types</p>
-            </div>
+        <!-- Main Content Tabs -->
+        <div class="bg-white rounded-lg shadow-sm mb-6">
+          <div class="border-b">
+            <nav class="flex -mb-px">
+              <button 
+                @click="currentAnalyticsTab = 'overview'" 
+                :class="[
+                  'py-4 px-6 font-medium text-sm border-b-2 focus:outline-none',
+                  currentAnalyticsTab === 'overview' 
+                    ? 'border-emerald-500 text-emerald-600' 
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ]"
+              >
+                Overview
+              </button>
+              <button 
+                @click="currentAnalyticsTab = 'budget'" 
+                :class="[
+                  'py-4 px-6 font-medium text-sm border-b-2 focus:outline-none',
+                  currentAnalyticsTab === 'budget' 
+                    ? 'border-emerald-500 text-emerald-600' 
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ]"
+              >
+                Budget Tracking
+              </button>
+              <button 
+                @click="currentAnalyticsTab = 'forecast'" 
+                :class="[
+                  'py-4 px-6 font-medium text-sm border-b-2 focus:outline-none',
+                  currentAnalyticsTab === 'forecast' 
+                    ? 'border-emerald-500 text-emerald-600' 
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ]"
+              >
+                Forecasting
+              </button>
+            </nav>
           </div>
-        </div>
-      </div>
 
-      <!-- Tab Navigation -->
-      <div class="bg-white rounded-2xl shadow-xl mb-8">
-        <div class="border-b border-gray-200">
-          <nav class="flex space-x-8 px-6" aria-label="Tabs">
-            <button
-              v-for="tab in tabs"
-              :key="tab"
-              @click="activeTab = tab"
-              :class="[
-                'py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200',
-                activeTab === tab 
-                  ? 'border-emerald-500 text-emerald-600' 
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              ]"
-            >
-              {{ tab }}
-            </button>
-            <!-- Toggle Compare Mode Button -->
-<button
-  class="ml-auto text-sm text-indigo-600 hover:underline"
-  @click="compareMode = !compareMode"
->
-  {{ compareMode ? '← Back to Single Image Mode' : '🧪 Switch to Compare Mode' }}
-</button>
-
-          </nav>
-        </div>
-
-        <!-- Tab Content -->
-        <div class="p-6">
-          <!-- Detector Tab -->
-          <div v-if="activeTab === 'Detector'" class="space-y-8">
-
-             <!-- 🧪 Compare Mode ON -->
-  <div v-if="compareMode">
-    <!-- Compare Mode -->
-            <div class="bg-gray-50 rounded-xl p-6">
-              <h3 class="text-xl font-semibold text-gray-900 mb-4">⚖️ Compare Images</h3>
-              
-              <div v-if="compareMode" class="space-y-6">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div class="space-y-3">
-                    <label class="block text-sm font-medium text-gray-700">Image 1</label>
-                    <div
-  :class="['border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition', 
-  dragOver1 ? 'border-blue-500 bg-blue-50' : 'border-blue-300']"
-@dragover.prevent="dragOver1 = true"
-@dragleave.prevent="dragOver1 = false"
-  @drop.prevent="handleDropCompare($event, 1); dragOver1 = false"
-  @click="$refs.fileDrop1.click()"
->
-  <p class="text-sm text-blue-600">📂 Drag & drop or click to upload Image 1</p>
-  <input 
-    type="file" 
-    accept="image/*" 
-    @change="e => handleCompareFile(e, 1)"
-    ref="fileDrop1"
-    class="hidden"
-  />
-</div>
-
-                    <div v-if="filePreview1" class="rounded-lg overflow-hidden shadow-md">
-                      <img :src="filePreview1" class="w-full h-48 object-cover" />
-                    </div>
+          <!-- Tab Content -->
+          <div class="p-6">
+            <!-- Overview Tab -->
+            <div v-if="currentAnalyticsTab === 'overview'">
+              <!-- Date Range Selector -->
+              <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <div class="flex flex-wrap items-center gap-2">
+                  <button 
+                    v-for="range in dateRanges" 
+                    :key="range.id"
+                    @click="setDateRange(range.id)"
+                    :class="[
+                      'px-3 py-1 text-sm rounded-md',
+                      selectedDateRange === range.id 
+                        ? 'bg-emerald-100 text-emerald-700 font-medium' 
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ]"
+                  >
+                    {{ range.name }}
+                  </button>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div v-if="selectedDateRange === 'custom'" class="flex items-center gap-2">
+                    <input 
+                      type="date" 
+                      v-model="customStartDate" 
+                      class="px-3 py-1 text-sm border border-gray-300 rounded-md"
+                    >
+                    <span class="text-gray-500">to</span>
+                    <input 
+                      type="date" 
+                      v-model="customEndDate" 
+                      class="px-3 py-1 text-sm border border-gray-300 rounded-md"
+                    >
+                    <button 
+                      @click="applyCustomDateRange" 
+                      class="px-3 py-1 text-sm bg-emerald-100 text-emerald-700 rounded-md hover:bg-emerald-200"
+                    >
+                      Apply
+                    </button>
                   </div>
-                  
-                  <div class="space-y-3">
-                    <label class="block text-sm font-medium text-gray-700">Image 2</label>
-                   <div
-  :class="['border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition', 
-  dragOver2 ? 'border-blue-500 bg-blue-50' : 'border-blue-300']"
-  @dragover.prevent="dragOver2 = true"
-@dragleave.prevent="dragOver2 = false"
-  @drop.prevent="handleDropCompare($event, 2); dragOver2 = false"
-  @click="$refs.fileDrop2.click()"
->
-  <p class="text-sm text-blue-600">📂 Drag & drop or click to upload Image 2</p>
-  <input 
-    type="file" 
-    accept="image/*" 
-    @change="e => handleCompareFile(e, 2)"
-    ref="fileDrop2"
-    class="hidden"
-  />
-</div>
+                  <button 
+                    @click="toggleChartType" 
+                    class="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                  >
+                    <span class="flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path v-if="chartType === 'line'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                      </svg>
+                      {{ chartType === 'line' ? 'Bar Chart' : 'Line Chart' }}
+                    </span>
+                  </button>
+                  <button 
+                    @click="toggleCumulativeMode" 
+                    :class="[
+                      'px-3 py-1 text-sm rounded-md',
+                      cumulativeMode 
+                        ? 'bg-emerald-100 text-emerald-700' 
+                        : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                    ]"
+                  >
+                    <span class="flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11l7-7 7 7M5 19l7-7 7 7" />
+                      </svg>
+                      Cumulative
+                    </span>
+                  </button>
+                </div>
+              </div>
 
-                    <div v-if="filePreview2" class="rounded-lg overflow-hidden shadow-md">
-                      <img :src="filePreview2" class="w-full h-48 object-cover" />
+              <!-- Main Chart -->
+              <div class="bg-white rounded-lg border p-4 mb-6">
+                <h3 class="text-lg font-medium text-gray-800 mb-4">Financial Overview</h3>
+                <div class="h-80 relative">
+                  <div v-if="chartLoading" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
+                    <svg class="animate-spin h-8 w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  </div>
+                  <canvas ref="trendChartCanvas"></canvas>
+                </div>
+              </div>
+
+              <!-- Distribution Charts -->
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Income Distribution -->
+                <div class="bg-white rounded-lg border p-4">
+                  <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-medium text-gray-800">Income Distribution</h3>
+                    <button 
+                      @click="toggleIncomeChartType" 
+                      class="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                    >
+                      <span class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path v-if="incomeChartType === 'pie'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                          <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+                        </svg>
+                        {{ incomeChartType === 'pie' ? 'Bar Chart' : 'Pie Chart' }}
+                      </span>
+                    </button>
+                  </div>
+                  <div class="h-64 relative">
+                    <div v-if="incomeChartLoading" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
+                      <svg class="animate-spin h-8 w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
                     </div>
+                    <canvas ref="incomeDistributionCanvas"></canvas>
                   </div>
                 </div>
 
-                <div class="flex flex-wrap gap-3">
-  <button
-    class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 disabled:opacity-50"
-    :disabled="!file1 || !file2"
-    @click="analyzeComparison"
-  >
-    🔍 Analyze Both Images
-  </button>
-
-  <button
-    v-if="result1 && result2"
-    @click="clearCompare"
-    class="inline-flex items-center px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors duration-200"
-  >
-    🔁 Try Another Image
-  </button>
-
-  <button
-    class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-colors duration-200"
-    @click="clearCompare"
-  >
-    ♻️ Reset Compare
-  </button>
-</div>
-
-
+                <!-- Expense Distribution -->
+                <div class="bg-white rounded-lg border p-4">
+                  <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-medium text-gray-800">Expense Distribution</h3>
+                    <button 
+                      @click="toggleExpenseChartType" 
+                      class="px-3 py-1 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                    >
+                      <span class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path v-if="expenseChartType === 'pie'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                          <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+                        </svg>
+                        {{ expenseChartType === 'pie' ? 'Bar Chart' : 'Pie Chart' }}
+                      </span>
+                    </button>
+                  </div>
+                  <div class="h-64 relative">
+                    <div v-if="expenseChartLoading" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
+                      <svg class="animate-spin h-8 w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    </div>
+                    <canvas ref="expenseDistributionCanvas"></canvas>
+                  </div>
+                </div>
               </div>
             </div>
-  </div>
 
-  <!-- 🖼️ Single Image Mode -->
-  <div v-else>
-    <!-- Image Upload Section -->
-            <div class="bg-gray-50 rounded-xl p-6">
-              <h3 class="text-xl font-semibold text-gray-900 mb-4">📸 Image Analysis</h3>
-              
-              <!-- File Upload -->
-              <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Upload Image</label>
-                <div
-  class="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition"
-  :class="dragOverSingle ? 'border-emerald-500 bg-emerald-50' : 'border-emerald-300'"
-  @dragover.prevent="dragOverSingle = true"
-  @dragleave.prevent="dragOverSingle = false"
-  @drop.prevent="handleDropSingle($event); dragOverSingle = false"
-  @click="$refs.fileDropSingle.click()"
-  role="button"
-  tabindex="0"
-  @keydown.enter="$refs.fileDropSingle.click()"
-  @keydown.space.prevent="$refs.fileDropSingle.click()"
-  aria-label="Upload image by clicking or dragging"
+           <div v-if="currentAnalyticsTab === 'budget'">
+  <!-- Month Selector and Save Button -->
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+    <div class="w-full sm:w-auto">
+      <label for="budget-month" class="block text-sm font-medium text-gray-700 mb-1">Select Month</label>
+      <select
+        id="budget-month"
+        v-model="budgetMonth"
+        class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm rounded-md"
+      >
+        <option v-for="month in months" :key="month.id" :value="month.id">
+          {{ month.name }}
+        </option>
+      </select>
+    </div>
+    <button
+  @click="resetBudgetLimits"
+  class="px-4 py-2 bg-gray-100 text-gray-800 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition"
 >
-  <p class="text-sm text-emerald-600">📂 Drag & drop or click to upload an image</p>
-  <input
-    type="file"
-    accept="image/*"
-    @change="onFileChange"
-    ref="fileDropSingle"
-    class="hidden"
-  />
+  Reset Limits
+</button>
+
+    <button
+      @click="saveBudgetLimits"
+      class="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition"
+      aria-label="Save budget limits"
+    >
+      Save Budget Limits
+    </button>
+    <div class="flex flex-wrap gap-3">
+  <button
+    @click="exportBudgetToCSV"
+    class="px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
+  >
+    Export CSV
+  </button>
+  <button
+    @click="exportBudgetToPDF"
+    class="px-4 py-2 bg-rose-600 text-white rounded-md hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+  >
+    Export PDF
+  </button>
 </div>
 
+  </div>
+
+  <!-- Budget Progress Display -->
+  <div class="bg-white rounded-lg border p-4 mb-6 shadow-sm">
+    <div class="mb-4 text-sm text-gray-600">
+  Total Limit: <span class="font-semibold text-gray-800">₱{{ safeToLocaleString(totalBudgetLimit) }}</span>
+</div>
+
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">Budget Progress</h3>
+
+    <div v-if="loadingBudget" class="text-gray-500 text-sm">Loading budget limits...</div>
+    
+    <div v-else class="space-y-6">
+      <div
+        v-for="(category, index) in categories"
+        :key="index"
+        class="space-y-2"
+      >
+        <!-- Category Row -->
+        <div class="flex justify-between items-center">
+          <span class="text-sm font-medium text-gray-700">{{ category }}</span>
+
+          <div class="flex items-center gap-4">
+            <div class="flex items-center">
+              <span class="text-sm text-gray-500 mr-2">Actual:</span>
+              <span class="text-sm font-medium text-gray-900">
+                ₱{{ safeToLocaleString(budgetData[category]?.actual || 0) }}
+              </span>
+            </div>
+            <div class="flex items-center">
+              <span class="text-sm text-gray-500 mr-2">Limit:</span>
+              <input
+                type="number"
+                v-model.number="budgetLimits[category]"
+                class="w-24 px-2 py-1 text-sm border border-gray-300 rounded-md"
+                min="0"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="w-full bg-gray-200 rounded-full h-2.5">
+          <div
+            class="h-2.5 rounded-full transition-all duration-300"
+            :class="[
+              budgetData[category]?.actual <= budgetData[category]?.limit * 0.8 ? 'bg-green-600' :
+              budgetData[category]?.actual <= budgetData[category]?.limit ? 'bg-yellow-500' :
+              'bg-red-600'
+            ]"
+            :style="{
+              width: budgetData[category]?.limit > 0
+                ? Math.min(100, (budgetData[category]?.actual / budgetData[category]?.limit) * 100) + '%'
+                : '0%'
+            }"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+            <!-- Forecasting Tab -->
+            <div v-if="currentAnalyticsTab === 'forecast'">
+              <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <div>
+                  <label for="forecast-months" class="block text-sm font-medium text-gray-700 mb-1">Forecast Period (Months)</label>
+                  <select 
+                    id="forecast-months" 
+                    v-model="forecastMonths"
+                    class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm rounded-md"
+                  >
+                    <option value="3">3 Months</option>
+                    <option value="6">6 Months</option>
+                    <option value="12">12 Months</option>
+                  </select>
+                </div>
               </div>
 
-              <!-- Image Preview -->
-              <div v-if="filePreview" class="mb-6">
-                <img :src="filePreview" class="w-full max-h-80 object-contain rounded-xl shadow-lg border border-gray-200" />
+              <!-- Forecast Chart -->
+              <div class="bg-white rounded-lg border p-4 mb-6">
+                <h3 class="text-lg font-medium text-gray-800 mb-4">Financial Forecast</h3>
+                <div class="h-80 relative">
+                  <div v-if="forecastChartLoading" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
+                    <svg class="animate-spin h-8 w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  </div>
+                  <canvas ref="forecastChartCanvas"></canvas>
+                </div>
               </div>
 
-              <!-- Action Buttons -->
-              <div class="flex flex-wrap gap-3">
-                <button
-                  class="inline-flex items-center px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                  :disabled="!file || loading"
-                  @click="analyzeImage"
+              <!-- Forecast Summary -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-white rounded-lg border p-4">
+                  <h4 class="text-sm font-medium text-gray-500 mb-1">Forecasted Income</h4>
+                  <div class="text-2xl font-bold text-gray-800">₱{{ safeToLocaleString(forecastedIncome) }}</div>
+                  <div class="flex items-center mt-1">
+                    <span :class="[
+                      forecastedIncomeGrowth >= 0 ? 'text-green-600' : 'text-red-600',
+                      'text-sm font-medium flex items-center'
+                    ]">
+                      <svg v-if="forecastedIncomeGrowth >= 0" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                      </svg>
+                      <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1V9a1 1 0 10-2 0v3.586l-4.293-4.293a1 1 0 00-1.414 0L8 10.586 3.707 6.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 10.414 14.586 14H12z" clip-rule="evenodd" />
+                      </svg>
+                      {{ Math.abs(forecastedIncomeGrowth).toFixed(1) }}%
+                    </span>
+                    <span class="text-gray-500 text-xs ml-1">vs current</span>
+                  </div>
+                </div>
+                <div class="bg-white rounded-lg border p-4">
+                  <h4 class="text-sm font-medium text-gray-500 mb-1">Forecasted Expenses</h4>
+                  <div class="text-2xl font-bold text-gray-800">₱{{ safeToLocaleString(forecastedExpenses) }}</div>
+                  <div class="flex items-center mt-1">
+                    <span :class="[
+                      forecastedExpenseGrowth <= 0 ? 'text-green-600' : 'text-red-600',
+                      'text-sm font-medium flex items-center'
+                    ]">
+                      <svg v-if="forecastedExpenseGrowth <= 0" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1V9a1 1 0 10-2 0v3.586l-4.293-4.293a1 1 0 00-1.414 0L8 10.586 3.707 6.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 10.414 14.586 14H12z" clip-rule="evenodd" />
+                      </svg>
+                      <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                      </svg>
+                      {{ Math.abs(forecastedExpenseGrowth).toFixed(1) }}%
+                    </span>
+                    <span class="text-gray-500 text-xs ml-1">vs current</span>
+                  </div>
+                </div>
+                <div class="bg-white rounded-lg border p-4">
+                  <h4 class="text-sm font-medium text-gray-500 mb-1">Forecasted Profit</h4>
+                  <div class="text-2xl font-bold text-gray-800">₱{{ safeToLocaleString(forecastedProfit) }}</div>
+                  <div class="flex items-center mt-1">
+                    <span :class="[
+                      forecastedProfitGrowth >= 0 ? 'text-green-600' : 'text-red-600',
+                      'text-sm font-medium flex items-center'
+                    ]">
+                      <svg v-if="forecastedProfitGrowth >= 0" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
+                      </svg>
+                      <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1V9a1 1 0 10-2 0v3.586l-4.293-4.293a1 1 0 00-1.414 0L8 10.586 3.707 6.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 10.414 14.586 14H12z" clip-rule="evenodd" />
+                      </svg>
+                      {{ Math.abs(forecastedProfitGrowth).toFixed(1) }}%
+                    </span>
+                    <span class="text-gray-500 text-xs ml-1">vs current</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transaction Form -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <h2 class="text-xl font-bold text-gray-800 mb-4">{{ isEditing ? 'Edit Transaction' : 'Add New Transaction' }}</h2>
+          <form @submit.prevent="isEditing ? updateTransaction() : addTransaction()">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+              <div>
+                <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Amount (₱)</label>
+                <input 
+                  type="number" 
+                  id="amount" 
+                  v-model="amount" 
+                  class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
+                  placeholder="0.00"
+                  step="0.01"
+                  min="0"
+                  required
                 >
-                  <svg v-if="loading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <p v-if="formErrors.amount" class="mt-1 text-sm text-red-600">{{ formErrors.amount }}</p>
+              </div>
+              <div>
+                <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                <select 
+                  id="type" 
+                  v-model="type"
+                  class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
+                >
+                  <option value="income">Income</option>
+                  <option value="expense">Expense</option>
+                </select>
+              </div>
+              <div>
+                <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                <select 
+                  id="category" 
+                  v-model="category"
+                  class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
+                >
+                  <option v-for="(cat, index) in categories" :key="index" :value="cat">{{ cat }}</option>
+                </select>
+              </div>
+              <div>
+                <label for="date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                <input 
+                  type="date" 
+                  id="date" 
+                  v-model="transactionDate" 
+                  class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
+                  required
+                >
+              </div>
+            </div>
+            <div class="mb-4">
+              <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">Notes (Optional)</label>
+              <textarea 
+                id="notes" 
+                v-model="notes" 
+                rows="2"
+                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
+                placeholder="Add any additional details here..."
+              ></textarea>
+            </div>
+            <div class="flex justify-end space-x-3">
+              <button 
+                v-if="isEditing"
+                type="button"
+                @click="cancelEdit"
+                class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+              >
+                Cancel
+              </button>
+              <button 
+                type="submit"
+                class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+                :disabled="loading"
+              >
+                <span v-if="loading" class="flex items-center">
+                  <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  {{ loading ? "Analyzing..." : "🔍 Analyze Image" }}
-                </button>
-
-                <button
-                  class="inline-flex items-center px-4 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-colors duration-200"
-                  @click="clearForm"
-                  :disabled="!file && !result"
-                >
-                  🗑️ Clear
-                </button>
-
-                <button
-                  v-if="result"
-                  class="inline-flex items-center px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors duration-200"
-                  @click="showConfidenceCard = true"
-                >
-                  📊 View Details
-                </button>
-              </div>
-            </div>
-
-            <!-- Camera Section -->
-            <!-- Collapsible Camera Section -->
-<div class="bg-gray-50 rounded-xl p-6">
-  <div class="flex justify-between items-center mb-4">
-    <h3 class="text-xl font-semibold text-gray-900">📹 Live Camera</h3>
-    <button
-      @click="showCameraSection = !showCameraSection"
-      class="text-sm text-indigo-600 hover:underline focus:outline-none"
-    >
-      {{ showCameraSection ? 'Hide' : 'Show' }}
-    </button>
-  </div>
-
-  <transition name="fade">
-    <div v-if="showCameraSection" class="space-y-4">
-      <video ref="videoRef" autoplay playsinline class="w-full max-h-80 rounded-xl border border-gray-200 shadow-lg bg-black"></video>
-      
-      <div class="flex flex-wrap gap-3">
-        <button
-          class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors duration-200"
-          @click="toggleCamera"
-        >
-          {{ cameraActive ? '🛑 Stop Camera' : '🎥 Start Camera' }}
-        </button>
-
-        <button
-          class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
-          @click="captureImage"
-          :disabled="!cameraActive"
-        >
-          📷 Capture Photo
-        </button>
-      </div>
-    </div>
-  </transition>
-</div>
-
-  </div>
-            
-
-            <!-- Results Section -->
-            <div v-if="result" class="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
-              <h3 class="text-2xl font-bold text-gray-900 mb-4">📋 Analysis Results</h3>
-              
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-  <!-- Result Summary -->
-  <div class="space-y-4">
-    <div class="bg-emerald-50 rounded-xl p-5 border border-emerald-200">
-      <div class="flex items-center gap-3">
-        <div class="text-4xl">
-          <span v-if="result.prediction === 'Healthy'">✅</span>
-          <span v-else-if="result.prediction === 'Bacterial'">🦠</span>
-          <span v-else-if="result.prediction === 'Fungal'">🍄</span>
-          <span v-else-if="result.prediction === 'Mosaic Virus'">🧬</span>
-          <span v-else-if="result.prediction === 'Nutrient Deficiency'">🧬</span>
-          <span v-else-if="result.prediction === 'Not Lettuce'">🚫</span>
-          <span v-else-if="result.prediction === 'Cannot Classify'">🚫</span>
-          <span v-else>📌</span>
-        </div>
-        <div>
-          <h4 class="text-2xl font-bold text-emerald-800">{{ result.prediction }}</h4>
-          <p class="text-sm text-gray-600">
-            Confidence:
-            <span :class="{
-              'text-green-600': result.confidence >= 0.8,
-              'text-yellow-600': result.confidence >= 0.5 && result.confidence < 0.8,
-              'text-red-600': result.confidence < 0.5
-            }">
-              {{ (result.confidence * 100).toFixed(2) }}%
-            </span>
-          </p>
-          <div class="text-xs text-gray-500 mt-1">
-  Model:
-  <strong>{{ result.modelUsed?.toUpperCase() || selectedModel.toUpperCase() }}</strong>
-  <span v-if="modelInfo?.version" class="ml-2 text-gray-400">(v{{ modelInfo.version }})</span>
-</div>
-
-        </div>
-      </div>
-    </div>
-
-    <!-- Fallback Warning -->
-    <div v-if="result.fallback_used" class="bg-yellow-100 border-l-4 border-yellow-500 p-4 rounded-lg">
-      <p class="text-yellow-800 font-medium">⚠️ Low Confidence Prediction</p>
-      <p class="text-sm text-yellow-700">The model could not confidently classify this image. Consider uploading a clearer image.</p>
-    </div>
-  </div>
-
-  <!-- Recommendations Section -->
-  <div class="bg-blue-50 rounded-xl p-5 border border-blue-200">
-    <h4 class="text-lg font-bold text-blue-800 mb-3">📝 Recommendations</h4>
-
-    <!-- Status Type -->
-    <div v-if="result.recommendations?.steps && !result.recommendations?.diseases">
-      <p class="text-gray-700 mb-2">{{ result.recommendations.description }}</p>
-      <ul class="list-disc list-inside text-sm text-gray-700">
-        <li v-for="(step, idx) in result.recommendations.steps" :key="idx">{{ step }}</li>
-      </ul>
-    </div>
-
-    <!-- Disease Type -->
-    <div v-else-if="result.recommendations?.diseases">
-      <div v-for="(disease, i) in result.recommendations.diseases" :key="i" class="mb-4">
-        <h5 class="text-md font-semibold text-blue-700">{{ disease.name }}</h5>
-        <p class="text-sm text-gray-600">{{ disease.description }}</p>
-
-        <div v-for="(treatment, tIdx) in disease.treatments" :key="tIdx" class="ml-3 mt-2">
-          <p class="text-sm font-medium text-blue-500 mb-1">{{ treatment.label }} Treatment</p>
-          <ul class="list-disc list-inside text-sm text-gray-700">
-            <li v-for="(step, idx) in treatment.steps" :key="idx">{{ step }}</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <!-- Fallback -->
-    <div v-else>
-      <p class="text-sm text-gray-500 italic">No recommendations available.</p>
-    </div>
-  </div>
-</div>
-
-            </div>
-
-            <!-- Comparison Results -->
-            <div v-if="result1 && result2" class="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
-              <h3 class="text-2xl font-bold text-gray-900 mb-6">🔄 Comparison Results</h3>
-              
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
-                  <h4 class="text-lg font-bold text-blue-800 mb-3">🖼️ Image 1</h4>
-                  <div class="space-y-2">
-                    <p class="text-blue-900"><strong>Prediction:</strong> {{ result1.prediction }}</p>
-                    <p class="text-blue-900"><strong>Confidence:</strong> {{ (result1.confidence * 100).toFixed(2) }}%</p>
-                    <div class="mt-3">
-                      <p class="text-sm font-medium text-blue-800 mb-2">Class Probabilities:</p>
-                      <div class="space-y-1">
-                        <div v-for="(v, k) in result1.class_probabilities" :key="k" class="flex justify-between text-sm">
-                          <span class="text-blue-700">{{ k }}</span>
-                          <span class="text-blue-900 font-medium">{{ (v * 100).toFixed(2) }}%</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 border border-purple-200">
-                  <h4 class="text-lg font-bold text-purple-800 mb-3">🖼️ Image 2</h4>
-                  <div class="space-y-2">
-                    <p class="text-purple-900"><strong>Prediction:</strong> {{ result2.prediction }}</p>
-                    <p class="text-purple-900"><strong>Confidence:</strong> {{ (result2.confidence * 100).toFixed(2) }}%</p>
-                    <div class="mt-3">
-                      <p class="text-sm font-medium text-purple-800 mb-2">Class Probabilities:</p>
-                      <div class="space-y-1">
-                        <div v-for="(v, k) in result2.class_probabilities" :key="k" class="flex justify-between text-sm">
-                          <span class="text-purple-700">{{ k }}</span>
-                          <span class="text-purple-900 font-medium">{{ (v * 100).toFixed(2) }}%</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Progression Alert -->
-              <div v-if="progressionDetected" class="bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-400 p-4 rounded-lg">
-                <div class="flex items-center">
-                  <svg class="h-6 w-6 text-yellow-600 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m0-4h.01M12 18a9 9 0 100-18 9 9 0 000 18z" />
-                  </svg>
-                  <div>
-                    <h4 class="text-lg font-semibold text-yellow-800">⚠️ Disease Progression Detected</h4>
-                    <p class="text-yellow-700">{{ result1.prediction }} → {{ result2.prediction }}. Consider immediate intervention.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Insights Tab -->
-          <div v-if="activeTab === 'Insights'" class="space-y-8">
-            <div class="flex flex-wrap gap-4 items-center mb-6">
-  <select v-model="insightsModelFilter" class="px-3 py-2 border rounded-lg">
-    <option value="">All Models</option>
-    <option value="v2">LettuceModel V2</option>
-    <option value="v3">LettuceModel V3</option>
-  </select>
-
-  <select v-model="insightsModeFilter" class="px-3 py-2 border rounded-lg">
-    <option value="">All Modes</option>
-    <option value="single">Single Image</option>
-    <option value="compare">Comparison</option>
-  </select>
-
-  <input type="date" v-model="startDate" class="px-3 py-2 border rounded-lg" />
-  <input type="date" v-model="endDate" class="px-3 py-2 border rounded-lg" />
-</div>
-
-<p class="text-sm text-gray-600 mb-4">
-  Showing {{ insights.total }} scans 
-  <span v-if="insightsModelFilter">for Model: {{ insightsModelFilter.toUpperCase() }}</span>
-  <span v-if="insightsModeFilter"> | Mode: {{ insightsModeFilter }}</span>
-  <span v-if="startDate && endDate"> | Between: {{ startDate }} and {{ endDate }}</span>
-</p>
-
-            <!-- Export Button -->
-            <div class="flex justify-end">
-              <button
-                @click="exportInsightsToPDF"
-                class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
-              >
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Export to PDF
+                  {{ isEditing ? 'Updating...' : 'Adding...' }}
+                </span>
+                <span v-else>{{ isEditing ? 'Update Transaction' : 'Add Transaction' }}</span>
               </button>
             </div>
-
-            <!-- Summary Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div class="bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl p-6 text-white shadow-lg">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-emerald-100 text-sm font-medium">Total Analyses</p>
-                    <h2 class="text-3xl font-bold">{{ insights.total }}</h2>
-                  </div>
-                  <div class="bg-white/20 rounded-lg p-3">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              <div class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl p-6 text-white shadow-lg">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-blue-100 text-sm font-medium">Healthy</p>
-                    <h2 class="text-3xl font-bold">{{ insights.Healthy }}</h2>
-                  </div>
-                  <div class="bg-white/20 rounded-lg p-3">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              <div class="bg-gradient-to-br from-orange-500 to-red-600 rounded-xl p-6 text-white shadow-lg">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-orange-100 text-sm font-medium">Bacterial</p>
-                    <h2 class="text-3xl font-bold">{{ insights.Bacterial }}</h2>
-                  </div>
-                  <div class="bg-white/20 rounded-lg p-3">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              <div class="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-6 text-white shadow-lg">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-purple-100 text-sm font-medium">Fungal</p>
-                    <h2 class="text-3xl font-bold">{{ insights.Fungal }}</h2>
-                  </div>
-                  <div class="bg-white/20 rounded-lg p-3">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Disease-Specific Insights -->
-            <div class="bg-white rounded-xl p-6 shadow-lg">
-              <h3 class="text-2xl font-bold text-gray-900 mb-6">🔬 Disease-Specific Insights</h3>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div v-for="(info, disease) in diseaseInsights" :key="disease" class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-4 border border-gray-200">
-                  <h4 class="text-lg font-semibold text-emerald-700 mb-3">{{ disease }}</h4>
-                  <div class="space-y-2 text-sm">
-                    <div class="flex justify-between">
-                      <span class="text-gray-600">Occurrences:</span>
-                      <span class="font-semibold text-gray-900">{{ info.count }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                      <span class="text-gray-600">Avg Confidence:</span>
-                      <span class="font-semibold text-gray-900">{{ info.avgConfidence.toFixed(2) }}%</span>
-                    </div>
-                    <div class="flex justify-between">
-                      <span class="text-gray-600">Last Detected:</span>
-                      <span class="font-semibold text-gray-900">{{ info.latest || 'N/A' }}</span>
-                    </div>
-                  </div>
-                  <div class="mt-3">
-                    <p class="text-sm font-medium text-gray-700 mb-2">Common Recommendations:</p>
-                    <ul class="text-xs text-gray-600 space-y-1">
-                      <li v-for="(rec, i) in info.recommendations.slice(0, 3)" :key="i" class="flex items-start">
-                        <span class="text-emerald-500 mr-1">•</span>
-                        <span>{{ rec }}</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Charts Section -->
-            <div class="space-y-6">
-              <!-- Confidence Charts -->
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-white rounded-xl p-6 shadow-lg">
-                <h3 class="text-xl font-semibold text-gray-900 mb-4">📊 Disease Distribution</h3>
-                <canvas ref="chartPie" height="250"></canvas>
-              </div>
-                <div class="bg-white rounded-xl p-6 shadow-lg">
-                  <h3 class="text-xl font-semibold text-gray-900 mb-4">📈 Confidence Trend</h3>
-                  <canvas ref="chartLine" height="250"></canvas>
-                </div>
-
-                <div class="bg-white rounded-xl p-6 shadow-lg">
-                  <h3 class="text-xl font-semibold text-gray-900 mb-4">📊 Avg Confidence by Type</h3>
-                  <canvas ref="chartBar" height="250"></canvas>
-                </div>
-                <!-- Confidence Comparison Bar -->
-<!-- <div class="bg-white rounded-xl p-6 shadow-lg">
-  <h3 class="text-xl font-semibold text-gray-900 mb-4">📊 Confidence Comparison</h3>
-  <canvas ref="chartCompareBar" height="250"></canvas>
-</div>
-
- Class Probability Radar Chart -->
-<!-- <div class="bg-white rounded-xl p-6 shadow-lg">
-  <h3 class="text-xl font-semibold text-gray-900 mb-4">🕸️ Class Probabilities (Radar)</h3>
-  <canvas ref="chartCompareRadar" height="250"></canvas>
-</div> -->
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Analysis History -->
-      <!-- Analysis History Section -->
-<div class="bg-white rounded-2xl shadow-xl p-6 mt-8">
-  <div class="flex justify-between items-center mb-4">
-    <h3 class="text-2xl font-bold text-gray-900">🕒 Analysis History</h3>
-    <button
-      @click="showHistorySection = !showHistorySection"
-      class="text-sm text-indigo-600 hover:underline"
-    >
-      {{ showHistorySection ? 'Hide' : 'Show' }}
-    </button>
-  </div>
-
-  <transition name="fade">
-    <div v-if="showHistorySection">
-      <!-- Filter Controls -->
-<div class="mb-4 flex flex-col sm:flex-row sm:items-center gap-2">
-  <input
-    type="text"
-    v-model="historyFilter"
-    placeholder="🔍 Filter by prediction..."
-    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
-  />
-  <select
-    v-model="historyModelFilter"
-    class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500"
-  >
-    <option value="">All Models</option>
-    <option value="v2">LettuceModel V2</option>
-    <option value="v3">LettuceModel V3</option>
-  </select>
-</div>
-
-      <!-- Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div
-          v-for="item in paginatedHistory"
-          :key="item.id"
-          class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow duration-200"
-        >
-          <div class="flex justify-between items-start mb-3">
-            <div class="flex-1">
-              <p class="font-semibold text-gray-900">{{ item.prediction }}</p>
-              <p class="text-sm text-emerald-600 font-medium">{{ (item.confidence * 100).toFixed(2) }}% confidence</p>
-              <p class="text-xs text-gray-500">Model: {{ item.modelUsed?.toUpperCase() || 'V2' }}</p>
-              <p class="text-xs text-gray-500 mt-1">
-                {{
-                  item.createdAt?.toDate?.().toLocaleString() || 'No timestamp'
-                }}
-              </p>
-            </div>
-          </div>
-
-          <div class="flex gap-2">
-            <button
-              class="flex-1 text-sm bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded-md transition-colors duration-200"
-              @click="selectedItem = item"
-            >
-              View Details
-            </button>
-            <button
-              class="text-sm bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded-md transition-colors duration-200"
-              @click="confirmDelete(item)"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Pagination -->
-      <div class="flex justify-center items-center gap-2 mt-6">
-        <button
-          @click="goToPage(currentPage - 1)"
-          :disabled="currentPage === 1"
-          class="px-3 py-1 rounded-md bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
-        >
-          ⬅ Prev
-        </button>
-        <span class="text-sm text-gray-600">Page {{ currentPage }} of {{ totalPages }}</span>
-        <button
-          @click="goToPage(currentPage + 1)"
-          :disabled="currentPage === totalPages"
-          class="px-3 py-1 rounded-md bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
-        >
-          Next ➡
-        </button>
-      </div>
-    </div>
-  </transition>
-  <!-- Export Buttons -->
-      <div class="flex gap-3 justify-end mt-6">
-        <button
-          @click="exportHistoryToCSV"
-          class="inline-flex items-center px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
-        >
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          Export CSV
-        </button>
-
-        <button
-          @click="exportInsightsToPDF"
-          class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
-        >
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          Export PDF
-        </button>
-      </div>
-</div>
-
-      <!-- 🧪 Comparison History -->
-<div class="bg-white rounded-2xl shadow-xl p-6 mt-8">
-  <div class="flex justify-between items-center mb-4">
-    <h3 class="text-2xl font-bold text-gray-900">🧪 Comparison History</h3>
-    <button
-      @click="showComparisonSection = !showComparisonSection"
-      class="text-sm text-indigo-600 hover:underline"
-    >
-      {{ showComparisonSection ? 'Hide' : 'Show' }}
-    </button>
-  </div>
-
-  <transition name="fade">
-    <div v-if="showComparisonSection">
-      <!-- Filter + Model Dropdown -->
-<div class="mb-4 flex flex-col sm:flex-row sm:items-center gap-2">
-  <input
-    type="text"
-    v-model="comparisonFilter"
-    placeholder="🔍 Filter by predictions..."
-    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-  />
-  <select
-    v-model="comparisonModelFilter"
-    class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
-  >
-    <option value="">All Models</option>
-    <option value="v2">LettuceModel V2</option>
-    <option value="v3">LettuceModel V3</option>
-  </select>
-</div>
-
-
-      <!-- Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div
-          v-for="item in paginatedComparisons"
-          :key="item.id"
-          class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow duration-200"
-        >
-          <div class="flex justify-between items-start mb-3">
-            <div>
-              <p class="font-semibold text-gray-900">{{ item.prediction1 }} → {{ item.prediction2 }}</p>
-              <p class="text-sm text-gray-600">{{ (item.confidence1 * 100).toFixed(1) }}% → {{ (item.confidence2 * 100).toFixed(1) }}%</p>
-              <p class="text-xs text-gray-500 mt-1">{{ item.createdAt?.toDate().toLocaleString() }}</p>
-              <p class="text-xs text-gray-400">Model: {{ item.modelUsed?.toUpperCase() || 'V2' }}</p>
-            </div>
-            <div class="text-xs px-2 py-1 rounded-full font-semibold"
-                :class="item.progressionDetected ? 'bg-yellow-100 text-yellow-800' : 'bg-emerald-100 text-emerald-800'">
-              {{ item.progressionDetected ? 'Progressed' : 'No Change' }}
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2 mb-3">
-            <img :src="item.imageUrl1" class="rounded-md object-cover h-28 w-full" />
-            <img :src="item.imageUrl2" class="rounded-md object-cover h-28 w-full" />
-          </div>
-
-          <div class="flex justify-end gap-2">
-            <button
-              @click="selectedComparison = item"
-              class="px-3 py-1 text-sm bg-indigo-100 text-indigo-800 rounded-lg hover:bg-indigo-200"
-            >
-              🔍 View
-            </button>
-            <button
-              @click="confirmDeleteComparison(item)"
-              class="px-3 py-1 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200"
-            >
-              ❌ Delete
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Pagination -->
-      <div class="flex justify-center items-center gap-2 mt-6">
-        <button
-          @click="goToComparisonPage(comparisonPage - 1)"
-          :disabled="comparisonPage === 1"
-          class="px-3 py-1 rounded-md bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
-        >
-          ⬅ Prev
-        </button>
-        <span class="text-sm text-gray-600">Page {{ comparisonPage }} of {{ totalComparisonPages }}</span>
-        <button
-          @click="goToComparisonPage(comparisonPage + 1)"
-          :disabled="comparisonPage === totalComparisonPages"
-          class="px-3 py-1 rounded-md bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
-        >
-          Next ➡
-        </button>
-      </div>
-    </div>
-  </transition>
-  <!-- Export Buttons -->
-      <div class="flex gap-3 justify-end mt-6">
-        <button
-          @click="exportComparisonToCSV"
-          class="inline-flex items-center px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
-        >
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          Export CSV
-        </button>
-
-        <button
-          @click="exportComparisonToPDF"
-          class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
-        >
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          Export PDF
-        </button>
-      </div>
-</div>
-
-
-    </div>
-
-    <!-- Hidden Canvas for Camera Capture -->
-    <canvas ref="canvasRef" class="hidden"></canvas>
-
-    <!-- Modals -->
-    <!-- Detail Viewer Modal -->
-    <div v-if="selectedItem" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-      <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-2xl">
-          <div class="flex justify-between items-center">
-            <h3 class="text-xl font-bold text-gray-900">Analysis Details</h3>
-            <button @click="closeDetails" class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-        </div>
-        <div class="text-xs text-gray-500 mt-4 border-t pt-3">
-  <p><strong>Model:</strong> {{ selectedItem.modelUsed?.toUpperCase() || 'Unknown' }} (v{{ selectedItem.modelVersion || '1.0.0' }})</p>
-  <p><strong>Scan Mode:</strong> Single Image</p>
-  <p><strong>Analyzed:</strong> {{ selectedItem.createdAt?.toDate?.().toLocaleString() || 'N/A' }}</p>
-</div>
-        <div class="p-6 space-y-4">
-          <img :src="selectedItem.imageUrl" class="w-full rounded-lg shadow-md" />
-          
-          <!-- Top section -->
-<div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200">
-  <div class="flex items-center gap-3">
-    <span class="text-2xl">📋</span>
-    <div>
-      <p class="text-sm text-emerald-600">Prediction</p>
-      <h2 class="text-xl font-bold text-emerald-800">{{ selectedItem.prediction }}</h2>
-      <p class="text-sm text-gray-600">
-        Confidence:
-        <span :class="{
-          'text-green-600': selectedItem.confidence >= 0.8,
-          'text-yellow-600': selectedItem.confidence >= 0.5 && selectedItem.confidence < 0.8,
-          'text-red-600': selectedItem.confidence < 0.5
-        }">{{ (selectedItem.confidence * 100).toFixed(2) }}%</span>
-      </p>
-    </div>
-  </div>
-</div>
-
-
-          <div class="bg-gray-50 rounded-lg p-4">
-            <p class="font-medium text-gray-900 mb-3">Recommendations:</p>
-            <!-- Render legacy recommendation array -->
-<div v-if="Array.isArray(selectedItem.recommendations)">
-  <p class="font-medium text-gray-900 mb-3">Recommendations:</p>
-  <ul class="space-y-2">
-    <li v-for="(rec, i) in selectedItem.recommendations" :key="i" class="flex items-start">
-      <svg class="w-4 h-4 text-emerald-500 mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/>
-</svg>
-
-      <span class="text-gray-700 text-sm">{{ rec }}</span>
-    </li>
-  </ul>
-</div>
-
-<!-- Render structured V3 recommendations -->
-<div v-else-if="selectedItem.recommendations?.diseases">
-  <p class="font-medium text-gray-900 mb-3">Recommendations:</p>
-  <div v-for="(disease, index) in selectedItem.recommendations.diseases" :key="index" class="mb-4">
-    <h4 class="text-md font-semibold text-emerald-700">{{ disease.name }}</h4>
-    <p class="text-sm text-gray-600 mb-2">{{ disease.description }}</p>
-
-    <div v-for="(treatment, i) in disease.treatments" :key="i" class="ml-3 mb-2">
-      <p class="text-sm font-medium text-blue-600">{{ treatment.label }} Treatment</p>
-      <ul class="list-disc list-inside text-sm text-gray-700">
-        <li v-for="(step, j) in treatment.steps" :key="j">{{ step }}</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-<!-- Fallback -->
-<div v-else>
-  <p class="text-sm text-gray-500 italic">No recommendations available.</p>
-</div>
-
-          </div>
-
-          <div class="text-xs text-gray-500 text-center pt-4 border-t border-gray-200">
-            Analyzed: {{ selectedItem.createdAt?.toDate().toLocaleString() }}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Confidence Card Modal -->
-    <div v-if="showConfidenceCard" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full">
-        <div class="flex justify-between items-center p-6 border-b border-gray-200">
-          <h2 class="text-xl font-bold text-emerald-700">Confidence Breakdown</h2>
-          <button
-            class="text-gray-400 hover:text-gray-600 transition-colors duration-200"
-            @click="showConfidenceCard = false"
-          >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          </form>
         </div>
 
-        <div class="p-6 space-y-4">
-          <div class="bg-emerald-50 rounded-lg p-4">
-            <p class="text-sm text-emerald-600 font-medium">Predicted</p>
-            <p class="text-lg font-bold text-emerald-900">{{ result.prediction }}</p>
-            <p class="text-sm text-emerald-700">{{ (result.confidence * 100).toFixed(2) }}% confidence</p>
-            <p class="text-xs text-gray-500">Model Used: {{ result.modelUsed?.toUpperCase() }} (v{{ modelInfo?.version || '1.0.0' }})</p>
-          </div>
-
-          <div class="space-y-3">
-            <p class="font-medium text-gray-900">All Class Probabilities:</p>
-            <div class="space-y-2">
-              <div
-                v-for="(value, label) in result.class_probabilities"
-                :key="label"
-                class="flex justify-between items-center p-2 bg-gray-50 rounded-lg"
+        <!-- Transaction List -->
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+          <div class="flex flex-col md:flex-row justify-between items-center p-4 border-b">
+            <h2 class="text-xl font-bold text-gray-800 mb-2 md:mb-0">Transaction History</h2>
+            <div class="flex flex-wrap items-center gap-2">
+              <div class="relative">
+                <input 
+                  type="text" 
+                  v-model="searchQuery" 
+                  placeholder="Search transactions..." 
+                  class="pl-9 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
+                >
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+              </div>
+              <button 
+                @click="generateReport" 
+                class="px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
               >
-                <span class="text-gray-700 font-medium">{{ label }}</span>
-                <div class="flex items-center gap-2">
-                  <div class="w-20 bg-gray-200 rounded-full h-2">
-                    <div 
-                      class="bg-emerald-500 h-2 rounded-full transition-all duration-300"
-                      :style="{ width: (value * 100) + '%' }"
-                    ></div>
-                  </div>
-                  <span class="text-gray-900 font-semibold text-sm w-12 text-right">{{ (value * 100).toFixed(1) }}%</span>
-                </div>
+                <span class="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  Export Report
+                </span>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Transaction Table -->
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th 
+                    scope="col" 
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                    @click="sortBy('date')"
+                  >
+                    <div class="flex items-center">
+                      Date
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" :class="getSortIcon('date')" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                      </svg>
+                    </div>
+                  </th>
+                  <th 
+                    scope="col" 
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                    @click="sortBy('type')"
+                  >
+                    <div class="flex items-center">
+                      Type
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" :class="getSortIcon('type')" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                      </svg>
+                    </div>
+                  </th>
+                  <th 
+                    scope="col" 
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                    @click="sortBy('category')"
+                  >
+                    <div class="flex items-center">
+                      Category
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" :class="getSortIcon('category')" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                      </svg>
+                    </div>
+                  </th>
+                  <th 
+                    scope="col" 
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                    @click="sortBy('amount')"
+                  >
+                    <div class="flex items-center">
+                      Amount
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" :class="getSortIcon('amount')" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                      </svg>
+                    </div>
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Notes
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr v-if="paginatedTransactions.length === 0">
+                  <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
+                    No transactions found. Add your first transaction above.
+                  </td>
+                </tr>
+                <tr v-for="transaction in paginatedTransactions" :key="transaction.id" class="hover:bg-gray-50">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ formatDate(transaction.date) }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span :class="[
+                      'px-2 py-1 text-xs font-medium rounded-full',
+                      transaction.type === 'income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    ]">
+                      {{ transaction.type === 'income' ? 'Income' : 'Expense' }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <div class="flex items-center">
+                      <i :class="getCategoryIcon(transaction.category)" class="mr-2"></i>
+                      {{ transaction.category }}
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" :class="transaction.type === 'income' ? 'text-green-600' : 'text-red-600'">
+                    {{ transaction.type === 'income' ? '+' : '-' }}₱{{ safeToLocaleString(transaction.amount) }}
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
+                    {{ transaction.notes || '-' }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div class="flex justify-end space-x-2">
+                      <button 
+                        @click="editTransaction(transaction)" 
+                        class="text-emerald-600 hover:text-emerald-900"
+                        title="Edit"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                      <button 
+                        @click="confirmDelete(transaction)" 
+                        class="text-red-600 hover:text-red-900"
+                        :disabled="transaction.deleting"
+                        title="Delete"
+                      >
+                        <svg v-if="!transaction.deleting" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        <svg v-else class="animate-spin h-5 w-5 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- Pagination -->
+          <div class="px-6 py-3 flex items-center justify-between border-t border-gray-200">
+            <div class="flex-1 flex justify-between sm:hidden">
+              <button 
+                @click="prevPage" 
+                :disabled="currentPage === 1"
+                :class="[
+                  'relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white',
+                  currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'
+                ]"
+              >
+                Previous
+              </button>
+              <button 
+                @click="nextPage" 
+                :disabled="currentPage === totalPages"
+                :class="[
+                  'ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white',
+                  currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'
+                ]"
+              >
+                Next
+              </button>
+            </div>
+            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+              <div>
+                <p class="text-sm text-gray-700">
+                  Showing
+                  <span class="font-medium">{{ ((currentPage - 1) * itemsPerPage) + 1 }}</span>
+                  to
+                  <span class="font-medium">{{ Math.min(currentPage * itemsPerPage, filteredTransactions.length) }}</span>
+                  of
+                  <span class="font-medium">{{ filteredTransactions.length }}</span>
+                  results
+                </p>
+              </div>
+              <div>
+                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                  <button 
+                    @click="prevPage" 
+                    :disabled="currentPage === 1"
+                    :class="[
+                      'relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500',
+                      currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'
+                    ]"
+                  >
+                    <span class="sr-only">Previous</span>
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                  <button 
+                    v-for="page in totalPages" 
+                    :key="page"
+                    @click="currentPage = page"
+                    :class="[
+                      'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
+                      currentPage === page 
+                        ? 'z-10 bg-emerald-50 border-emerald-500 text-emerald-600' 
+                        : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                    ]"
+                  >
+                    {{ page }}
+                  </button>
+                  <button 
+                    @click="nextPage" 
+                    :disabled="currentPage === totalPages"
+                    :class="[
+                      'relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500',
+                      currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'
+                    ]"
+                  >
+                    <span class="sr-only">Next</span>
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                </nav>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div v-if="showDeleteConfirm" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full">
-        <div class="p-6">
-          <div class="flex items-center mb-4">
-            <div class="bg-red-100 rounded-full p-3 mr-4">
-              <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            </div>
-            <div>
-              <h2 class="text-lg font-bold text-gray-900">Delete Analysis?</h2>
-              <p class="text-sm text-gray-600">This action cannot be undone.</p>
-            </div>
-          </div>
+    <!-- Confirmation Modal -->
+  <div
+  v-if="showModal"
+  class="fixed inset-0 bg-black/40 backdrop-blur-sm backdrop-saturate-150 flex items-center justify-center z-50 transition-opacity duration-300 ease-out"
+>
+  <div class="bg-white rounded-lg p-6 max-w-sm mx-auto shadow-xl">
+    <h3 class="text-lg font-medium text-gray-900 mb-4">{{ modalTitle }}</h3>
+    <p class="text-gray-500 mb-4">{{ modalMessage }}</p>
+    <div class="flex justify-end gap-2">
+      <button @click="closeModal" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">
+        Cancel
+      </button>
+      <button @click="handleModalConfirm" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+        {{ modalConfirmText }}
+      </button>
+    </div>
+  </div>
+</div>
 
-          <div class="flex justify-end gap-3">
-            <button 
-              @click="cancelDelete" 
-              class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200"
-            >
-              Cancel
-            </button>
-            <button 
-              @click="proceedDelete" 
-              class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-200"
-            >
-              Delete
-            </button>
-          </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div v-if="showLogoutModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-lg p-6 max-w-sm mx-auto">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Confirm Logout</h3>
+        <p class="text-gray-500 mb-4">Are you sure you want to log out of your account?</p>
+        <div class="flex justify-end gap-2">
+          <button @click="showLogoutModal = false" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">
+            Cancel
+          </button>
+          <button @click="logout" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+            Logout
+          </button>
         </div>
       </div>
     </div>
 
     <!-- Toast Notification -->
     <div 
-      v-if="toastMessage" 
-      :class="['fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white z-50 transition-all duration-300 cursor-pointer', toastType]" 
-      @click="clearToast"
+      v-if="toast.show" 
+      class="fixed bottom-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 flex items-center"
+      :class="{
+        'bg-green-100 text-green-800 border-l-4 border-green-500': toast.type === 'success',
+        'bg-red-100 text-red-800 border-l-4 border-red-500': toast.type === 'error'
+      }"
     >
-      <div class="flex items-center">
-        <svg v-if="toastType.includes('green')" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <svg v-else-if="toastType.includes('red')" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <span>{{ toastMessage }}</span>
-      </div>
-    </div>
-  </div>
-  <Teleport to="body">
-  <div v-if="selectedComparison" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-    <div class="bg-white rounded-xl p-6 w-full max-w-lg shadow-xl relative">
-      <button
-        @click="selectedComparison = null"
-        class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-xl font-bold"
+      <svg 
+        v-if="toast.type === 'success'" 
+        class="h-5 w-5 mr-2" 
+        xmlns="http://www.w3.org/2000/svg" 
+        viewBox="0 0 20 20" 
+        fill="currentColor"
       >
-        &times;
-      </button>
-
-      <h2 class="text-xl font-semibold text-gray-800 mb-4">🔍 Comparison Details</h2>
-
-      <div class="space-y-2 text-sm">
-        <p><strong>Prediction 1:</strong> {{ selectedComparison.prediction1 }}</p>
-        <p><strong>Confidence 1:</strong> {{ (selectedComparison.confidence1 * 100).toFixed(1) }}%</p>
-        <p><strong>Prediction 2:</strong> {{ selectedComparison.prediction2 }}</p>
-        <p><strong>Confidence 2:</strong> {{ (selectedComparison.confidence2 * 100).toFixed(1) }}%</p>
-        <p><strong>Progression Detected:</strong> {{ selectedComparison.progressionDetected ? 'Yes' : 'No' }}</p>
-        <p><strong>Model Used:</strong> {{ selectedComparison.modelUsed?.toUpperCase() || 'V2' }}</p>
-        <p><strong>Date:</strong>
-          {{
-            selectedComparison.createdAt && typeof selectedComparison.createdAt.toDate === 'function'
-              ? selectedComparison.createdAt.toDate().toLocaleString()
-              : 'N/A'
-          }}
-        </p>
-      </div>
-
-      <div class="mt-4 grid grid-cols-2 gap-4">
-        <img :src="selectedComparison.imageUrl1" class="rounded-md object-cover w-full h-40 border" />
-        <img :src="selectedComparison.imageUrl2" class="rounded-md object-cover w-full h-40 border" />
-      </div>
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+      </svg>
+      <svg 
+        v-if="toast.type === 'error'" 
+        class="h-5 w-5 mr-2" 
+        xmlns="http://www.w3.org/2000/svg" 
+        viewBox="0 0 20 20" 
+        fill="currentColor"
+      >
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+      </svg>
+      <span>{{ toast.message }}</span>
     </div>
   </div>
-</Teleport>
-<Teleport to="body">
-  <div
-    v-if="showDeleteConfirmComparison"
-    class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center"
-  >
-    <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm text-center">
-      <h3 class="text-lg font-semibold text-gray-900 mb-2">Are you sure?</h3>
-      <p class="text-sm text-gray-600 mb-6">
-        You are about to delete this comparison permanently. This action cannot be undone.
-      </p>
-
-      <div class="flex justify-center gap-3">
-        <button
-          @click="showDeleteConfirmComparison = false"
-          class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800"
-        >
-          Cancel
-        </button>
-        <button
-          @click="deleteComparison2"
-          class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium"
-        >
-          Yes, Delete
-        </button>
-      </div>
-    </div>
-  </div>
-</Teleport>
-
-
 </template>
 
 <script setup>
-import { onSnapshot, query, where, orderBy, deleteDoc, doc, getDocs } from 'firebase/firestore';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import { onAuthStateChanged } from 'firebase/auth';
-import { ref as vueRef,onMounted, watch, ref, nextTick,computed } from 'vue';
-import { Chart, registerables } from 'chart.js';
-Chart.register(...registerables);
-import {
-  auth,
-  db,
-  storage
-} from '../firebase'; // your firebase.js
-import {
-  addDoc,
-  collection,
-  serverTimestamp
-} from 'firebase/firestore';
-import {
-  ref as storageRef,
-  uploadBytes,
-  getDownloadURL
-} from 'firebase/storage';
-
-// Refs for reactivity
-const file = vueRef(null);
-const result = vueRef(null);
-const loading = vueRef(false);
-
-const diseaseInsights = ref({});
-const showConfidenceCard = vueRef(false);
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { 
+  collection, 
+  addDoc, 
+  updateDoc, 
+  deleteDoc, 
+  doc,
+  getDoc,
+  setDoc, 
+  onSnapshot, 
+  query, 
+  orderBy,
+  where,
+  Timestamp 
+} from "firebase/firestore";
+import { db } from "../firebase";
+import Chart from 'chart.js/auto';
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 
-const selectedItem = vueRef(null);
-const closeDetails = () => selectedItem.value = null;
+// State
+const auth = getAuth();
+const transactions = ref([]);
+const categories = ref([
+  "Crop Sales",
+  "Equipment Sales",
+  "Consulting",
+  "Utilities",
+  "Nutrients",
+  "Equipment",
+  "Maintenance",
+  "Labor",
+  "Marketing",
+  "Other"
+]);
+const amount = ref("");
+const type = ref("income");
+const category = ref(categories.value[0]);
+const notes = ref("");
+const transactionDate = ref(new Date().toISOString().split('T')[0]);
+const chartCanvas = ref(null);
+const trendChartCanvas = ref(null);
+const incomeDistributionCanvas = ref(null);
+const expenseDistributionCanvas = ref(null);
+const forecastChartCanvas = ref(null);
+const isEditing = ref(false);
+const editingTransactionId = ref(null);
+const loading = ref(false);
+const chartLoading = ref(false);
+const incomeChartLoading = ref(false);
+const expenseChartLoading = ref(false);
+const forecastChartLoading = ref(false);
+const showModal = ref(false);
+const modalType = ref("");
+const selectedTransaction = ref(null);
+const searchQuery = ref("");
+const currentPage = ref(1);
+const itemsPerPage = 10;
+const sortColumn = ref("date");
+const sortDirection = ref("desc");
+const chartType = ref("line");
+const incomeChartType = ref("pie");
+const expenseChartType = ref("pie");
+const cumulativeMode = ref(false);
+const selectedMonth = ref(new Date().getMonth() + 1);
+const formErrors = ref({});
+const toast = ref({ show: false, message: '', type: '' });
+const username = ref("");
+const role = ref("user");
+const sidebarOpen = ref(true);
+const userMenuOpen = ref(false);
+const notificationCount = ref(3);
+const isMobile = ref(false);
+const userMenuRef = ref(null);
+const showLogoutModal = ref(false);
+const currentAnalyticsTab = ref('overview');
+const selectedDateRange = ref('month');
+const customStartDate = ref(new Date().toISOString().split('T')[0]);
+const customEndDate = ref(new Date().toISOString().split('T')[0]);
+const startDate = ref(new Date());
+const endDate = ref(new Date());
+const budgetMonth = ref(new Date().getMonth() + 1);
+const budgetLimits = ref({});
+const forecastMonths = ref(6);
 
-const compareMode = vueRef(false);
-const file1 = vueRef(null);
-const file2 = vueRef(null);
-const result1 = vueRef(null);
-const result2 = vueRef(null);
+let chartInstance = null;
+let trendChartInstance = null;
+let incomeChartInstance = null;
+let expenseChartInstance = null;
+let forecastChartInstance = null;
 
-const progressionDetected = vueRef(false);
+// Router
+const router = useRouter();
+const route = useRoute();
+const currentRoute = computed(() => route.path);
 
-const fileInputRef = vueRef(null); // for clearing input
-const comparisonHistory = vueRef([]);
-const selectedComparison = ref(null); // For modal
-const comparisonToDelete = ref(null);
-const showDeleteConfirmComparison = ref(false);    
+// Analytics Tabs
+const analyticsTabs = [
+  { id: 'overview', name: 'Overview', icon: 'chart-bar' },
+  { id: 'budget', name: 'Budget Tracking', icon: 'dollar-sign' },
+  { id: 'forecast', name: 'Forecasting', icon: 'trending-up' }
+];
 
-const showCameraSection = ref(false);
+// Date Ranges
+const dateRanges = [
+  { id: 'week', name: 'This Week' },
+  { id: 'month', name: 'This Month' },
+  { id: 'quarter', name: 'This Quarter' },
+  { id: 'year', name: 'This Year' },
+  { id: 'custom', name: 'Custom Range' }
+];
 
-const selectedModel = ref('v2'); // default to v2
-const historyModelFilter = ref('');
-const comparisonModelFilter = ref('');
+// Constants
+const months = [
+  { id: 1, name: 'January' },
+  { id: 2, name: 'February' },
+  { id: 3, name: 'March' },
+  { id: 4, name: 'April' },
+  { id: 5, name: 'May' },
+  { id: 6, name: 'June' },
+  { id: 7, name: 'July' },
+  { id: 8, name: 'August' },
+  { id: 9, name: 'September' },
+  { id: 10, name: 'October' },
+  { id: 11, name: 'November' },
+  { id: 12, name: 'December' }
+];
 
-const insightsModelFilter = ref('');
-const insightsModeFilter = ref('');
-const startDate = ref('');
-const endDate = ref('');
+// Computed Properties
+const filteredTransactions = computed(() => {
+  let filtered = [...transactions.value];
 
-// Triggered on file selection
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase();
+    filtered = filtered.filter(t => 
+      t.category.toLowerCase().includes(query) ||
+      t.notes?.toLowerCase().includes(query) ||
+      t.amount.toString().includes(query)
+    );
+  }
 
-const filePreview = vueRef(null);
+  // Apply sorting
+  filtered.sort((a, b) => {
+    let aVal = a[sortColumn.value];
+    let bVal = b[sortColumn.value];
 
-const onFileChange = (e) => {
-  file.value = e.target.files[0];
-  if (file.value) {
-    filePreview.value = URL.createObjectURL(file.value);
+    if (sortColumn.value === 'date') {
+      aVal = a.date.seconds;
+      bVal = b.date.seconds;
+       }
+
+    if (sortDirection.value === 'asc') {
+      return aVal > bVal ? 1 : -1;
+    }
+    return aVal < bVal ? 1 : -1;
+  });
+
+  return filtered;
+});
+
+const paginatedTransactions = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  const totalItems = filteredTransactions.value.length;
+
+  // Ensure currentPage does not exceed totalPages
+  if (start >= totalItems) {
+    currentPage.value = Math.max(1, Math.ceil(totalItems / itemsPerPage));
+  }
+
+  return filteredTransactions.value.slice(start, end);
+});
+
+const totalPages = computed(() => 
+  Math.ceil(filteredTransactions.value.length / itemsPerPage)
+);
+
+const totalIncome = computed(() => {
+  return transactions.value
+    .filter(t => t.type === 'income')
+    .reduce((sum, t) => sum + t.amount, 0);
+});
+
+const totalExpenses = computed(() => {
+  return transactions.value
+    .filter(t => t.type === 'expense')
+    .reduce((sum, t) => sum + t.amount, 0);
+});
+
+const netProfit = computed(() => totalIncome.value - totalExpenses.value);
+
+const savingsRate = computed(() => {
+  if (totalIncome.value === 0) return 0;
+  return (netProfit.value / totalIncome.value) * 100;
+});
+
+const transactionSummary = computed(() => {
+  const summary = {};
+  categories.value.forEach(cat => {
+    summary[cat] = { income: 0, expense: 0 };
+  });
+
+  transactions.value.forEach(t => {
+    summary[t.category][t.type] += t.amount;
+  });
+
+  return summary;
+});
+
+// Growth rates
+const incomeGrowth = computed(() => {
+  const currentMonthIncome = getMonthlyTotal('income', new Date().getMonth());
+  const lastMonthIncome = getMonthlyTotal('income', new Date().getMonth() - 1);
+  
+  if (lastMonthIncome === 0) return 100;
+  return ((currentMonthIncome - lastMonthIncome) / lastMonthIncome) * 100;
+});
+
+const expenseGrowth = computed(() => {
+  const currentMonthExpense = getMonthlyTotal('expense', new Date().getMonth());
+  const lastMonthExpense = getMonthlyTotal('expense', new Date().getMonth() - 1);
+  
+  if (lastMonthExpense === 0) return 100;
+  return ((currentMonthExpense - lastMonthExpense) / lastMonthExpense) * 100;
+});
+
+const profitGrowth = computed(() => {
+  const currentMonthProfit = getMonthlyTotal('income', new Date().getMonth()) - getMonthlyTotal('expense', new Date().getMonth());
+  const lastMonthProfit = getMonthlyTotal('income', new Date().getMonth() - 1) - getMonthlyTotal('expense', new Date().getMonth() - 1);
+  
+  if (lastMonthProfit === 0) return 100;
+  return ((currentMonthProfit - lastMonthProfit) / Math.abs(lastMonthProfit)) * 100;
+});
+
+const savingsRateGrowth = computed(() => {
+  const currentMonthIncome = getMonthlyTotal('income', new Date().getMonth());
+  const lastMonthIncome = getMonthlyTotal('income', new Date().getMonth() - 1);
+  const currentMonthExpense = getMonthlyTotal('expense', new Date().getMonth());
+  const lastMonthExpense = getMonthlyTotal('expense', new Date().getMonth() - 1);
+  
+  const currentSavingsRate = currentMonthIncome === 0 ? 0 : ((currentMonthIncome - currentMonthExpense) / currentMonthIncome) * 100;
+  const lastSavingsRate = lastMonthIncome === 0 ? 0 : ((lastMonthIncome - lastMonthExpense) / lastMonthIncome) * 100;
+  
+  if (lastSavingsRate === 0) return 100;
+  return currentSavingsRate - lastSavingsRate;
+});
+
+// Budget data
+const budgetData = computed(() => {
+  const data = {};
+  
+  categories.value.forEach(cat => {
+    const actual = transactions.value
+      .filter(t => t.type === 'expense' && t.category === cat && getTransactionMonth(t) === budgetMonth.value)
+      .reduce((sum, t) => sum + t.amount, 0);
+      
+    data[cat] = {
+      actual,
+      limit: budgetLimits.value[cat] || 0
+    };
+  });
+  
+  return data;
+});
+
+// Forecast data
+const forecastedIncome = computed(() => {
+  const monthlyAverage = getMonthlyAverage('income');
+  return monthlyAverage * parseInt(forecastMonths.value);
+});
+
+const forecastedExpenses = computed(() => {
+  const monthlyAverage = getMonthlyAverage('expense');
+  return monthlyAverage * parseInt(forecastMonths.value);
+});
+
+const forecastedProfit = computed(() => forecastedIncome.value - forecastedExpenses.value);
+
+const forecastedIncomeGrowth = computed(() => {
+  if (totalIncome.value === 0) return 100;
+  return ((forecastedIncome.value - totalIncome.value) / totalIncome.value) * 100;
+});
+
+const forecastedExpenseGrowth = computed(() => {
+  if (totalExpenses.value === 0) return 100;
+  return ((forecastedExpenses.value - totalExpenses.value) / totalExpenses.value) * 100;
+});
+
+const forecastedProfitGrowth = computed(() => {
+  if (netProfit.value === 0) return 100;
+  return ((forecastedProfit.value - netProfit.value) / Math.abs(netProfit.value)) * 100;
+});
+
+// Modal computed properties
+const modalTitle = computed(() => {
+  switch (modalType.value) {
+    case 'delete': return 'Delete Transaction';
+    default: return '';
+  }
+});
+
+const modalMessage = computed(() => {
+  if (!selectedTransaction.value) return '';
+  
+  switch (modalType.value) {
+    case 'delete':
+      return `Are you sure you want to delete this ${selectedTransaction.value.type} transaction of ₱${selectedTransaction.value.amount.toLocaleString()}?`;
+    default:
+      return '';
+  }
+});
+
+const modalConfirmText = computed(() => {
+  switch (modalType.value) {
+    case 'delete': return 'Delete';
+    default: return 'Confirm';
+  }
+});
+
+// Methods
+const validateForm = () => {
+  formErrors.value = {};
+  
+  if (!amount.value || isNaN(amount.value) || amount.value <= 0) {
+    formErrors.value.amount = 'Please enter a valid amount';
+    return false;
+  }
+
+  return true;
+};
+
+const showSuccess = (message) => {
+  toast.value = { show: true, message, type: 'success' };
+  setTimeout(() => {
+    toast.value.show = false;
+  }, 3000);
+};
+
+const showError = (message) => {
+  toast.value = { show: true, message, type: 'error' };
+  setTimeout(() => {
+    toast.value.show = false;
+  }, 3000);
+};
+
+const fetchTransactions = async () => {
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      showError('Please sign in to manage your transactions');
+      return; // Prevent further execution
+    }
+
+    const transactionsRef = collection(db, 'users', user.uid, 'transactions');
+    const q = query(transactionsRef, orderBy('date', 'desc'));
+
+    onSnapshot(q, (snapshot) => {
+      transactions.value = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        deleting: false
+      }));
+      updateAllCharts();
+    }, (error) => {
+      console.error("Error fetching transactions:", error);
+      showError('Error loading transactions. Please try again.');
+    });
+  } catch (error) {
+    console.error("Error in fetchTransactions:", error);
+    showError('Error connecting to database. Please try again.');
   }
 };
 
-
-// Main prediction + upload function
-const analyzeImage = async () => {
-  if (!file.value || !auth.currentUser) {
-    showToast("Please log in and upload a file.", 'bg-yellow-500');
+const addTransaction = async () => {
+  if (!validateForm()) return;
+  
+  loading.value = true;
+  const user = auth.currentUser;
+  if (!user) {
+    showError('Please sign in to add transactions');
     return;
   }
 
-  loading.value = true;
-
   try {
-    // Step 1: Upload image to Flask API
-    const formData = new FormData();
-    formData.append('file', file.value);
-    formData.append('model', selectedModel.value);
-
-    const token = await auth.currentUser.getIdToken();
-
-    const response = await fetch('https://ecomist-flask.onrender.com/predict', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-      body: formData
+    await addDoc(collection(db, 'users', user.uid, 'transactions'), {
+      amount: parseFloat(amount.value),
+      type: type.value,
+      category: category.value,
+      date: Timestamp.fromDate(new Date(transactionDate.value)),
+      notes: notes.value || '',
     });
 
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.statusText}`);
-    }
-
-    const predictionData = await response.json();
-    if (predictionData.status !== 'success') {
-      throw new Error('Prediction failed');
-    }
-
-    result.value = {
-  prediction: predictionData.prediction,
-  confidence: predictionData.confidence,
-  class_probabilities: predictionData.class_probabilities,
-  recommendations: predictionData.recommendations || [],
-  fallback_used: predictionData.fallback_used || false,
-  raw_model: predictionData.raw_model || selectedModel.value,
-  message: predictionData.message || ''
-};
-
-
-    // Step 2: Upload the image to Firebase Storage
-    const timestamp = Date.now();
-    const filename = `${timestamp}_${file.value.name}`;
-    const path = `disease_uploads/${auth.currentUser.uid}/${filename}`;
-    const imageStorageRef = storageRef(storage, path);
-
-    await uploadBytes(imageStorageRef, file.value);
-    const imageUrl = await getDownloadURL(imageStorageRef);
-
-    // Step 3: Save prediction + metadata to Firestore
-    await addDoc(collection(db, 'analysisHistory'), {
-      userId: auth.currentUser.uid,
-      imageUrl,
-      prediction: predictionData.prediction,
-      confidence: predictionData.confidence,
-      classProbabilities: predictionData.class_probabilities,
-      recommendations: predictionData.recommendations,
-      modelUsed: predictionData.raw_model || selectedModel.value,
-      modelVersion: modelInfo.value?.version || '1.0.0',
-      createdAt: serverTimestamp()
-    });
-
-    console.log('✅ Saved prediction to Firestore');
-    showToast("Image analyzed successfully!", 'bg-green-500');
-  } catch (err) {
-    console.error('❌ Error:', err.message || err);
-    showToast(`Error: ${err.message || 'An unexpected error occurred.'}`, 'bg-red-500');
+    resetForm();
+    showSuccess('Transaction added successfully');
+  } catch (error) {
+    showError('Error adding transaction. Please try again.');
   } finally {
     loading.value = false;
   }
 };
 
-const modelInfo = vueRef(null);
+const updateTransaction = async () => {
+  if (!validateForm()) return;
+  
+  loading.value = true;
+  const user = auth.currentUser;
+  if (!user || !editingTransactionId.value) {
+    showError('Please sign in to update transactions');
+    return;
+  }
 
-const fetchModelInfo = async () => {
   try {
-    const response = await fetch(`https://ecomist-flask.onrender.com/model-info?model=${selectedModel.value}`);
-    const data = await response.json();
-    modelInfo.value = data;
-  } catch (err) {
-    showToast("Failed to fetch model info", 'bg-red-500');
-  }
-};
-onMounted(() => {
-  fetchModelInfo();
-});
-const videoRef = vueRef(null);
-const canvasRef = vueRef(null);
-
-// Start camera stream on mount
-onMounted(() => {
-  fetchModelInfo();
-
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      loadHistory();
-      loadComparisonHistory();
-    } else {
-      console.warn("User not authenticated. Skipping history load.");
-    }
-  });
-});
-
-const initCamera = async () => {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    videoRef.value.srcObject = stream;
-  } catch (err) {
-    console.error("❌ Failed to access camera:", err);
-    alert("Camera not supported or permission denied.");
-  }
-};
-
-// Capture image from video
-const captureImage = () => {
-  const video = videoRef.value;
-  const canvas = canvasRef.value;
-
-  const width = video.videoWidth;
-  const height = video.videoHeight;
-
-  canvas.width = width;
-  canvas.height = height;
-
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(video, 0, 0, width, height);
-
-  // Convert canvas to blob → file
-  canvas.toBlob(blob => {
-    const capturedFile = new File([blob], `captured_${Date.now()}.jpg`, { type: 'image/jpeg' });
-    file.value = capturedFile;
-    filePreview.value = URL.createObjectURL(capturedFile);
-    console.log("📷 Captured image ready for analysis.");
-  }, 'image/jpeg', 0.95);
-};
-const stopCamera = () => {
-  const stream = videoRef.value?.srcObject;
-  if (stream) {
-    stream.getTracks().forEach(track => track.stop());
-    videoRef.value.srcObject = null;
-    console.log("📴 Camera stopped.");
-  }
-};
-const cameraActive = vueRef(false);
-
-const toggleCameraStatus = () => {
-  if (cameraActive.value) {
-    stopCamera();
-  } else {
-    initCamera();
-  }
-  cameraActive.value = !cameraActive.value;
-};
-
-const history = vueRef([]); // analysis history
-
-const loadHistory = () => {
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      console.warn("User not authenticated. Cannot load history.");
-      return;
-    }
-
-    const q = query(
-      collection(db, 'analysisHistory'),
-      where('userId', '==', user.uid),
-      orderBy('createdAt', 'desc')
+    await updateDoc(
+      doc(db, 'users', user.uid, 'transactions', editingTransactionId.value),
+      {
+        amount: parseFloat(amount.value),
+        type: type.value,
+        category: category.value,
+        date: Timestamp.fromDate(new Date(transactionDate.value)),
+        notes: notes.value || '',
+        updatedAt: Timestamp.now()
+      }
     );
 
-    onSnapshot(q, (snapshot) => {
-      history.value = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      console.log("📜 History loaded:", history.value);
-    });
-  });
-};
-const deleteHistory = async (id) => {
-  try {
-    await deleteDoc(doc(db, 'analysisHistory', id));
-    showToast("Analysis deleted successfully!", 'bg-green-500');
-  } catch (err) {
-    console.error("❌ Failed to delete history:", err);
-    showToast(`Error: ${err.message || 'Failed to delete item.'}`, 'bg-red-500');
-  }
-};
-/////////////////////
-
-const tabs = ['Detector', 'Insights'];
-const activeTab = ref('Detector');
-
-const chartPie = ref(null);
-const chartLine = ref(null);
-const chartBar = ref(null);
-
-const insights = ref({
-  total: 0,
-  Healthy: 0,
-  Bacterial: 0,
-  Fungal: 0
-});
-
-const loadInsights = async () => {
-  const user = auth.currentUser;
-  if (!user) return;
-
-  const singleQuery = query(
-    collection(db, 'analysisHistory'),
-    where('userId', '==', user.uid),
-    orderBy('createdAt', 'desc')
-  );
-
-  const comparisonQuery = query(
-    collection(db, 'comparisons'),
-    where('userId', '==', user.uid),
-    orderBy('createdAt', 'desc')
-  );
-
-  const [singleSnap, compareSnap] = await Promise.all([
-    getDocs(singleQuery),
-    getDocs(comparisonQuery)
-  ]);
-
-  let combinedData = [];
-
-  if (insightsModeFilter.value !== 'compare') {
-    const singleData = singleSnap.docs.map(doc => ({ ...doc.data(), mode: 'single' }));
-    combinedData.push(...singleData);
-  }
-
-  if (insightsModeFilter.value !== 'single') {
-    const compareData = compareSnap.docs.map(doc => ({
-      prediction: doc.data().prediction2,
-      confidence: doc.data().confidence2,
-      recommendations: [],
-      modelUsed: doc.data().modelUsed,
-      createdAt: doc.data().createdAt,
-      mode: 'compare'
-    }));
-    combinedData.push(...compareData);
-  }
-
-  // Apply filters
-  combinedData = combinedData.filter(item => {
-    const modelMatch = !insightsModelFilter.value || item.modelUsed === insightsModelFilter.value;
-    const date = item.createdAt?.toDate?.();
-    const afterStart = !startDate.value || new Date(startDate.value) <= date;
-    const beforeEnd = !endDate.value || date <= new Date(endDate.value + "T23:59:59");
-
-    return modelMatch && afterStart && beforeEnd;
-  });
-
-  computeInsightsFromData(combinedData);
-};
-
-const computeInsightsFromData = async (data) => {
-  const summary = { total: data.length };
-  const trends = [];
-  const labels = {};
-  const diseaseBreakdown = {};
-
-  data.forEach(item => {
-    const label = item.prediction;
-    const conf = item.confidence;
-    const date = item.createdAt?.toDate().toLocaleDateString() || 'Unknown';
-
-    summary[label] = (summary[label] || 0) + 1;
-    trends.push({ x: date, y: conf });
-
-    if (!labels[label]) labels[label] = [];
-    labels[label].push(conf);
-
-    if (!diseaseBreakdown[label]) {
-      diseaseBreakdown[label] = {
-        count: 0,
-        totalConfidence: 0,
-        latest: date,
-        recommendations: []
-      };
-    }
-
-    diseaseBreakdown[label].count++;
-    diseaseBreakdown[label].totalConfidence += conf;
-
-    if (!diseaseBreakdown[label].latest || new Date(date) > new Date(diseaseBreakdown[label].latest)) {
-      diseaseBreakdown[label].latest = date;
-    }
-
-    if (Array.isArray(item.recommendations)) {
-      diseaseBreakdown[label].recommendations.push(...item.recommendations);
-    }
-  });
-
-  for (const k in diseaseBreakdown) {
-    diseaseBreakdown[k].avgConfidence = (diseaseBreakdown[k].totalConfidence / diseaseBreakdown[k].count) * 100;
-    diseaseBreakdown[k].recommendations = [...new Set(diseaseBreakdown[k].recommendations)];
-  }
-
-  insights.value = summary;
-  diseaseInsights.value = diseaseBreakdown;
-
-  await nextTick(); // ✅ safe now
-  drawCharts(summary, trends, labels);
-};
-
-watch([insightsModelFilter, insightsModeFilter, startDate, endDate], ([model, mode, start, end]) => {
-  console.log('🔍 Filter Changed:', { model, mode, start, end });
-  loadInsights();
-});
-
-const drawCharts = (summary, confidenceTrend, labelGroups) => {
-  // Ensure chart elements exist before creating charts
-  if (!chartPie.value || !chartLine.value || !chartBar.value) {
-    console.error("❌ Chart elements are not initialized.");
-    return;
-  }
-
-  // Destroy existing charts if they exist
-  pieChart?.destroy();
-  lineChart?.destroy();
-  barChart?.destroy();
-
-  // Create new charts
-  pieChart = new Chart(chartPie.value, {
-    type: 'pie',
-    data: {
-      labels: Object.keys(summary).filter(k => k !== 'total'),
-      datasets: [{
-        data: Object.keys(summary).filter(k => k !== 'total').map(k => summary[k]),
-        backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
-        borderWidth: 1
-      }]
-    },
-    options: { responsive: true, animation: { duration: 500 } }
-  });
-
-  lineChart = new Chart(chartLine.value, {
-    type: 'line',
-    data: {
-      datasets: [{
-        label: 'Confidence Over Time',
-        data: confidenceTrend,
-        fill: false,
-        borderColor: '#3b82f6'
-      }]
-    },
-    options: { responsive: true, animation: { duration: 500 } }
-  });
-
-  barChart = new Chart(chartBar.value, {
-    type: 'bar',
-    data: {
-      labels: Object.keys(labelGroups),
-      datasets: [{
-        label: 'Avg Confidence',
-        data: Object.values(labelGroups).map(arr => arr.reduce((a, b) => a + b) / arr.length),
-        backgroundColor: '#6366f1'
-      }]
-    },
-    options: { responsive: true, animation: { duration: 500 } }
-  });
-};
-
-watch(activeTab, (val) => {
-  if (val === 'Insights') {
-    if (!auth.currentUser) {
-      console.warn("User not authenticated. Skipping insights load.");
-      return;
-    }
-    loadInsights();
-  }
-});
-
-
-let pieChart = null;
-let lineChart = null;
-let barChart = null;
-
-const exportHistoryToCSV = () => {
-  if (!history.value.length) return;
-
-  const headers = [
-  'Prediction',
-  'Confidence',
-  'Created At',
-  'Image URL',
-  'Recommendations',
-  'Class Probabilities',
-  'User ID',
-  'Model Used',
-  'Model Version'
-];
-
-
-  const rows = history.value.map(item => [
-  item.prediction,
-  (item.confidence * 100).toFixed(2) + '%',
-  item.createdAt?.toDate().toLocaleString() || '',
-  item.imageUrl || '',
-  JSON.stringify(item.recommendations || []),
-  JSON.stringify(item.classProbabilities || {}),
-  item.userId || '',
-  item.modelUsed || 'v2',
-  item.modelVersion || '1.0.0'
-]);
-
-
-  const csvContent = [
-    headers.join(','),
-    ...rows.map(row =>
-      row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
-    )
-  ].join('\n');
-
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement('a');
-  link.href = url;
-  link.setAttribute('download', 'EcoMist-Detection-Report.csv');
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
-
-const exportInsightsToPDF = async () => {
-  const pdf = new jsPDF('p', 'mm', 'a4');
-  let y = 10;
-
-  pdf.setFontSize(18);
-  pdf.text("Crop Disease Insights Report", 14, y);
-  y += 10;
-
-  pdf.setFontSize(12);
-  pdf.text(`Total Analyses: ${insights.value.total}`, 14, y += 10);
-  pdf.text(`Healthy: ${insights.value.Healthy}`, 14, y += 7);
-  pdf.text(`Bacterial: ${insights.value.Bacterial}`, 14, y += 7);
-  pdf.text(`Fungal: ${insights.value.Fungal}`, 14, y += 7);
-
-  const addCanvasToPDF = async (canvasEl, label) => {
-    if (!canvasEl) return;
-
-    const canvas = await html2canvas(canvasEl, {
-      scale: 2,
-      useCORS: true
-    });
-
-    const imgData = canvas.toDataURL('image/png');
-
-    if (y > 200) {
-      pdf.addPage();
-      y = 10;
-    }
-
-    pdf.setFontSize(14);
-    pdf.text(label, 14, y += 10);
-    pdf.addImage(imgData, 'PNG', 14, y += 5, 180, 90);
- 
-    y += 95;
-  };
-
-  await nextTick(); // ensure charts are rendered
-
-  await addCanvasToPDF(chartPie.value, 'Disease Distribution');
-  await addCanvasToPDF(chartLine.value, 'Confidence Trend');
-  await addCanvasToPDF(chartBar.value, 'Average Confidence by Type');
-
-  // ✅ Add Disease-Specific Insights
-  pdf.addPage();
-  let dy = 10;
-
-  pdf.setFontSize(16);
-  pdf.text("Disease-Specific Insights", 14, dy);
-  dy += 10;
-  pdf.setFontSize(11);
-
-  Object.entries(diseaseInsights.value).forEach(([label, info]) => {
-    if (dy > 270) {
-      pdf.addPage();
-      dy = 10;
-    }
-
-    pdf.setFont(undefined, 'bold');
-    pdf.text(`${label}`, 14, dy);
-    pdf.setFont(undefined, 'normal');
-
-    dy += 6;
-    pdf.text(`Occurrences: ${info.count}`, 18, dy += 6);
-    pdf.text(`Avg Confidence: ${info.avgConfidence.toFixed(2)}%`, 18, dy += 6);
-    pdf.text(`Last Detected: ${info.latest}`, 18, dy += 6);
-
-    if (info.recommendations.length) {
-      pdf.text(`Recommendations:`, 18, dy += 6);
-      info.recommendations.slice(0, 3).forEach((rec) => {
-        dy += 6;
-        if (dy > 270) {
-          pdf.addPage();
-          dy = 10;
-        }
-        pdf.text(`- ${rec}`, 22, dy);
-      });
-    }
-
-    dy += 10;
-  });
-
-  pdf.save('EcoMist-Analytics-&-Insights-Report.pdf');
-};
-
-
-
-const toastMessage = vueRef(null);
-const toastType = vueRef('');
-
-const showToast = (message, type = 'bg-green-500') => {
-  toastMessage.value = message;
-  toastType.value = type;
-  setTimeout(() => {
-    toastMessage.value = null;
-    toastType.value = '';
-  }, 3000); // Auto-hide after 3 seconds
-};
-
-const clearToast = () => {
-  toastMessage.value = null;
-  toastType.value = '';
-};
-
-// Accessibility: Detect reduced motion preference
-const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-// Adjust animations/transitions based on reduced motion preference
-const reducedMotionClass = prefersReducedMotion ? 'transition-none' : 'transition-all duration-300';
-
-// Responsive design adjustments
-onMounted(() => {
-  const handleResize = () => {
-    const isMobile = window.innerWidth < 768;
-    if (isMobile) {
-      console.log("📱 Mobile layout activated");
-      // Add any mobile-specific logic here
-    }
-  };
-  window.addEventListener('resize', handleResize);
-  handleResize(); // Initial check
-});
-const showDeleteConfirm = vueRef(false);
-const itemToDelete = vueRef(null);
-
-const confirmDelete = (item) => {
-  itemToDelete.value = item;
-  showDeleteConfirm.value = true;
-};
-
-const cancelDelete = () => {
-  showDeleteConfirm.value = false;
-  itemToDelete.value = null;
-};
-
-const proceedDelete = async () => {
-  if (!itemToDelete.value) return;
-
-  try {
-    await deleteHistory(itemToDelete.value.id);
-    await nextTick();
-
-    setTimeout(() => {
-      loadInsights(); // delay chart loading until DOM is fully ready
-    }, 100); // 100ms 
-
-  } catch (err) {
-    console.error("❌ Failed to delete or reload insights:", err);
-    showToast('Failed to delete item or reload charts.', 'bg-red-500');
+    resetForm();
+    showSuccess('Transaction updated successfully');
+  } catch (error) {
+    showError('Error updating transaction. Please try again.');
   } finally {
-    showDeleteConfirm.value = false;
-    itemToDelete.value = null;
+    loading.value = false;
   }
 };
 
-watch(selectedModel, fetchModelInfo);
-
-const clearForm = () => {
-  file.value = null;
-  filePreview.value = null;
-  result.value = null;
-
-  // ✅ Clear actual input DOM element
-  if (fileInputRef.value) {
-    fileInputRef.value.value = ''; // resets the input field
-  }
-
-  // ✅ Clear canvas snapshot
-  const canvas = canvasRef.value;
-  if (canvas) {
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
-
-  // ✅ Stop camera if active
-  stopCamera();
-
-  nextTick(() => {
-  fileInputRef.value?.focus();
-});
-
-
-  console.log("🧼 Cleared all prediction-related fields.");
-};
-
-const filePreview1 = vueRef(null);
-const filePreview2 = vueRef(null);
-
-const handleCompareFile = (e, slot) => {
-  const file = e.target.files[0];
-  if (slot === 1) {
-    file1.value = file;
-    filePreview1.value = URL.createObjectURL(file);
-  } else {
-    file2.value = file;
-    filePreview2.value = URL.createObjectURL(file);
-  }
-};
-
-const analyzeComparison = async () => {
-  if (!file1.value || !file2.value || !auth.currentUser) {
-    showToast("Please upload both images to compare.", 'bg-yellow-500');
+const deleteTransaction = async (transaction) => {
+  const user = auth.currentUser;
+  if (!user) {
+    showError('Please sign in to delete transactions');
     return;
   }
 
-  try {
-    showToast("Analyzing both images...", 'bg-blue-500');
-    const token = await auth.currentUser.getIdToken();
-
-    const send = async (file) => {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('model', selectedModel.value);
-
-      const res = await fetch('https://ecomist-flask.onrender.com/predict', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData
-      });
-      if (!res.ok) throw new Error("Flask API failed");
-      return await res.json();
-    };
-
-    // 🔍 Predict both
-    const [res1, res2] = await Promise.all([send(file1.value), send(file2.value)]);
-    result1.value = res1;
-    result2.value = res2;
-    progressionDetected.value = isProgressing(res1.prediction, res2.prediction);
-
-    // 📤 Upload images to Firebase Storage
-    const timestamp = Date.now();
-    const pathBase = `comparisons/${auth.currentUser.uid}/${timestamp}`;
-    const imageRef1 = storageRef(storage, `${pathBase}_1.jpg`);
-    const imageRef2 = storageRef(storage, `${pathBase}_2.jpg`);
-
-    await uploadBytes(imageRef1, file1.value);
-    await uploadBytes(imageRef2, file2.value);
-
-    const url1 = await getDownloadURL(imageRef1);
-    const url2 = await getDownloadURL(imageRef2);
-
-    // 🧾 Save to Firestore
-    await addDoc(collection(db, 'comparisons'), {
-      userId: auth.currentUser.uid,
-      imageUrl1: url1,
-      imageUrl2: url2,
-      prediction1: res1.prediction,
-      prediction2: res2.prediction,
-      confidence1: res1.confidence,
-      confidence2: res2.confidence,
-      classProbabilities1: res1.class_probabilities,
-      classProbabilities2: res2.class_probabilities,
-      progressionDetected: progressionDetected.value,
-      modelUsed: res1.raw_model || selectedModel.value,
-      modelVersion: modelInfo.value?.version || '1.0.0',
-      createdAt: serverTimestamp()
-    });
-
-    showToast("Comparison saved to history!", 'bg-green-500');
-  } catch (err) {
-    console.error(err);
-    showToast("Comparison failed. Try again.", 'bg-red-500');
+  const index = transactions.value.findIndex(t => t.id === transaction.id);
+  if (index !== -1) {
+    transactions.value[index].deleting = true;
   }
+
+  try {
+    await deleteDoc(
+      doc(db, 'users', user.uid, 'transactions', transaction.id)
+    );
+    showSuccess('Transaction deleted successfully');
+  } catch (error) {
+    showError('Error deleting transaction. Please try again.');
+    if (index !== -1) {
+      transactions.value[index].deleting = false;
+    }
+  }
+};
+
+// Chart Methods
+const updateAllCharts = async () => {
+  updateChart();
+  updateTrendChart();
+  updateIncomeDistributionChart();
+  updateExpenseDistributionChart();
+  updateForecastChart();
+  updateBudgetChart();
+};
+
+const updateChart = async () => {
+  chartLoading.value = true;
   await nextTick();
-drawComparisonCharts();
-
-};
-
-const isProgressing = (from, to) => {
-  const healthIndex = ["Healthy", "Bacterial", "Fungal"];
-  const fromIndex = healthIndex.indexOf(from);
-  const toIndex = healthIndex.indexOf(to);
   
-  // Only consider progression if going from Healthy to a disease
-  return fromIndex !== -1 && toIndex !== -1 && fromIndex < toIndex;
-};
-
-const clearCompare = () => {
-  file1.value = null;
-  file2.value = null;
-  filePreview1.value = null;
-  filePreview2.value = null;
-  result1.value = null;
-  result2.value = null;
-  progressionDetected.value = false;
-};
-
-const loadComparisonHistory = () => {
-  const user = auth.currentUser;
-  if (!user) return;
-
-  const q = query(
-    collection(db, 'comparisons'),
-    where('userId', '==', user.uid),
-    orderBy('createdAt', 'desc')
-  );
-
-  onSnapshot(q, (snapshot) => {
-    comparisonHistory.value = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    console.log("🧪 Comparison history loaded:", comparisonHistory.value);
-    console.log("Loaded comparisonHistory:", comparisonHistory.value);
-
-  });
-  nextTick(() => {
-  fileInputRef.value?.focus();
-});
-
-};
-
-const exportComparisonToCSV = () => {
-  if (!comparisonHistory.value.length) return;
-
- const headers = [
-  'Prediction 1', 'Confidence 1', 'Prediction 2', 'Confidence 2',
-  'Progression Detected', 'Created At', 'Image URL 1', 'Image URL 2',
-  'Model Used', 'Model Version'
-];
-
-
-  const rows = comparisonHistory.value.map(item => [
-  item.prediction1,
-  (item.confidence1 * 100).toFixed(2) + '%',
-  item.prediction2,
-  (item.confidence2 * 100).toFixed(2) + '%',
-  item.progressionDetected ? 'Yes' : 'No',
-  item.createdAt?.toDate().toLocaleString() || '',
-  item.imageUrl1,
-  item.imageUrl2,
-  item.modelUsed || 'v2',
-  item.modelVersion || '1.0.0'
-]);
-
-
-  const csvContent = [
-    headers.join(','),
-    ...rows.map(row =>
-      row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
-    )
-  ].join('\n');
-
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement('a');
-  link.href = url;
-  link.setAttribute('download', 'EcoMist-Comparison-History.csv');
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
-
-const exportComparisonToPDF = async () => {
-  const pdf = new jsPDF('p', 'mm', 'a4');
-  let y = 10;
-
-  pdf.setFontSize(18);
-  pdf.text("EcoMist - Comparison History Report", 14, y);
-  y += 10;
-
-  pdf.setFontSize(12);
-  comparisonHistory.value.forEach((item, index) => {
-    if (y > 270) {
-      pdf.addPage();
-      y = 10;
-    }
-
-    pdf.setFont(undefined, 'bold');
-    pdf.text(`Entry ${index + 1}`, 14, y);
-    pdf.setFont(undefined, 'normal');
-
-    y += 6;
-    pdf.text(`Prediction 1: ${item.prediction1} (${(item.confidence1 * 100).toFixed(1)}%)`, 18, y += 6);
-    pdf.text(`Prediction 2: ${item.prediction2} (${(item.confidence2 * 100).toFixed(1)}%)`, 18, y += 6);
-    pdf.text(`Progression: ${item.progressionDetected ? 'Yes' : 'No'}`, 18, y += 6);
-    pdf.text(`Created At: ${item.createdAt?.toDate().toLocaleString() || 'N/A'}`, 18, y += 6);
-    pdf.text(`Image 1: ${item.imageUrl1}`, 18, y += 6);
-    pdf.text(`Image 2: ${item.imageUrl2}`, 18, y += 6);
-    pdf.text(`Model Used: ${item.modelUsed?.toUpperCase() || 'V2'}`, 18, y += 6);
-    pdf.text(`Model Version: ${item.modelVersion || '1.0.0'}`, 18, y += 6);
-
-
-    y += 8;
-  });
-
-  pdf.save('EcoMist-Comparison-History.pdf');
-};
-
-const deleteComparison = async (id) => {
-  try {
-    await deleteDoc(doc(db, 'comparisons', id));
-    showToast('Comparison deleted.', 'bg-green-500');
-  } catch (err) {
-    console.error('Failed to delete:', err);
-    showToast('Failed to delete.', 'bg-red-500');
-  }
-};
-
-const confirmDeleteComparison = (item) => {
-  comparisonToDelete.value = item;
-  showDeleteConfirmComparison.value = true;
-};
-
-const deleteComparison2 = async () => {
-  try {
-    await deleteDoc(doc(db, 'comparisons', comparisonToDelete.value.id));
-    showToast('Comparison deleted.', 'bg-green-500');
-  } catch (err) {
-    console.error('Delete failed:', err);
-    showToast('Failed to delete comparison.', 'bg-red-500');
-  } finally {
-    showDeleteConfirmComparison.value = false;
-    comparisonToDelete.value = null;
-  }
-};
-
-const fileDrop1 = vueRef(null);
-const fileDrop2 = vueRef(null);
-
-const dragOver1 = ref(false);
-const dragOver2 = ref(false);
-
-const handleDropCompare = (e, slot) => {
-  const droppedFile = e.dataTransfer.files[0];
-  if (!droppedFile || !droppedFile.type.startsWith('image/')) {
-    showToast("Only image files are allowed", 'bg-yellow-500');
-    return;
-  }
-  handleCompareFile({ target: { files: [droppedFile] } }, slot);
-};
-
-const dragOverSingle = ref(false);
-const fileDropSingle = vueRef(null);
-
-const handleDropSingle = (e) => {
-  const droppedFile = e.dataTransfer.files[0];
-  if (!droppedFile || !droppedFile.type.startsWith('image/')) {
-    showToast("Only image files are allowed.", 'bg-yellow-500');
+  if (!chartCanvas.value) {
+    chartLoading.value = false;
     return;
   }
 
-  onFileChange({ target: { files: [droppedFile] } });
-};
+  const ctx = chartCanvas.value.getContext('2d');
+  const monthlyData = getMonthlyData();
 
-const showHistorySection = ref(false);
-const historyFilter = ref('');
-const currentPage = ref(1);
-const itemsPerPage = 6;
+  if (chartInstance) {
+    chartInstance.destroy();
+  }
 
-// Computed for filtered + paginated history
-const filteredHistory = computed(() =>
-  history.value.filter(item =>
-    item.prediction?.toLowerCase().includes(historyFilter.value.toLowerCase()) &&
-    (historyModelFilter.value === '' || (item.modelUsed || 'v2') === historyModelFilter.value)
-  )
-);
-
-const paginatedHistory = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage;
-  return filteredHistory.value.slice(start, start + itemsPerPage);
-});
-
-const totalPages = computed(() =>
-  Math.ceil(filteredHistory.value.length / itemsPerPage)
-);
-
-const goToPage = (page) => {
-  if (page >= 1 && page <= totalPages.value) currentPage.value = page;
-};
-
-const showComparisonSection = ref(false);
-const comparisonFilter = ref('');
-const comparisonPage = ref(1);
-const comparisonsPerPage = 6;
-
-const filteredComparisons = computed(() =>
-  comparisonHistory.value.filter(item =>
-    `${item.prediction1} ${item.prediction2}`.toLowerCase().includes(comparisonFilter.value.toLowerCase()) &&
-    (comparisonModelFilter.value === '' || (item.modelUsed || 'v2') === comparisonModelFilter.value)
-  )
-);
-
-const paginatedComparisons = computed(() => {
-  const start = (comparisonPage.value - 1) * comparisonsPerPage;
-  return filteredComparisons.value.slice(start, start + comparisonsPerPage);
-});
-
-const totalComparisonPages = computed(() =>
-  Math.ceil(filteredComparisons.value.length / comparisonsPerPage)
-);
-
-const goToComparisonPage = (page) => {
-  if (page >= 1 && page <= totalComparisonPages.value) comparisonPage.value = page;
-};
-
-watch(comparisonFilter, () => {
-  comparisonPage.value = 1;
-});
-
-watch(historyFilter, () => {
-  currentPage.value = 1;
-});
-
-const chartCompareBar = ref(null);
-const chartCompareRadar = ref(null);
-let compareBarChart = null;
-let compareRadarChart = null;
-
-const drawComparisonCharts = () => {
-  if (!chartCompareBar.value || !chartCompareRadar.value) return;
-
-  compareBarChart?.destroy();
-  compareRadarChart?.destroy();
-
-  // Bar Chart for Confidence
-  compareBarChart = new Chart(chartCompareBar.value, {
-    type: 'bar',
+  const config = {
+    type: chartType.value,
     data: {
-      labels: ['Image 1', 'Image 2'],
-      datasets: [{
-        label: 'Confidence (%)',
-        data: [(result1.value.confidence * 100).toFixed(2), (result2.value.confidence * 100).toFixed(2)],
-        backgroundColor: ['#3b82f6', '#8b5cf6']
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } }
-    }
-  });
-
-  // Radar Chart for Class Probabilities
-  const labels = Object.keys(result1.value.class_probabilities);
-  compareRadarChart = new Chart(chartCompareRadar.value, {
-    type: 'radar',
-    data: {
-      labels,
+      labels: monthlyData.labels,
       datasets: [
         {
-          label: 'Image 1',
-          data: labels.map(l => result1.value.class_probabilities[l] * 100),
-          backgroundColor: 'rgba(59, 130, 246, 0.2)',
-          borderColor: '#3b82f6',
-          borderWidth: 2
+          label: 'Income',
+          data: monthlyData.income,
+          borderColor: 'rgb(16, 185, 129)',
+          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+          tension: 0.4
         },
         {
-          label: 'Image 2',
-          data: labels.map(l => result2.value.class_probabilities[l] * 100),
-          backgroundColor: 'rgba(139, 92, 246, 0.2)',
-          borderColor: '#8b5cf6',
-          borderWidth: 2
+          label: 'Expenses',
+          data: monthlyData.expenses,
+          borderColor: 'rgb(244, 63, 94)',
+          backgroundColor: 'rgba(244, 63, 94, 0.1)',
+          tension: 0.4
+        },
+        {
+          label: 'Net Profit',
+          data: monthlyData.profit,
+          borderColor: 'rgb(14, 165, 233)',
+          backgroundColor: 'rgba(14, 165, 233, 0.1)',
+          tension: 0.4
         }
       ]
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        intersect: false,
+        mode: 'index'
+      },
       scales: {
-        r: {
-          angleLines: { display: true },
-          suggestedMin: 0,
-          suggestedMax: 100
+        y: {
+          beginAtZero: true,
+          grid: {
+            color: 'rgba(0, 0, 0, 0.1)'
+          },
+          ticks: {
+            callback: value => `₱${value.toLocaleString()}`
+          }
+        }
+      },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              let label = context.dataset.label || '';
+              if (label) {
+                label += ': ';
+              }
+              if (context.parsed.y !== null) {
+                label += `₱${context.parsed.y.toLocaleString()}`;
+              }
+              return label;
+            }
+          }
         }
       }
     }
+  };
+
+  chartInstance = new Chart(ctx, config);
+  chartLoading.value = false;
+};
+
+const updateTrendChart = async () => {
+  chartLoading.value = true;
+  await nextTick();
+
+  if (!trendChartCanvas.value) {
+    chartLoading.value = false;
+    return;
+  }
+
+  const ctx = trendChartCanvas.value.getContext('2d');
+  const trendData = getTrendData();
+
+  if (trendChartInstance) {
+    trendChartInstance.destroy();
+  }
+
+  const config = {
+    type: chartType.value,
+    data: {
+      labels: trendData.labels,
+      datasets: [
+        {
+          label: 'Income',
+          data: trendData.income,
+          borderColor: 'rgb(16, 185, 129)',
+          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+          tension: 0.4
+        },
+        {
+          label: 'Expenses',
+          data: trendData.expenses,
+          borderColor: 'rgb(244, 63, 94)',
+          backgroundColor: 'rgba(244, 63, 94, 0.1)',
+          tension: 0.4
+        },
+        {
+          label: 'Net Profit',
+          data: trendData.profit,
+          borderColor: 'rgb(14, 165, 233)',
+          backgroundColor: 'rgba(14, 165, 233, 0.1)',
+          tension: 0.4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        intersect: false,
+        mode: 'index'
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: {
+            color: 'rgba(0, 0, 0, 0.1)'
+          },
+          ticks: {
+            callback: value => `₱${value.toLocaleString()}`
+          }
+        }
+      },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              let label = context.dataset.label || '';
+              if (label) {
+                label += ': ';
+              }
+              if (context.parsed.y !== null) {
+                label += `₱${context.parsed.y.toLocaleString()}`;
+              }
+              return label;
+            }
+          }
+        }
+      }
+    }
+  };
+
+  trendChartInstance = new Chart(ctx, config);
+  chartLoading.value = false;
+};
+
+const updateIncomeDistributionChart = async () => {
+  incomeChartLoading.value = true;
+  await nextTick();
+  
+  if (!incomeDistributionCanvas.value) {
+    incomeChartLoading.value = false;
+    return;
+  }
+
+  const ctx = incomeDistributionCanvas.value.getContext('2d');
+  const distributionData = getCategoryDistribution('income');
+
+  if (incomeChartInstance) {
+    incomeChartInstance.destroy();
+  }
+
+  const config = {
+    type: incomeChartType.value,
+    data: {
+      labels: distributionData.labels,
+      datasets: [
+        {
+          label: 'Income',
+          data: distributionData.values,
+          backgroundColor: [
+            'rgba(16, 185, 129, 0.7)',
+            'rgba(14, 165, 233, 0.7)',
+            'rgba(168, 85, 247, 0.7)',
+            'rgba(236, 72, 153, 0.7)',
+            'rgba(245, 158, 11, 0.7)',
+            'rgba(239, 68, 68, 0.7)',
+            'rgba(59, 130, 246, 0.7)',
+            'rgba(99, 102, 241, 0.7)',
+            'rgba(217, 70, 239, 0.7)',
+            'rgba(79, 70, 229, 0.7)'
+          ],
+          borderColor: 'white',
+          borderWidth: 1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              let label = context.label || '';
+              if (label) {
+                label += ': ';
+              }
+              if (context.parsed !== null) {
+                label += `₱${context.parsed.toLocaleString()}`;
+              }
+              return label;
+            }
+          }
+        }
+      }
+    }
+  };
+
+  incomeChartInstance = new Chart(ctx, config);
+  incomeChartLoading.value = false;
+};
+
+const updateExpenseDistributionChart = async () => {
+  expenseChartLoading.value = true;
+  await nextTick();
+  
+  if (!expenseDistributionCanvas.value) {
+    expenseChartLoading.value = false;
+    return;
+  }
+
+  const ctx = expenseDistributionCanvas.value.getContext('2d');
+  const distributionData = getCategoryDistribution('expense');
+
+  if (expenseChartInstance) {
+    expenseChartInstance.destroy();
+  }
+
+  const config = {
+    type: expenseChartType.value,
+    data: {
+      labels: distributionData.labels,
+      datasets: [
+        {
+          label: 'Expenses',
+          data: distributionData.values,
+          backgroundColor: [
+            'rgba(244, 63, 94, 0.7)',
+            'rgba(245, 158, 11, 0.7)',
+            'rgba(168, 85, 247, 0.7)',
+            'rgba(59, 130, 246, 0.7)',
+            'rgba(16, 185, 129, 0.7)',
+            'rgba(236, 72, 153, 0.7)',
+            'rgba(99, 102, 241, 0.7)',
+            'rgba(217, 70, 239, 0.7)',
+            'rgba(14, 165, 233, 0.7)',
+            'rgba(79, 70, 229, 0.7)'
+          ],
+          borderColor: 'white',
+          borderWidth: 1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              let label = context.label || '';
+              if (label) {
+                label += ': ';
+              }
+              if (context.parsed !== null) {
+                label += `₱${context.parsed.toLocaleString()}`;
+              }
+              return label;
+            }
+          }
+        }
+      }
+    }
+  };
+
+  expenseChartInstance = new Chart(ctx, config);
+  expenseChartLoading.value = false;
+};
+
+const updateForecastChart = async () => {
+  forecastChartLoading.value = true;
+  await nextTick();
+  
+  if (!forecastChartCanvas.value) {
+    forecastChartLoading.value = false;
+    return;
+  }
+
+  const ctx = forecastChartCanvas.value.getContext('2d');
+  const forecastData = getForecastData();
+
+  if (forecastChartInstance) {
+    forecastChartInstance.destroy();
+  }
+
+  const config = {
+    type: 'line',
+    data: {
+      labels: forecastData.labels,
+      datasets: [
+        {
+          label: 'Income',
+          data: forecastData.income,
+          borderColor: 'rgb(16, 185, 129)',
+          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+          tension: 0.4
+        },
+        {
+          label: 'Expenses',
+          data: forecastData.expenses,
+          borderColor: 'rgb(244, 63, 94)',
+          backgroundColor: 'rgba(244, 63, 94, 0.1)',
+          tension: 0.4
+        },
+        {
+          label: 'Net Profit',
+          data: forecastData.profit,
+          borderColor: 'rgb(14, 165, 233)',
+          backgroundColor: 'rgba(14, 165, 233, 0.1)',
+          tension: 0.4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        intersect: false,
+        mode: 'index'
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: {
+            color: 'rgba(0, 0, 0, 0.1)'
+          },
+          ticks: {
+            callback: value => `₱${value.toLocaleString()}`
+          }
+        }
+      },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              let label = context.dataset.label || '';
+              if (label) {
+                label += ': ';
+              }
+              if (context.parsed.y !== null) {
+                label += `₱${context.parsed.y.toLocaleString()}`;
+              }
+              return label;
+            }
+          }
+        }
+      }
+    }
+  };
+
+  forecastChartInstance = new Chart(ctx, config);
+  forecastChartLoading.value = false;
+};
+
+const updateBudgetChart = () => {
+  // This function would update any budget-related charts
+  // For now, we're using progress bars instead of charts
+};
+
+const toggleChartType = () => {
+  chartType.value = chartType.value === 'line' ? 'bar' : 'line';
+  updateChart();
+  updateTrendChart();
+};
+
+const toggleIncomeChartType = () => {
+  incomeChartType.value = incomeChartType.value === 'pie' ? 'bar' : 'pie';
+  updateIncomeDistributionChart();
+};
+
+const toggleExpenseChartType = () => {
+  expenseChartType.value = expenseChartType.value === 'pie' ? 'bar' : 'pie';
+  updateExpenseDistributionChart();
+};
+
+const toggleCumulativeMode = () => {
+  cumulativeMode.value = !cumulativeMode.value;
+  updateTrendChart();
+};
+
+// Date Range Methods
+const setDateRange = (rangeId) => {
+  console.log('Range selected:', rangeId);
+  selectedDateRange.value = rangeId;
+  
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  switch (rangeId) {
+    case 'week': {
+      const start = new Date(today);
+      start.setDate(today.getDate() - today.getDay()); // Sunday
+      startDate.value = start;
+      endDate.value = today;
+      break;
+    }
+    case 'month': {
+      startDate.value = new Date(now.getFullYear(), now.getMonth(), 1);
+      endDate.value = today;
+      break;
+    }
+    case 'quarter': {
+      const quarterStartMonth = Math.floor(now.getMonth() / 3) * 3;
+      startDate.value = new Date(now.getFullYear(), quarterStartMonth, 1);
+      endDate.value = today;
+      break;
+    }
+    case 'year': {
+      startDate.value = new Date(now.getFullYear(), 0, 1);
+      endDate.value = today;
+      break;
+    }
+    case 'custom':
+      // Custom handled separately
+      break;
+  }
+  updateTrendChart();
+};
+
+
+const applyCustomDateRange = () => {
+  if (customStartDate.value && customEndDate.value) {
+    const start = new Date(customStartDate.value);
+    const end = new Date(customEndDate.value);
+    if (start > end) {
+      showError('Start date cannot be later than end date');
+      return;
+    }
+    startDate.value = start;
+    endDate.value = end;
+  }
+};
+
+
+// Budget Methods
+const saveBudgetLimits = async () => {
+  const user = auth.currentUser;
+  if (!user) {
+    showError('Please sign in to save budget limits');
+    return;
+  }
+
+  try {
+    const docRef = doc(db, 'users', user.uid, 'budgets', `month-${budgetMonth.value}`);
+    await setDoc(docRef, budgetLimits.value, { merge: true });
+
+    showSuccess('Budget limits saved successfully');
+    updateBudgetChart();
+  } catch (error) {
+    console.error("Error saving budget limits:", error);
+    showError('Failed to save budget limits. Please try again.');
+  }
+};
+
+
+// Utility Methods
+const getMonthlyData = () => {
+  const months = {};
+  const now = new Date();
+  
+  // Initialize last 6 months
+  for (let i = 0; i < 6; i++) {
+    const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const key = date.toLocaleString('default', { month: 'short', year: '2-digit' });
+    months[key] = { income: 0, expenses: 0 };
+  }
+
+  // Populate data
+  transactions.value.forEach(t => {
+    const date = new Date(t.date.seconds * 1000);
+    const key = date.toLocaleString('default', { month: 'short', year: '2-digit' });
+    if (months[key]) {
+      if (t.type === 'income') {
+        months[key].income += t.amount;
+      } else {
+        months[key].expenses += t.amount;
+      }
+    }
+  });
+
+  const labels = Object.keys(months).reverse();
+  const income = labels.map(key => months[key].income);
+  const expenses = labels.map(key => months[key].expenses);
+  const profit = labels.map((key, i) => income[i] - expenses[i]);
+
+  return { labels, income, expenses, profit };
+};
+
+const getTrendData = () => {
+  // Filter transactions by date range
+  const filteredTransactions = transactions.value.filter(t => {
+    const date = new Date(t.date.seconds * 1000);
+    return date >= startDate.value && date <= endDate.value;
+  });
+  
+  // Group by day, week, or month depending on range size
+  const diffDays = Math.ceil((endDate.value - startDate.value) / (1000 * 60 * 60 * 24));
+  let groupBy = 'day';
+  
+  if (diffDays > 90) {
+    groupBy = 'month';
+  } else if (diffDays > 14) {
+    groupBy = 'week';
+  }
+  
+  const groups = {};
+  let labels = [];
+  
+  // Create empty groups
+  if (groupBy === 'day') {
+    for (let d = new Date(startDate.value); d <= endDate.value; d.setDate(d.getDate() + 1)) {
+      const key = d.toISOString().split('T')[0];
+      groups[key] = { income: 0, expenses: 0 };
+      labels.push(d.toLocaleDateString('default', { month: 'short', day: 'numeric' }));
+    }
+  } else if (groupBy === 'week') {
+    const startWeek = new Date(startDate.value);
+    startWeek.setDate(startWeek.getDate() - startWeek.getDay()); // Start of week (Sunday)
+    
+    for (let d = new Date(startWeek); d <= endDate.value; d.setDate(d.getDate() + 7)) {
+      const endOfWeek = new Date(d);
+      endOfWeek.setDate(endOfWeek.getDate() + 6);
+      const key = `${d.toISOString().split('T')[0]}_${endOfWeek.toISOString().split('T')[0]}`;
+      groups[key] = { income: 0, expenses: 0 };
+      labels.push(`${d.toLocaleDateString('default', { month: 'short', day: 'numeric' })} - ${endOfWeek.toLocaleDateString('default', { month: 'short', day: 'numeric' })}`);
+    }
+  } else if (groupBy === 'month') {
+    const startMonth = new Date(startDate.value.getFullYear(), startDate.value.getMonth(), 1);
+    
+    for (let d = new Date(startMonth); d <= endDate.value; d.setMonth(d.getMonth() + 1)) {
+      const key = `${d.getFullYear()}-${d.getMonth() + 1}`;
+      groups[key] = { income: 0, expenses: 0 };
+      labels.push(d.toLocaleDateString('default', { month: 'short', year: 'numeric' }));
+    }
+  }
+  
+  // Populate data
+  filteredTransactions.forEach(t => {
+    const date = new Date(t.date.seconds * 1000);
+    let key;
+    
+    if (groupBy === 'day') {
+      key = date.toISOString().split('T')[0];
+    } else if (groupBy === 'week') {
+      const startOfWeek = new Date(date);
+      startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay()); // Start of week (Sunday)
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(endOfWeek.getDate() + 6);
+      key = `${startOfWeek.toISOString().split('T')[0]}_${endOfWeek.toISOString().split('T')[0]}`;
+    } else if (groupBy === 'month') {
+      key = `${date.getFullYear()}-${date.getMonth() + 1}`;
+    }
+    
+    if (groups[key]) {
+      if (t.type === 'income') {
+        groups[key].income += t.amount;
+      } else {
+        groups[key].expenses += t.amount;
+      }
+    }
+  });
+  
+  // Convert to arrays
+  const keys = Object.keys(groups);
+  let income = keys.map(key => groups[key].income);
+  let expenses = keys.map(key => groups[key].expenses);
+  
+  // Calculate cumulative values if needed
+  if (cumulativeMode.value) {
+    income = income.reduce((acc, val, i) => {
+      acc.push((acc[i-1] || 0) + val);
+      return acc;
+    }, []);
+    
+    expenses = expenses.reduce((acc, val, i) => {
+      acc.push((acc[i-1] || 0) + val);
+      return acc;
+    }, []);
+  }
+  
+  const profit = income.map((val, i) => val - expenses[i]);
+  
+  return { labels, income, expenses, profit };
+};
+
+const getCategoryDistribution = (type) => {
+  // Filter transactions by date range and type
+  const filteredTransactions = transactions.value.filter(t => {
+    const date = new Date(t.date.seconds * 1000);
+    return date >= startDate.value && date <= endDate.value && t.type === type;
+  });
+  
+  // Group by category
+  const categoryTotals = {};
+  
+  filteredTransactions.forEach(t => {
+    if (!categoryTotals[t.category]) {
+      categoryTotals[t.category] = 0;
+    }
+    categoryTotals[t.category] += t.amount;
+  });
+  
+  // Sort by amount (descending)
+  const sortedCategories = Object.entries(categoryTotals)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10); // Top 10 categories
+  
+  const labels = sortedCategories.map(([category]) => category);
+  const values = sortedCategories.map(([, amount]) => amount);
+  
+  return { labels, values };
+};
+
+const getForecastData = () => {
+  const now = new Date();
+  const labels = [];
+  const income = [];
+  const expenses = [];
+  const profit = [];
+
+  // Get monthly averages
+  const monthlyIncomeAvg = getMonthlyAverage('income');
+  const monthlyExpenseAvg = getMonthlyAverage('expense');
+
+  // Generate forecast for the next X months
+  for (let i = 0; i < parseInt(forecastMonths.value); i++) {
+    const forecastDate = new Date(now.getFullYear(), now.getMonth() + i, 1);
+    labels.push(forecastDate.toLocaleDateString('default', { month: 'short', year: 'numeric' }));
+
+    // Apply a small random variation to make the forecast more realistic
+    const incomeVariation = 1 + (Math.random() * 0.2 - 0.1); // ±10%
+    const expenseVariation = 1 + (Math.random() * 0.2 - 0.1); // ±10%
+
+    const monthIncome = monthlyIncomeAvg * incomeVariation;
+    const monthExpense = monthlyExpenseAvg * expenseVariation;
+
+    income.push(monthIncome);
+    expenses.push(monthExpense);
+    profit.push(monthIncome - monthExpense);
+  }
+
+  return { labels, income, expenses, profit }; // Ensure this is inside the function
+};
+
+const getMonthlyAverage = (type) => {
+  // Group transactions by month
+  const monthlyTotals = {};
+  
+  transactions.value.forEach(t => {
+    if (t.type !== type) return;
+    
+    const date = new Date(t.date.seconds * 1000);
+    const key = `${date.getFullYear()}-${date.getMonth() + 1}`;
+    
+    if (!monthlyTotals[key]) {
+      monthlyTotals[key] = 0;
+    }
+    
+    monthlyTotals[key] += t.amount;
+  });
+  
+  // Calculate average
+  const months = Object.values(monthlyTotals);
+  if (months.length === 0) return 0;
+  
+  return months.reduce((sum, val) => sum + val, 0) / months.length;
+};
+
+const getMonthlyTotal = (type, month) => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const startOfMonth = new Date(year, month, 1);
+  const endOfMonth = new Date(year, month + 1, 0);
+  
+  return transactions.value
+    .filter(t => {
+      const date = new Date(t.date.seconds * 1000);
+      return t.type === type && date >= startOfMonth && date <= endOfMonth;
+    })
+    .reduce((sum, t) => sum + t.amount, 0);
+};
+
+const getTransactionMonth = (transaction) => {
+  const date = new Date(transaction.date.seconds * 1000);
+  return date.getMonth() + 1; // JavaScript months are 0-indexed
+};
+
+const formatDate = (date) => {
+  if (typeof date === 'string') return date;
+  
+  return new Date(date.seconds * 1000).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
   });
 };
-watch([result1, result2], async ([r1, r2]) => {
-  if (r1 && r2 && chartCompareBar.value && chartCompareRadar.value) {
-    await nextTick();
-    drawComparisonCharts();
+
+const resetForm = () => {
+  amount.value = '';
+  notes.value = '';
+  isEditing.value = false;
+  editingTransactionId.value = null;
+  type.value = 'income';
+  category.value = categories.value[0];
+  transactionDate.value = new Date().toISOString().split('T')[0];
+  formErrors.value = {};
+};
+
+const editTransaction = (transaction) => {
+  amount.value = transaction.amount;
+  type.value = transaction.type;
+  category.value = transaction.category;
+  notes.value = transaction.notes || '';
+  transactionDate.value = new Date(transaction.date.seconds * 1000).toISOString().split('T')[0];
+  isEditing.value = true;
+  editingTransactionId.value = transaction.id;
+};
+
+const cancelEdit = () => {
+  resetForm();
+};
+
+const confirmDelete = (transaction) => {
+  modalType.value = 'delete';
+  selectedTransaction.value = transaction;
+  showModal.value = true;
+};
+
+const handleModalConfirm = async () => {
+  if (!selectedTransaction.value) return;
+
+  switch (modalType.value) {
+    case 'delete':
+      await deleteTransaction(selectedTransaction.value);
+      break;
+  }
+
+  closeModal();
+};
+
+const closeModal = () => {
+  showModal.value = false;
+  modalType.value = '';
+  selectedTransaction.value = null;
+};
+
+const getCategoryIcon = (category) => {
+  const icons = {
+    'Crop Sales': 'fas fa-seedling text-green-600',
+    'Equipment Sales': 'fas fa-tools text-blue-600',
+    'Consulting': 'fas fa-comments text-purple-600',
+    'Utilities': 'fas fa-bolt text-yellow-600',
+    'Nutrients': 'fas fa-flask text-pink-600',
+    'Equipment': 'fas fa-cogs text-gray-600',
+    'Maintenance': 'fas fa-wrench text-orange-600',
+    'Labor': 'fas fa-users text-indigo-600',
+    'Marketing': 'fas fa-bullhorn text-red-600',
+    'Other': 'fas fa-ellipsis-h text-gray-500'
+  };
+  return icons[category] || 'fas fa-tag text-gray-500';
+};
+
+const getSortIcon = (column) => {
+  if (sortColumn.value !== column) return 'fas fa-sort text-gray-400';
+  return sortDirection.value === 'asc' ? 'fas fa-sort-up text-green-600' : 'fas fa-sort-down text-green-600';
+};
+
+const sortBy = (column) => {
+  if (sortColumn.value === column) {
+    sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortColumn.value = column;
+    sortDirection.value = 'asc';
+  }
+};
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+  }
+};
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+  }
+};
+
+const generateReport = async () => {
+  const doc = new jsPDF();
+  
+  // Title and Header
+  doc.setFontSize(20);
+  doc.setTextColor(44, 62, 80);
+  doc.text('Financial Report', 105, 15, { align: 'center' });
+  
+  // Date Range
+  doc.setFontSize(10);
+  doc.setTextColor(100, 100, 100);
+  doc.text(`Period: ${formatDate(startDate.value)} to ${formatDate(endDate.value)}`, 105, 22, { align: 'center' });
+  
+  // Summary Section
+  doc.setFontSize(12);
+  doc.setTextColor(52, 73, 94);
+  doc.text('Summary', 14, 30);
+  
+  // Add summary table
+  doc.autoTable({
+    startY: 35,
+    head: [['Metric', 'Amount']],
+    body: [
+      ['Total Income', `₱${totalIncome.value.toLocaleString()}`],
+      ['Total Expenses', `₱${totalExpenses.value.toLocaleString()}`],
+      ['Net Profit', `₱${netProfit.value.toLocaleString()}`],
+      ['Savings Rate', `${savingsRate.value.toFixed(1)}%`]
+    ],
+    theme: 'grid',
+    headStyles: { 
+      fillColor: [22, 163, 74],
+      textColor: 255
+    },
+    alternateRowStyles: {
+      fillColor: [241, 245, 249]
+    }
+  });
+
+  // Category Summary
+  doc.text('Category Summary', 14, doc.autoTable.previous.finalY + 15);
+  
+  const categorySummaryData = Object.entries(transactionSummary.value).map(([cat, totals]) => [
+    cat,
+    `₱${totals.income.toLocaleString()}`,
+    `₱${totals.expense.toLocaleString()}`,
+    `₱${(totals.income - totals.expense).toLocaleString()}`
+  ]);
+
+  doc.autoTable({
+    startY: doc.autoTable.previous.finalY + 20,
+    head: [['Category', 'Income', 'Expenses', 'Net']],
+    body: categorySummaryData,
+    theme: 'grid',
+    headStyles: { 
+      fillColor: [22, 163, 74],
+      textColor: 255
+    }
+  });
+
+  // Transaction History
+  doc.addPage();
+  doc.text('Transaction History', 14, 15);
+  
+  const transactionData = paginatedTransactions.value.map(t => [
+    formatDate(t.date),
+    t.type,
+    t.category,
+    `₱${t.amount.toLocaleString()}`,
+    t.notes || '-'
+  ]);
+
+  doc.autoTable({
+    startY: 20,
+    head: [['Date', 'Type', 'Category', 'Amount', 'Notes']],
+    body: transactionData,
+    theme: 'grid',
+    headStyles: { 
+      fillColor: [22, 163, 74],
+      textColor: 255
+    }
+  });
+
+  // Save the PDF
+  doc.save(`EcoMist-Financial-Report-${new Date().toISOString().split('T')[0]}.pdf`);
+};
+
+const handleClickOutside = (event) => {
+  if (userMenuRef.value && !userMenuRef.value.contains(event.target)) {
+    userMenuOpen.value = false;
+  }
+};
+
+const checkIfMobile = () => {
+  isMobile.value = window.innerWidth < 768;
+  if (isMobile.value) {
+    sidebarOpen.value = false;
+  } else {
+    // Get saved sidebar state or default to open on desktop
+    const savedState = localStorage.getItem('sidebarOpen');
+    sidebarOpen.value = savedState !== null ? savedState === 'true' : true;
+  }
+};
+
+
+
+// Ensure safe usage of toLocaleString
+const safeToLocaleString = (value) => {
+  return value != null ? value.toLocaleString() : '0';
+};
+
+// Initialize budget limits with default values
+onMounted(() => {
+  categories.value.forEach(cat => {
+    budgetLimits.value[cat] = 0;
+
+    // Trigger the watch() logic manually for initial mount
+  budgetMonth.value = new Date().getMonth() + 1;
+
+  loadBudgetLimits();
+  });
+  
+  // Set some sample budget limits for demonstration
+  budgetLimits.value['Utilities'] = 5000;
+  budgetLimits.value['Equipment'] = 10000;
+  budgetLimits.value['Maintenance'] = 3000;
+  budgetLimits.value['Labor'] = 15000;
+  budgetLimits.value['Marketing'] = 7500;
+  
+  // Set default date range
+  setDateRange('month');
+  
+  fetchTransactions();
+  
+  // Check if mobile on initial load
+  checkIfMobile();
+  
+  // Add resize event listener
+  window.addEventListener('resize', handleResize);
+  
+  // Add click outside listener for user menu
+  document.addEventListener('click', handleClickOutside);
+  
+  // Cleanup on component unmount
+  onBeforeUnmount(() => {
+    window.removeEventListener('resize', handleResize);
+    document.removeEventListener('click', handleClickOutside);
+
+    // Correctly destroy all chart instances
+    if (chartInstance) chartInstance.destroy();
+    if (trendChartInstance) trendChartInstance.destroy();
+    if (incomeChartInstance) incomeChartInstance.destroy();
+    if (expenseChartInstance) expenseChartInstance.destroy();
+    if (forecastChartInstance) forecastChartInstance.destroy();
+  });
+});
+
+// Handle window resize
+const handleResize = () => {
+  checkIfMobile();
+};
+
+// Watch for changes that require chart updates
+watch([selectedMonth, transactions], () => {
+  updateAllCharts();
+});
+
+// Watch for route changes to close sidebar on mobile
+watch(currentRoute, () => {
+  if (isMobile.value) {
+    sidebarOpen.value = false;
+    document.body.style.overflow = '';
+  }
+  // Close user menu when route changes
+  userMenuOpen.value = false;
+});
+
+// Watch for analytics tab changes
+watch(currentAnalyticsTab, () => {
+  nextTick(() => {
+    updateAllCharts();
+  });
+});
+
+// Fetch the logged-in user's name
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    username.value = user.displayName || "User";
+  } else {
+    username.value = "Guest";
   }
 });
-const resetAll = () => {
-  // Single mode
-  file.value = null;
-  filePreview.value = null;
-  result.value = null;
+//added
+const loadBudgetLimits = async () => {
+  const user = auth.currentUser;
+  if (!user) return;
 
-  // Compare mode
-  file1.value = null;
-  file2.value = null;
-  filePreview1.value = null;
-  filePreview2.value = null;
-  result1.value = null;
-  result2.value = null;
-  progressionDetected.value = false;
+  try {
+    loadingBudget.value = true;
+    const docRef = doc(db, 'users', user.uid, 'budgets', `month-${budgetMonth.value}`);
+    const docSnap = await getDoc(docRef);
 
-  // Visual resets
-  dragOver1.value = false;
-  dragOver2.value = false;
-  dragOverSingle.value = false;
-
-  // Modals
-  showConfidenceCard.value = false;
-  selectedItem.value = null;
-  selectedComparison.value = null;
-
-  console.log("🧹 Reset all fields due to mode or model change.");
+    if (docSnap.exists()) {
+      const savedLimits = docSnap.data();
+      const updatedLimits = {};
+      categories.value.forEach(cat => {
+        updatedLimits[cat] = savedLimits[cat] ?? 0;
+      });
+      Object.assign(budgetLimits.value, updatedLimits);
+    } else {
+      categories.value.forEach(cat => {
+        budgetLimits.value[cat] = 0;
+      });
+    }
+  } catch (error) {
+    console.error("Error loading budget limits:", error);
+    showError('Failed to load budget limits');
+  } finally {
+    loadingBudget.value = false;
+  }
 };
-watch(selectedModel, () => {
-  resetAll();
-  fetchModelInfo(); // still fetch new model info
+
+const loadingBudget = ref(false);
+
+watch(budgetMonth, async () => {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  try {
+    loadingBudget.value = true;
+    const docRef = doc(db, 'users', user.uid, 'budgets', `month-${budgetMonth.value}`);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const savedLimits = docSnap.data();
+      const updatedLimits = {};
+      categories.value.forEach(cat => {
+        updatedLimits[cat] = savedLimits[cat] ?? 0;
+      });
+      Object.assign(budgetLimits.value, updatedLimits);
+    } else {
+      categories.value.forEach(cat => {
+        budgetLimits.value[cat] = 0;
+      });
+    }
+  } catch (error) {
+    console.error("Error loading budget limits:", error);
+    showError('Failed to load budget limits');
+  } finally {
+    loadingBudget.value = false;
+  }
 });
 
-watch(compareMode, () => {
-  resetAll();
+watch(budgetMonth, () => {
+  loadBudgetLimits();
 });
 
-const hasStructuredRecommendations = computed(() => {
-  return result.value?.recommendations && typeof result.value.recommendations === 'object' && (
-    result.value.recommendations.diseases ||
-    result.value.recommendations.steps
-  );
+const resetBudgetLimits = async () => {
+  categories.value.forEach(cat => {
+    budgetLimits.value[cat] = 0;
+  });
+  await saveBudgetLimits(); // ✅ Save immediately
+  showSuccess('Budget limits have been reset and saved');
+};
+
+
+const totalBudgetLimit = computed(() => {
+  return Object.values(budgetLimits.value).reduce((sum, val) => sum + (Number(val) || 0), 0);
 });
 
+
+const exportBudgetToCSV = () => {
+  let csv = 'Category,Actual,Limit\n';
+  categories.value.forEach(cat => {
+    const actual = budgetData[cat]?.actual || 0;
+    const limit = budgetLimits.value[cat] || 0;
+    csv += `${cat},${actual},${limit}\n`;
+  });
+
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Budget-${budgetMonth.value}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+const exportBudgetToPDF = () => {
+  const doc = new jsPDF();
+  doc.setFontSize(14);
+  doc.text(`Budget Report - Month ${budgetMonth.value}`, 14, 15);
+
+  const tableData = categories.value.map(cat => [
+    cat,
+    `₱${safeToLocaleString(budgetData[cat]?.actual || 0)}`,
+    `₱${safeToLocaleString(budgetLimits.value[cat] || 0)}`
+  ]);
+
+  autoTable(doc, {
+    startY: 25,
+    head: [['Category', 'Actual', 'Limit']],
+    body: tableData
+  });
+
+  doc.save(`Budget-${budgetMonth.value}.pdf`);
+};
+watch([startDate, endDate], () => {
+  updateTrendChart();
+  updateIncomeDistributionChart();
+  updateExpenseDistributionChart();
+});
 
 </script>
 
-
-<style scoped>
-/* Custom scrollbar for better UX */
-
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
+<style>
+/* Custom styles for the financial management component */
+.bg-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
-::-webkit-scrollbar {
-  width: 6px;
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin {
+    animation: none !important;
+  }
 }
 
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius:  3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-/* Smooth transitions for all interactive elements */
-* {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-
-/* Enhanced focus states for accessibility */
-button:focus,
-input:focus {
+/* Focus styles for accessibility */
+button:focus-visible,
+a:focus-visible {
   outline: 2px solid #10b981;
   outline-offset: 2px;
 }
-
-/* Loading animation for buttons */
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: .5;
-  }
-}
-
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-}
-.text-xs strong {
-  color: #047857;
-}
-
 </style>
