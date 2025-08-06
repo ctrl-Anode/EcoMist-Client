@@ -12,9 +12,9 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-  let path = /databases/$(database)/documents/users/$(request.auth.uid);
-  return exists(path) && get(path).data.role == 'admin';
-}
+      let path = /databases/$(database)/documents/users/$(request.auth.uid);
+      return exists(path) && get(path).data.role == 'admin';
+    }
 
     function isValidTransaction() {
       let data = request.resource.data;
@@ -23,63 +23,95 @@ service cloud.firestore {
              data.amount is number && data.amount > 0 &&
              data.date is timestamp;
     }
+    
+     function isValidBudget() {
+      let data = request.resource.data;
+      return data.keys().hasAll(['startDate', 'endDate', 'limits', 'createdAt']) &&
+             data.startDate is timestamp &&
+             data.endDate is timestamp &&
+             data.createdAt is timestamp &&
+             data.limits is map;
+    }
+// ─── Users & Financial Data ────────────────────────
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isOwner(userId) &&
+                    request.resource.data.email is string &&
+                    request.resource.data.role in ['user', 'admin'];
+      allow update: if isAuthenticated() && (isOwner(userId) || isAdmin());
 
-    // ─── Users Collection ─────────────────────────────
-   match /users/{userId} {
-  allow read: if isAuthenticated();
+      // Transactions Subcollection
+      match /transactions/{transactionId} {
+        allow read: if isAuthenticated() && (isOwner(userId) || isAdmin());
+        allow create, update: if isAuthenticated() && (isOwner(userId) || isAdmin()) && isValidTransaction();
+        allow delete: if isAuthenticated() && (isOwner(userId) || isAdmin());
+      }
 
-  allow create: if isAuthenticated() && isOwner(userId) &&
-  request.resource.data.email is string &&
-  request.resource.data.role in ['user', 'admin'];
+      // Budgets Subcollection — updated to allow range-based budgets
+      match /budgets/{budgetId} {
+        allow read: if isAuthenticated() && (isOwner(userId) || isAdmin());
+        allow create, update: if isAuthenticated() && (isOwner(userId) || isAdmin());
+        allow delete: if isAuthenticated() && (isOwner(userId) || isAdmin());
+      }
 
-  allow update: if isAuthenticated() && (isOwner(userId) || isAdmin());
+      // Categories Subcollection — allows user-defined categories
+      match /categories/{categoryId} {
+        allow read: if isAuthenticated();
+        allow create, update, delete: if isAuthenticated() && (isOwner(userId) || isAdmin());
+      }
 
-      // ─── Transactions Subcollection ───────────────
-       match /transactions/{transactionId} {
-    allow read: if isAuthenticated() && (isOwner(userId) || isAdmin());
-    allow create, update: if isAuthenticated() && (isOwner(userId) || isAdmin()) && isValidTransaction();
-    allow delete: if isAuthenticated() && (isOwner(userId) || isAdmin());
-  }
-      // ─── Budgets Subcollection ────────────────────
-     match /budgets/{monthId} {
-    allow read, write: if isAuthenticated() && isOwner(userId);
-  }
-}
+      // Settings Subcollection — for user-specific settings like categories
+      match /settings/{settingId} {
+        allow read, write: if isAuthenticated() && isOwner(userId);
+      }
 
-    // ─── Contact Messages ────────────────────────────
+      // Budget Plans Subcollection — for user budget plans
+      match /budget_plans/{planId} {
+        allow read, write: if isAuthenticated() && isOwner(userId);
+        allow create: if isAuthenticated() && isOwner(userId) && isValidBudget();
+        allow delete: if isAuthenticated() && isOwner(userId);
+      }
+    }
+
+    // ─── Global Categories ─────────────────────────────
+    match /categories/{categoryId} {
+      allow read: if isAuthenticated(); // or `true` if public
+      allow create, update, delete: if isAuthenticated() && isAdmin();
+    }
+
+    // ─── Contact Messages ─────────────────────────────
     match /contact_messages/{messageId} {
       allow create: if request.resource.data.keys().hasAll(['name', 'email', 'message', 'timestamp']) &&
-                    request.resource.data.name is string &&
-                    request.resource.data.email is string &&
-                    request.resource.data.message is string &&
-                    request.resource.data.timestamp is timestamp;
+                     request.resource.data.name is string &&
+                     request.resource.data.email is string &&
+                     request.resource.data.message is string &&
+                     request.resource.data.timestamp is timestamp;
       allow read, delete: if isAuthenticated() && isAdmin();
     }
-    
-    // ─── Typing Status ───────────────────────────────
+
+    // ─── Typing and Online Status ─────────────────────
     match /typing/{typingId} {
       allow read: if isAuthenticated();
-      allow create, delete: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow create, delete: if isAuthenticated() &&
+                            request.resource.data.userId == request.auth.uid;
     }
 
-    // ─── Online Status ───────────────────────────────
     match /status/{userId} {
       allow read: if isAuthenticated();
       allow write: if isAuthenticated() && isOwner(userId);
     }
 
-    // ─── Analysis History ────────────────────────────
-    match /analysisHistory/{documentId} {
+    // ─── Analysis History ─────────────────────────────
+    match /analysisHistory/{docId} {
       allow read: if isAuthenticated() && (
-  resource.data.userId == request.auth.uid || isAdmin()
-);
+        resource.data.userId == request.auth.uid || isAdmin()
+      );
       allow create: if isAuthenticated() &&
-        request.resource.data.userId == request.auth.uid &&
         request.resource.data.keys().hasAll([
           'userId', 'imageUrl', 'prediction', 'confidence',
           'classProbabilities', 'recommendations', 'createdAt'
         ]) &&
-        request.resource.data.userId is string &&
+        request.resource.data.userId == request.auth.uid &&
         request.resource.data.imageUrl is string &&
         request.resource.data.prediction is string &&
         request.resource.data.confidence is number &&
@@ -90,105 +122,86 @@ service cloud.firestore {
         resource.data.userId == request.auth.uid || isAdmin()
       );
     }
-    
-        // ─── Comparisons (Two-Image Comparison History) ────────────────────────────
+
+    // ─── Comparisons ──────────────────────────────────
     match /comparisons/{comparisonId} {
       allow read: if isAuthenticated() && (
-  resource.data.userId == request.auth.uid || isAdmin()
-);
-
+        resource.data.userId == request.auth.uid || isAdmin()
+      );
       allow create: if isAuthenticated() &&
         request.resource.data.userId == request.auth.uid &&
         request.resource.data.keys().hasAll([
-          'userId', 'imageUrl1', 'imageUrl2',
-          'prediction1', 'prediction2',
-          'confidence1', 'confidence2',
-          'classProbabilities1', 'classProbabilities2',
+          'userId', 'imageUrl1', 'imageUrl2', 'prediction1', 'prediction2',
+          'confidence1', 'confidence2', 'classProbabilities1', 'classProbabilities2',
           'progressionDetected', 'createdAt'
         ]) &&
-        request.resource.data.userId is string &&
-        request.resource.data.imageUrl1 is string &&
-        request.resource.data.imageUrl2 is string &&
-        request.resource.data.prediction1 is string &&
-        request.resource.data.prediction2 is string &&
-        request.resource.data.confidence1 is number &&
-        request.resource.data.confidence2 is number &&
-        request.resource.data.classProbabilities1 is map &&
-        request.resource.data.classProbabilities2 is map &&
         request.resource.data.progressionDetected is bool &&
         request.resource.data.createdAt is timestamp;
-
-      allow update, delete: if isAuthenticated() && (
-        resource.data.userId == request.auth.uid || isAdmin()
-      );
+      allow update, delete: if isAuthenticated() &&
+        (resource.data.userId == request.auth.uid || isAdmin());
     }
 
-
-    // ─── Attachments ─────────────────────────────────
+    // ─── Attachments ──────────────────────────────────
     match /attachments/{attachmentId} {
       allow read: if isAuthenticated();
       allow create, delete: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
     }
 
-    // ─── Feedback ────────────────────────────────────
-  match /feedback/{feedbackId} {
-  allow read: if isAuthenticated() && (
-    resource.data.userId == request.auth.uid || isAdmin()
-  );
-  allow delete: if isAuthenticated() && isAdmin();
-  allow create: if isAuthenticated() &&
-    request.resource.data.keys().hasAll(['type', 'message', 'userId', 'timestamp']) &&
-    request.resource.data.type in ['suggestion', 'bug', 'question', 'other'] &&
-    request.resource.data.message.size() > 0 &&
-    request.resource.data.userId == request.auth.uid &&
-    request.resource.data.timestamp is timestamp;
+    // ─── Feedback ─────────────────────────────────────
+    match /feedback/{feedbackId} {
+      allow read: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid || isAdmin()
+      );
+      allow delete: if isAuthenticated() && isAdmin();
+      allow create: if isAuthenticated() &&
+        request.resource.data.keys().hasAll(['type', 'message', 'userId', 'timestamp']) &&
+        request.resource.data.type in ['suggestion', 'bug', 'question', 'other'] &&
+        request.resource.data.message.size() > 0 &&
+        request.resource.data.userId == request.auth.uid &&
+        request.resource.data.timestamp is timestamp;
 
-  allow update: if isAuthenticated() && (
-    isAdmin() || (
-      request.resource.data.diff(resource.data).affectedKeys().hasOnly(['readByUser']) &&
-      resource.data.userId == request.auth.uid
-    )
-  );
-}
+      allow update: if isAuthenticated() && (
+        isAdmin() || (
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['readByUser']) &&
+          resource.data.userId == request.auth.uid
+        )
+      );
+    }
 
-
-    // ─── System Logs ─────────────────────────────────
+    // ─── System Logs ──────────────────────────────────
     match /system_logs/{logId} {
-  allow read: if isAuthenticated() && resource.data.user == request.auth.token.email;
-  allow create: if isAuthenticated() &&
-    request.resource.data.keys().hasAll(['type', 'message', 'timestamp', 'user', 'userRole']) &&
-    request.resource.data.type in ['info', 'warning', 'error', 'success'] &&
-    request.resource.data.message.size() > 0 &&
-    request.resource.data.timestamp is timestamp &&
-    request.resource.data.user.size() > 0 &&
-    request.resource.data.userRole in ['admin', 'user'];
-  allow delete: if isAuthenticated() && isAdmin();
-}
+      allow read: if isAuthenticated() && resource.data.user == request.auth.token.email;
+      allow create: if isAuthenticated() &&
+        request.resource.data.keys().hasAll(['type', 'message', 'timestamp', 'user', 'userRole']) &&
+        request.resource.data.type in ['info', 'warning', 'error', 'success'] &&
+        request.resource.data.userRole in ['admin', 'user'];
+      allow delete: if isAuthenticated() && isAdmin();
+    }
 
-
-    // ─── System Config (Admin only) ──────────────────
+    // ─── System Settings ──────────────────────────────
     match /system/{document=**} {
       allow read, write: if isAuthenticated() && isAdmin();
     }
 
-    // ─── Public Data ─────────────────────────────────
+    // ─── Public Documents ─────────────────────────────
     match /public/{document=**} {
       allow read: if true;
       allow write: if isAuthenticated() && isAdmin();
     }
 
-    // ─── IoT Sensor Data ─────────────────────────────
+    // ─── IoT Sensor Data ──────────────────────────────
     match /sensor_data/{deviceId} {
       allow read, write: if isAuthenticated();
     }
-    
-    // ─── Tawk Logs ───────────────────────────────────
+
+    // ─── Tawk Logs ────────────────────────────────────
     match /tawkLogs/{docId} {
       allow create: if isAuthenticated() &&
-                    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['user', 'admin']; // Allow both 'user' and 'admin' roles
+                    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['user', 'admin'];
     }
-    // ─── Messages ────────────────────────────────────
-     function isSender(message) {
+
+    // ─── Messages ─────────────────────────────────────
+    function isSender(message) {
       return request.auth != null && request.auth.uid == message.userId;
     }
 
@@ -212,83 +225,60 @@ service cloud.firestore {
              request.resource.data.diff(resource.data).affectedKeys().hasOnly(['replies']);
     }
 
-    // ─── Messages Collection ─────────────────────────
     match /messages/{messageId} {
-
-      // Read: Any authenticated user can read messages
       allow read: if isAuthenticated();
-
-      // Create: Authenticated users can create their own message
       allow create: if isAuthenticated() &&
         request.resource.data.userId == request.auth.uid &&
         request.resource.data.text is string &&
         request.resource.data.timestamp is timestamp;
-
-      // Update: 
       allow update: if isAuthenticated() && (
-        
-        // Sender can edit their own message (text, fileUrl, edited flag, etc.)
-        isSender(resource.data)
-
-        // Other users can update readBy field
-        || (isReadByUpdate() && !isSender(resource.data))
-
-        // Other users can update reactions only
-        || (isReactionUpdate() && !isSender(resource.data))
-
-        // Other users can update replies only
-        || (isReplyUpdate() && !isSender(resource.data))
+        isSender(resource.data) || isReadByUpdate() || isReactionUpdate() || isReplyUpdate()
       );
-
-      // Delete: Only the sender can delete their own message
       allow delete: if isSender(resource.data);
     }
-    match /mail_senders/{uid} {
-  allow read, write: if request.auth != null && request.auth.uid == uid;
-}
 
-match /smtp_logs/{uid}/logs/{logId} {
-  allow read, write: if request.auth != null && request.auth.uid == uid;
-}
-match /contact_logs/{logId} {
+    // ─── Mailer & Logging ─────────────────────────────
+    match /mail_senders/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    match /smtp_logs/{uid}/logs/{logId} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    match /contact_logs/{logId} {
       allow read, write: if isAuthenticated() && isAdmin();
     }
-     match /auth_logs/{logId} {
-      allow create: if request.auth != null; // any authenticated user can log events
+
+    match /auth_logs/{logId} {
+      allow create: if isAuthenticated();
       allow read: if isAdmin() || resource.data.uid == request.auth.uid;
     }
+
+    // ─── Feedback Notifications ───────────────────────
+    match /feedback_notifications/{notificationId} {
+      allow create: if isAuthenticated();
+      allow get, list: if isAuthenticated();
+      allow delete, update: if isAdmin();
+    }
+
+    // ─── Admin/User Settings ──────────────────────────
+    match /admin_settings/{adminId} {
+      allow write: if isAuthenticated() && request.auth.uid == adminId && isAdmin();
+      allow get, list: if isAuthenticated();
+    }
+
+    match /user_settings/{userId} {
+      allow write: if isAuthenticated() && request.auth.uid == userId;
+      allow get, list: if isAuthenticated();
+    }
+
+    // ─── Feedback Replies ─────────────────────────────
+    match /feedback_replies/{replyId} {
+      allow read, update: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && isAdmin();
+      allow list: if isAuthenticated();
+    }
     
-match /feedback_notifications/{notificationId} {
-  allow create: if isAuthenticated();
-  
-  allow get: if request.auth != null && (isAdmin() || resource.data.userId == request.auth.uid);
-
-   allow list: if isAuthenticated();
-  
-  allow delete, update: if isAdmin();
-}
-
-// Admin tokens
-match /admin_settings/{adminId} {
-  allow write: if isAuthenticated() && request.auth.uid == adminId && isAdmin();
-  allow get: if isAuthenticated();
-  allow list: if isAuthenticated();
-}
-
-// User tokens
-match /user_settings/{userId} {
-  allow write: if isAuthenticated() && request.auth.uid == userId;
-  allow get: if isAuthenticated();
-  allow list: if isAuthenticated();
-}
-
-// Feedback Replies
-match /feedback_replies/{replyId} {
-  allow read, update: if isAuthenticated() && resource.data.userId == request.auth.uid;
-  allow create: if isAuthenticated() && isAdmin();
-  allow list: if isAuthenticated(); 
-}
-
-
   }
 }

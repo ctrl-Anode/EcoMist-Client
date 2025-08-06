@@ -1,7 +1,7 @@
 <template>
   <div
     class="fixed inset-0 bg-cover bg-bottom bg-no-repeat z-0"
-    style="background-image: url('/aeroponics_bg.png');"
+    :style="{ backgroundImage: `url(${backgroundImageLoaded ? '/aeroponics_bg.png' : '/placeholder.png'})` }"
     role="presentation"
     aria-hidden="true"
   >
@@ -148,6 +148,7 @@ const profileImageError = ref("");
 const isHighContrast = ref(false);
 const notifications = ref([]);
 const showNotifications = ref(false);
+const backgroundImageLoaded = ref(false);
 
 const globalAlert = reactive({
   show: false,
@@ -441,7 +442,16 @@ const acceptPrivacy = () => {
   showPrivacyModal.value = false;
 };
 
+const loadBackgroundImage = () => {
+  const img = new Image();
+  img.src = '/aeroponics_bg.png';
+  img.onload = () => {
+    backgroundImageLoaded.value = true;
+  };
+};
+
 onMounted(() => {
+  loadBackgroundImage();
   setTimeout(() => {
     const firstInput = document.querySelector(isLoginView.value ? "#login-email" : "input[type='text']");
     if (firstInput) firstInput.focus();
