@@ -1536,7 +1536,6 @@ const route = useRoute();
 const dateRanges = [
 { id: 'week', name: 'This Week' },
 { id: 'month', name: 'This Month' },
-{ id: 'quarter', name: 'This Quarter' },
 { id: 'year', name: 'This Year' },
 { id: 'custom', name: 'Custom Range' }
 ];
