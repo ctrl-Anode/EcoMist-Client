@@ -89,7 +89,26 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div class="space-y-3">
                     <label class="block text-sm font-medium text-gray-700">Image 1</label>
+                    
+                    <!-- Camera Controls for Compare Mode -->
+                    <div v-if="compareCameraActive" class="flex gap-2 mb-2">
+                      <button
+                        @click="captureCompareImage"
+                        class="px-3 py-1 bg-blue-600 text-white rounded text-sm"
+                        :disabled="!compareCameraActive"
+                      >
+                        Capture {{ activeCompareSlot === 1 ? 'Before' : 'After' }} Image
+                      </button>
+                      <button
+                        @click="toggleCompareCamera"
+                        class="px-3 py-1 bg-gray-200 rounded text-sm"
+                      >
+                        {{ compareCameraActive ? 'Stop Camera' : 'Start Camera' }}
+                      </button>
+                    </div>
+
                     <div
+
   :class="['border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition', 
   dragOver1 ? 'border-blue-500 bg-blue-50' : 'border-blue-300']"
 @dragover.prevent="dragOver1 = true"
@@ -110,7 +129,15 @@
                     <div v-if="filePreview1" class="rounded-lg overflow-hidden shadow-md">
                       <img :src="filePreview1" class="w-full h-48 object-cover" />
                     </div>
+                    <!-- <video 
+                      v-if="compareCameraActive" 
+                      ref="videoRef" 
+                      autoplay 
+                      playsinline 
+                      class="w-full h-48 object-cover border rounded-lg"
+                    ></video> -->
                   </div>
+
                   
                   <div class="space-y-3">
                     <label class="block text-sm font-medium text-gray-700">Image 2</label>
@@ -163,6 +190,112 @@
   </button>
 </div>
 
+
+         <!-- Camera Section Compare Mode -->
+<div class="bg-gray-50 rounded-xl p-6">
+  <div class="flex justify-between items-center mb-4">
+    <h3 class="text-xl font-semibold text-gray-900">📹 Live Camera - Compare Mode</h3>
+    <button
+      @click="showCameraSectionCompare = !showCameraSectionCompare"
+      class="text-sm text-indigo-600 hover:underline focus:outline-none"
+    >
+      {{ showCameraSectionCompare ? 'Hide' : 'Show' }}
+    </button>
+  </div>
+
+  <transition name="fade">
+    <div v-if="showCameraSectionCompare" class="space-y-4">
+      <!-- Camera Video Preview with Loading State -->
+      <div class="relative w-full max-h-80 rounded-xl border border-gray-200 shadow-lg bg-black overflow-hidden">
+        <video
+          ref="videoRefCompare"
+          autoplay
+          playsinline
+          class="w-full h-full object-cover"
+          :class="{ 'opacity-0': isLoadingDevices }"
+        ></video>
+        
+        <!-- Loading/Error States -->
+        <div v-if="isLoadingDevices" class="absolute inset-0 flex items-center justify-center bg-black/50">
+          <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
+        </div>
+        
+        <div v-if="cameraError" class="absolute inset-0 flex items-center justify-center bg-black/50 p-4">
+          <div class="text-center text-white">
+            <p class="text-red-400 font-medium mb-2">⚠️ Camera Error</p>
+            <p class="text-sm">{{ cameraError }}</p>
+            <button 
+              @click="startCompareCamera"
+              class="mt-3 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-sm"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Camera Controls -->
+      <div class="space-y-3">
+        <!-- Device Selection -->
+        <div v-if="availableVideoDevices.length > 1" class="space-y-1">
+          <label class="block text-sm font-medium text-gray-700">Camera Source</label>
+          <select
+            v-model="selectedDeviceId"
+            @change="startCompareCamera"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+          >
+            <option
+              v-for="device in availableVideoDevices"
+              :key="device.deviceId"
+              :value="device.deviceId"
+            >
+              {{ device.label || 'Camera ' + device.deviceId.slice(0, 8) }}
+            </option>
+          </select>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+          <!-- Flip Button (mobile only) -->
+          <button
+            v-if="isMobile"
+            @click="flipCompareCamera"
+            class="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+            </svg>
+            <span>Flip ({{ facingMode === 'user' ? 'Front' : 'Back' }})</span>
+          </button>
+
+          <!-- Start/Stop -->
+          <button
+            class="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+            @click="toggleCompareCamera"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path v-if="compareCameraActive" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <path v-if="!compareCameraActive" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l-4.5 4.5m0-4.5l4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{{ compareCameraActive ? 'Stop' : 'Start' }}</span>
+          </button>
+
+          <!-- Capture -->
+          <button
+            class="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors disabled:opacity-50"
+            @click="captureCompareImage"
+            :disabled="!compareCameraActive"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span>Capture {{ activeCompareSlot === 1 ? 'Before' : 'After' }} Image</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </transition>
+</div>
 
               </div>
             </div>
@@ -239,72 +372,109 @@
               </div>
             </div>
 
-           <!-- Camera Section -->
+           <!-- Camera Section Single Mode-->
 <div class="bg-gray-50 rounded-xl p-6">
   <div class="flex justify-between items-center mb-4">
-    <h3 class="text-xl font-semibold text-gray-900">📹 Live Camera</h3>
+    <h3 class="text-xl font-semibold text-gray-900">📹 Live Camera -  Single Mode</h3>
     <button
-      @click="showCameraSection = !showCameraSection"
+      @click="showCameraSectionSingle = !showCameraSectionSingle"
       class="text-sm text-indigo-600 hover:underline focus:outline-none"
     >
-      {{ showCameraSection ? 'Hide' : 'Show' }}
+      {{ showCameraSectionSingle ? 'Hide' : 'Show' }}
     </button>
   </div>
 
   <transition name="fade">
-    <div v-if="showCameraSection" class="space-y-4">
-      <!-- Camera Video Preview -->
-      <video
-        ref="videoRef"
-        autoplay
-        playsinline
-        class="w-full max-h-80 rounded-xl border border-gray-200 shadow-lg bg-black"
-      ></video>
+    <div v-if="showCameraSectionSingle" class="space-y-4">
+      <!-- Camera Video Preview with Loading State -->
+      <div class="relative w-full max-h-80 rounded-xl border border-gray-200 shadow-lg bg-black overflow-hidden">
+        <video
+          ref="videoRef"
+          autoplay
+          playsinline
+          class="w-full h-full object-cover"
+          :class="{ 'opacity-0': isLoadingDevices }"
+        ></video>
+        
+        <!-- Loading/Error States -->
+        <div v-if="isLoadingDevices" class="absolute inset-0 flex items-center justify-center bg-black/50">
+          <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
+        </div>
+        
+        <div v-if="cameraError" class="absolute inset-0 flex items-center justify-center bg-black/50 p-4">
+          <div class="text-center text-white">
+            <p class="text-red-400 font-medium mb-2">⚠️ Camera Error</p>
+            <p class="text-sm">{{ cameraError }}</p>
+            <button 
+              @click="startCamera"
+              class="mt-3 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-sm"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
 
-      <!-- Device Selector for Desktop -->
-      <div v-if="availableVideoDevices.length > 1" class="flex gap-3">
-        <select
-          v-model="selectedDeviceId"
-          @change="startCamera"
-          class="px-3 py-2 border rounded-lg text-sm"
-        >
-          <option
-            v-for="device in availableVideoDevices"
-            :key="device.deviceId"
-            :value="device.deviceId"
+      <!-- Camera Controls -->
+      <div class="space-y-3">
+        <!-- Device Selection -->
+        <div v-if="availableVideoDevices.length > 1" class="space-y-1">
+          <label class="block text-sm font-medium text-gray-700">Camera Source</label>
+          <select
+            v-model="selectedDeviceId"
+            @change="startCamera"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm"
           >
-            {{ device.label || 'Camera ' + device.deviceId }}
-          </option>
-        </select>
+            <option
+              v-for="device in availableVideoDevices"
+              :key="device.deviceId"
+              :value="device.deviceId"
+            >
+              {{ device.label || 'Camera ' + device.deviceId.slice(0, 8) }}
+            </option>
+          </select>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+          <!-- Flip Button (mobile only) -->
+          <button
+            v-if="isMobile"
+            @click="flipCamera"
+            class="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+            </svg>
+            <span>Flip ({{ facingMode === 'user' ? 'Front' : 'Back' }})</span>
+          </button>
+
+          <!-- Start/Stop -->
+          <button
+            class="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+            @click="toggleCamera"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path v-if="cameraActive" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <path v-if="!cameraActive" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l-4.5 4.5m0-4.5l4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{{ cameraActive ? 'Stop' : 'Start' }}</span>
+          </button>
+
+          <!-- Capture -->
+          <button
+            class="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors disabled:opacity-50"
+            @click="captureImage"
+            :disabled="!cameraActive"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span>Capture</span>
+          </button>
+        </div>
       </div>
 
-      <div class="flex flex-wrap gap-3">
-        <!-- Flip Button (mobile only) -->
-        <button
-          v-if="isMobile"
-          @click="flipCamera"
-          class="text-sm bg-white text-black px-3 py-2 rounded shadow hover:bg-gray-100"
-        >
-          Flip Camera ({{ facingMode === 'user' ? 'Front' : 'Back' }})
-        </button>
-
-        <!-- Start/Stop -->
-        <button
-          class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors duration-200"
-          @click="toggleCamera"
-        >
-          {{ cameraActive ? '🛑 Stop Camera' : '🎥 Start Camera' }}
-        </button>
-
-        <!-- Capture -->
-        <button
-          class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
-          @click="captureImage"
-          :disabled="!cameraActive"
-        >
-          📷 Capture Photo
-        </button>
-      </div>
     </div>
   </transition>
 </div>
@@ -1162,6 +1332,9 @@ const file1 = vueRef(null);
 const file2 = vueRef(null);
 const result1 = vueRef(null);
 const result2 = vueRef(null);
+const compareCameraActive = vueRef(false);
+const activeCompareSlot = vueRef(1); // 1 or 2
+
 
 const progressionDetected = vueRef(false);
 
@@ -1171,7 +1344,8 @@ const selectedComparison = ref(null); // For modal
 const comparisonToDelete = ref(null);
 const showDeleteConfirmComparison = ref(false);    
 
-const showCameraSection = ref(false);
+const showCameraSectionSingle = ref(false);
+const showCameraSectionCompare = ref(false);
 
 const selectedModel = ref('v2'); // default to v2
 const historyModelFilter = ref('');
@@ -1185,13 +1359,18 @@ const endDate = ref('');
 const videoRef = vueRef(null);
 const canvasRef = vueRef(null);
 const cameraActive = ref(false);
-const facingMode = ref('environment'); // back camera default
+const facingMode = ref('environment');
 const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
 const availableVideoDevices = ref([]);
 const selectedDeviceId = ref(null);
+const cameraError = ref(null);
+const isLoadingDevices = ref(false);
 let mediaStream = null;
+
 const filePreview = vueRef(null);
+
+const videoRefCompare = vueRef(null);
+const compareMediaStream = vueRef(null);
 
 const onFileChange = (e) => {
   file.value = e.target.files[0];
@@ -1309,70 +1488,96 @@ onMounted(() => {
 
 const initCamera = async () => {
   try {
-    // Stop previous camera if exists
     stopCamera();
+    isLoadingDevices.value = true;
+    cameraError.value = null;
 
-    mediaStream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: facingMode.value },
+    await enumerateVideoDevices();
+    
+    const constraints = {
+      video: {
+        ...(selectedDeviceId.value 
+          ? { deviceId: { exact: selectedDeviceId.value } }
+          : { facingMode: facingMode.value }),
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      },
       audio: false
-    });
+    };
+
+    mediaStream = await navigator.mediaDevices.getUserMedia(constraints)
+      .catch(err => {
+        if (err.name === 'NotAllowedError') {
+          throw new Error('Camera access was denied');
+        }
+        throw err;
+      });
 
     if (videoRef.value) {
       videoRef.value.srcObject = mediaStream;
+      videoRef.value.play().catch(err => {
+        console.error('Video play error:', err);
+        throw new Error('Could not start video stream');
+      });
     }
-    console.log("🎥 Camera initialized.");
   } catch (err) {
     console.error('Camera error:', err);
-    showToast("❌ Can't access camera.", 'bg-red-500');
+    cameraError.value = err.message;
+    showToast(`Camera error: ${err.message}`, 'bg-red-500');
+  } finally {
+    isLoadingDevices.value = false;
   }
 };
 
-// List available video input devices
+
 const enumerateVideoDevices = async () => {
-  const devices = await navigator.mediaDevices.enumerateDevices();
-  availableVideoDevices.value = devices.filter(d => d.kind === 'videoinput');
-
-  // Auto-select: use facingMode on mobile, or first camera on desktop
-  if (isMobile) {
-    selectedDeviceId.value = null; // use facingMode
-  } else {
-    selectedDeviceId.value = availableVideoDevices.value[0]?.deviceId || null;
-  }
-};
-
-// Start camera with either facingMode or deviceId
-const startCamera = async () => {
-  stopCamera();
-
   try {
-    const constraints = selectedDeviceId.value
-      ? { video: { deviceId: selectedDeviceId.value } }
-      : { video: { facingMode: facingMode.value } };
-
-    mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-
-    if (videoRef.value) {
-      videoRef.value.srcObject = mediaStream;
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    availableVideoDevices.value = devices.filter(d => d.kind === 'videoinput');
+    
+    if (availableVideoDevices.value.length === 0) {
+      throw new Error('No cameras found');
     }
 
-    cameraActive.value = true;
-    console.log('🎥 Camera started');
+    // Prefer back camera on mobile if available
+    if (isMobile) {
+      const backCamera = availableVideoDevices.value.find(d => 
+        d.label.toLowerCase().includes('back')
+      );
+      selectedDeviceId.value = backCamera?.deviceId || availableVideoDevices.value[0].deviceId;
+    } else {
+      selectedDeviceId.value = availableVideoDevices.value[0].deviceId;
+    }
   } catch (err) {
-    console.error('Camera error:', err);
-    showToast("Failed to access camera", 'bg-red-500');
+    console.error('Device enumeration error:', err);
+    cameraError.value = err.message;
+    showToast(`Device error: ${err.message}`, 'bg-red-500');
+    throw err;
   }
 };
+
+
+const startCamera = async () => {
+  try {
+    await initCamera();
+    cameraActive.value = true;
+  } catch (err) {
+    cameraActive.value = false;
+  }
+};
+
 
 const stopCamera = () => {
-  const stream = videoRef.value?.srcObject;
-  if (stream) {
-    stream.getTracks().forEach(track => track.stop());
-    videoRef.value.srcObject = null;
-    mediaStream = null;
-    cameraActive.value = false;
-    console.log('📴 Camera stopped');
+  if (mediaStream) {
+    mediaStream.getTracks().forEach(track => track.stop());
   }
+  if (videoRef.value?.srcObject) {
+    videoRef.value.srcObject = null;
+  }
+  mediaStream = null;
+  cameraActive.value = false;
 };
+
 
 const toggleCamera = () => {
   cameraActive.value ? stopCamera() : startCamera();
@@ -1405,6 +1610,104 @@ const captureImage = () => {
     filePreview.value = URL.createObjectURL(fileBlob);
   }, 'image/jpeg');
 };
+
+const startCompareCamera = async () => {
+  try {
+    stopCompareCamera();
+    isLoadingDevices.value = true;
+    cameraError.value = null;
+
+    await enumerateVideoDevices();
+    
+    const constraints = {
+      video: {
+        ...(selectedDeviceId.value 
+          ? { deviceId: { exact: selectedDeviceId.value } }
+          : { facingMode: facingMode.value }),
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      },
+      audio: false
+    };
+
+    compareMediaStream.value = await navigator.mediaDevices.getUserMedia(constraints)
+      .catch(err => {
+        if (err.name === 'NotAllowedError') {
+          throw new Error('Camera access was denied');
+        }
+        throw err;
+      });
+
+    if (videoRefCompare.value) {
+      videoRefCompare.value.srcObject = compareMediaStream.value;
+      videoRefCompare.value.play().catch(err => {
+        console.error('Video play error:', err);
+        throw new Error('Could not start video stream');
+      });
+    }
+    
+    compareCameraActive.value = true;
+  } catch (err) {
+    console.error('Compare camera error:', err);
+    cameraError.value = err.message;
+    showToast(`Camera error: ${err.message}`, 'bg-red-500');
+    compareCameraActive.value = false;
+  } finally {
+    isLoadingDevices.value = false;
+  }
+};
+
+const stopCompareCamera = () => {
+  if (compareMediaStream.value) {
+    compareMediaStream.value.getTracks().forEach(track => track.stop());
+  }
+  if (videoRefCompare.value?.srcObject) {
+    videoRefCompare.value.srcObject = null;
+  }
+  compareMediaStream.value = null;
+  compareCameraActive.value = false;
+};
+
+const toggleCompareCamera = () => {
+  compareCameraActive.value ? stopCompareCamera() : startCompareCamera();
+};
+
+const flipCompareCamera = () => {
+  facingMode.value = facingMode.value === 'user' ? 'environment' : 'user';
+  selectedDeviceId.value = null;
+  startCompareCamera();
+};
+
+const captureCompareImage = () => {
+  const video = videoRefCompare.value;
+  const canvas = canvasRef.value;
+
+  if (!video || !canvas) return;
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0);
+
+  canvas.toBlob(blob => {
+    const fileBlob = new File([blob], `captured_${Date.now()}.jpg`, {
+      type: 'image/jpeg'
+    });
+    
+    if (activeCompareSlot.value === 1) {
+      file1.value = fileBlob;
+      filePreview1.value = URL.createObjectURL(fileBlob);
+    } else {
+      file2.value = fileBlob;
+      filePreview2.value = URL.createObjectURL(fileBlob);
+    }
+    
+    // Switch to other slot for next capture
+    activeCompareSlot.value = activeCompareSlot.value === 1 ? 2 : 1;
+  }, 'image/jpeg');
+};
+
 
 onMounted(() => {
   enumerateVideoDevices();
@@ -1978,7 +2281,11 @@ const clearCompare = () => {
   result1.value = null;
   result2.value = null;
   progressionDetected.value = false;
+  compareCameraActive.value = false;
+  activeCompareSlot.value = 1;
+  stopCamera();
 };
+
 
 const loadComparisonHistory = () => {
   const user = auth.currentUser;
