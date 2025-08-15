@@ -83,114 +83,7 @@
   <div v-if="compareMode">
     <!-- Compare Mode -->
             <div class="bg-gray-50 rounded-xl p-6">
-              <h3 class="text-xl font-semibold text-gray-900 mb-4">⚖️ Compare Images</h3>
               
-              <div v-if="compareMode" class="space-y-6">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div class="space-y-3">
-                    <label class="block text-sm font-medium text-gray-700">Image 1</label>
-                    
-                    <!-- Camera Controls for Compare Mode -->
-                    <div v-if="compareCameraActive" class="flex gap-2 mb-2">
-                      <button
-                        @click="captureCompareImage"
-                        class="px-3 py-1 bg-blue-600 text-white rounded text-sm"
-                        :disabled="!compareCameraActive"
-                      >
-                        Capture {{ activeCompareSlot === 1 ? 'Before' : 'After' }} Image
-                      </button>
-                      <button
-                        @click="toggleCompareCamera"
-                        class="px-3 py-1 bg-gray-200 rounded text-sm"
-                      >
-                        {{ compareCameraActive ? 'Stop Camera' : 'Start Camera' }}
-                      </button>
-                    </div>
-
-                    <div
-
-  :class="['border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition', 
-  dragOver1 ? 'border-blue-500 bg-blue-50' : 'border-blue-300']"
-@dragover.prevent="dragOver1 = true"
-@dragleave.prevent="dragOver1 = false"
-  @drop.prevent="handleDropCompare($event, 1); dragOver1 = false"
-  @click="$refs.fileDrop1.click()"
->
-  <p class="text-sm text-blue-600">📂 Drag & drop or click to upload Image 1</p>
-  <input 
-    type="file" 
-    accept="image/*" 
-    @change="e => handleCompareFile(e, 1)"
-    ref="fileDrop1"
-    class="hidden"
-  />
-</div>
-
-                    <div v-if="filePreview1" class="rounded-lg overflow-hidden shadow-md">
-                      <img :src="filePreview1" class="w-full h-48 object-cover" />
-                    </div>
-                    <!-- <video 
-                      v-if="compareCameraActive" 
-                      ref="videoRef" 
-                      autoplay 
-                      playsinline 
-                      class="w-full h-48 object-cover border rounded-lg"
-                    ></video> -->
-                  </div>
-
-                  
-                  <div class="space-y-3">
-                    <label class="block text-sm font-medium text-gray-700">Image 2</label>
-                   <div
-  :class="['border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition', 
-  dragOver2 ? 'border-blue-500 bg-blue-50' : 'border-blue-300']"
-  @dragover.prevent="dragOver2 = true"
-@dragleave.prevent="dragOver2 = false"
-  @drop.prevent="handleDropCompare($event, 2); dragOver2 = false"
-  @click="$refs.fileDrop2.click()"
->
-  <p class="text-sm text-blue-600">📂 Drag & drop or click to upload Image 2</p>
-  <input 
-    type="file" 
-    accept="image/*" 
-    @change="e => handleCompareFile(e, 2)"
-    ref="fileDrop2"
-    class="hidden"
-  />
-</div>
-
-                    <div v-if="filePreview2" class="rounded-lg overflow-hidden shadow-md">
-                      <img :src="filePreview2" class="w-full h-48 object-cover" />
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flex flex-wrap gap-3">
-  <button
-    class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 disabled:opacity-50"
-    :disabled="!file1 || !file2"
-    @click="analyzeComparison"
-  >
-    🔍 Analyze Both Images
-  </button>
-
-  <button
-    v-if="result1 && result2"
-    @click="clearCompare"
-    class="inline-flex items-center px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors duration-200"
-  >
-    🔁 Try Another Image
-  </button>
-
-  <button
-    class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-colors duration-200"
-    @click="clearCompare"
-  >
-    ♻️ Reset Compare
-  </button>
-</div>
-
-
          <!-- Camera Section Compare Mode -->
 <div class="bg-gray-50 rounded-xl p-6">
   <div class="flex justify-between items-center mb-4">
@@ -297,6 +190,96 @@
   </transition>
 </div>
 
+              <h3 class="text-xl font-semibold text-gray-900 mb-4">⚖️ Compare Images</h3>
+              
+              <div v-if="compareMode" class="space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div class="space-y-3">
+                    <label class="block text-sm font-medium text-gray-700">Image 1</label>
+
+                    <div
+
+  :class="['border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition', 
+  dragOver1 ? 'border-blue-500 bg-blue-50' : 'border-blue-300']"
+@dragover.prevent="dragOver1 = true"
+@dragleave.prevent="dragOver1 = false"
+  @drop.prevent="handleDropCompare($event, 1); dragOver1 = false"
+  @click="$refs.fileDrop1.click()"
+>
+  <p class="text-sm text-blue-600">📂 Drag & drop or click to upload Image 1</p>
+  <input 
+    type="file" 
+    accept="image/*" 
+    @change="e => handleCompareFile(e, 1)"
+    ref="fileDrop1"
+    class="hidden"
+  />
+</div>
+
+                    <div v-if="filePreview1" class="rounded-lg overflow-hidden shadow-md">
+                      <img :src="filePreview1" class="w-full h-48 object-cover" />
+                    </div>
+                    <!-- <video 
+                      v-if="compareCameraActive" 
+                      ref="videoRef" 
+                      autoplay 
+                      playsinline 
+                      class="w-full h-48 object-cover border rounded-lg"
+                    ></video> -->
+                  </div>
+
+                  
+                  <div class="space-y-3">
+                    <label class="block text-sm font-medium text-gray-700">Image 2</label>
+                   <div
+  :class="['border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition', 
+  dragOver2 ? 'border-blue-500 bg-blue-50' : 'border-blue-300']"
+  @dragover.prevent="dragOver2 = true"
+@dragleave.prevent="dragOver2 = false"
+  @drop.prevent="handleDropCompare($event, 2); dragOver2 = false"
+  @click="$refs.fileDrop2.click()"
+>
+  <p class="text-sm text-blue-600">📂 Drag & drop or click to upload Image 2</p>
+  <input 
+    type="file" 
+    accept="image/*" 
+    @change="e => handleCompareFile(e, 2)"
+    ref="fileDrop2"
+    class="hidden"
+  />
+</div>
+
+                    <div v-if="filePreview2" class="rounded-lg overflow-hidden shadow-md">
+                      <img :src="filePreview2" class="w-full h-48 object-cover" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex flex-wrap gap-3">
+  <button
+    class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 disabled:opacity-50"
+    :disabled="!file1 || !file2"
+    @click="analyzeComparison"
+  >
+    🔍 Analyze Both Images
+  </button>
+
+  <button
+    v-if="result1 && result2"
+    @click="clearCompare"
+    class="inline-flex items-center px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors duration-200"
+  >
+    🔁 Try Another Image
+  </button>
+
+  <button
+    class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-colors duration-200"
+    @click="clearCompare"
+  >
+    ♻️ Reset Compare
+  </button>
+</div>
+
               </div>
             </div>
   </div>
@@ -305,73 +288,7 @@
   <div v-else>
     <!-- Image Upload Section -->
             <div class="bg-gray-50 rounded-xl p-6">
-              <h3 class="text-xl font-semibold text-gray-900 mb-4">📸 Image Analysis</h3>
               
-              <!-- File Upload -->
-              <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Upload Image</label>
-                <div
-  class="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition"
-  :class="dragOverSingle ? 'border-emerald-500 bg-emerald-50' : 'border-emerald-300'"
-  @dragover.prevent="dragOverSingle = true"
-  @dragleave.prevent="dragOverSingle = false"
-  @drop.prevent="handleDropSingle($event); dragOverSingle = false"
-  @click="$refs.fileDropSingle.click()"
-  role="button"
-  tabindex="0"
-  @keydown.enter="$refs.fileDropSingle.click()"
-  @keydown.space.prevent="$refs.fileDropSingle.click()"
-  aria-label="Upload image by clicking or dragging"
->
-  <p class="text-sm text-emerald-600">📂 Drag & drop or click to upload an image</p>
-  <input
-    type="file"
-    accept="image/*"
-    @change="onFileChange"
-    ref="fileDropSingle"
-    class="hidden"
-  />
-</div>
-
-              </div>
-
-              <!-- Image Preview -->
-              <div v-if="filePreview" class="mb-6">
-                <img :src="filePreview" class="w-full max-h-80 object-contain rounded-xl shadow-lg border border-gray-200" />
-              </div>
-
-              <!-- Action Buttons -->
-              <div class="flex flex-wrap gap-3">
-                <button
-                  class="inline-flex items-center px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                  :disabled="!file || loading"
-                  @click="analyzeImage"
-                >
-                  <svg v-if="loading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  {{ loading ? "Analyzing..." : "🔍 Analyze Image" }}
-                </button>
-
-                <button
-                  class="inline-flex items-center px-4 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-colors duration-200"
-                  @click="clearForm"
-                  :disabled="!file && !result"
-                >
-                  🗑️ Clear
-                </button>
-
-                <button
-                  v-if="result"
-                  class="inline-flex items-center px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors duration-200"
-                  @click="showConfidenceCard = true"
-                >
-                  📊 View Details
-                </button>
-              </div>
-            </div>
-
            <!-- Camera Section Single Mode-->
 <div class="bg-gray-50 rounded-xl p-6">
   <div class="flex justify-between items-center mb-4">
@@ -478,6 +395,73 @@
     </div>
   </transition>
 </div>
+
+              <h3 class="text-xl font-semibold text-gray-900 mb-4">📸 Image Analysis</h3>
+              
+              <!-- File Upload -->
+              <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Upload Image</label>
+                <div
+  class="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition"
+  :class="dragOverSingle ? 'border-emerald-500 bg-emerald-50' : 'border-emerald-300'"
+  @dragover.prevent="dragOverSingle = true"
+  @dragleave.prevent="dragOverSingle = false"
+  @drop.prevent="handleDropSingle($event); dragOverSingle = false"
+  @click="$refs.fileDropSingle.click()"
+  role="button"
+  tabindex="0"
+  @keydown.enter="$refs.fileDropSingle.click()"
+  @keydown.space.prevent="$refs.fileDropSingle.click()"
+  aria-label="Upload image by clicking or dragging"
+>
+  <p class="text-sm text-emerald-600">📂 Drag & drop or click to upload an image</p>
+  <input
+    type="file"
+    accept="image/*"
+    @change="onFileChange"
+    ref="fileDropSingle"
+    class="hidden"
+  />
+</div>
+
+              </div>
+
+              <!-- Image Preview -->
+              <div v-if="filePreview" class="mb-6">
+                <img :src="filePreview" class="w-full max-h-80 object-contain rounded-xl shadow-lg border border-gray-200" />
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="flex flex-wrap gap-3">
+                <button
+                  class="inline-flex items-center px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  :disabled="!file || loading"
+                  @click="analyzeImage"
+                >
+                  <svg v-if="loading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  {{ loading ? "Analyzing..." : "🔍 Analyze Image" }}
+                </button>
+
+                <button
+                  class="inline-flex items-center px-4 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-colors duration-200"
+                  @click="clearForm"
+                  :disabled="!file && !result"
+                >
+                  🗑️ Clear
+                </button>
+
+                <button
+                  v-if="result"
+                  class="inline-flex items-center px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors duration-200"
+                  @click="showConfidenceCard = true"
+                >
+                  📊 View Details
+                </button>
+              </div>
+            </div>
 
   </div>
             
@@ -1344,8 +1328,8 @@ const selectedComparison = ref(null); // For modal
 const comparisonToDelete = ref(null);
 const showDeleteConfirmComparison = ref(false);    
 
-const showCameraSectionSingle = ref(false);
-const showCameraSectionCompare = ref(false);
+const showCameraSectionSingle = ref(true);
+const showCameraSectionCompare = ref(true);
 
 const selectedModel = ref('v2'); // default to v2
 const historyModelFilter = ref('');
@@ -1725,7 +1709,7 @@ onMounted(() => {
     facingMode.value = 'environment';
   }
   startCamera();
-  initCamera();
+  //initCamera();
 });
 
 const history = vueRef([]); // analysis history
