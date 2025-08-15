@@ -438,6 +438,20 @@ const logContactAction = async (action, targetEmail, subject = '') => {
   });
 };
 
+const logContactReply = async (recipientEmail, subject) => {
+  const admin = auth.currentUser;
+  if (!admin) return;
+
+  const logRef = collection(db, 'contact_logs');
+  await addDoc(logRef, {
+    action: 'replied',
+    recipient: recipientEmail,
+    subject,
+    by: admin.email,
+    timestamp: serverTimestamp()
+  });
+};
+
 </script>
 
 <style scoped>
