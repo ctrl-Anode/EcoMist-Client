@@ -58,6 +58,28 @@ export function useTawk() {
       name: auth.currentUser.displayName || 'Vue User',
       email: auth.currentUser.email,
     };
+    
+    // Configure Tawk to prevent i18n issues
+    window.Tawk_API.onLoad = function() {
+      try {
+        // Ensure widget is properly initialized
+        if (window.Tawk_API.hideWidget && window.Tawk_API.showWidget) {
+          window.Tawk_API.hideWidget();
+          setTimeout(() => {
+            window.Tawk_API.showWidget();
+          }, 100);
+        }
+      } catch (e) {
+        console.warn('[TAWK] Widget initialization failed:', e);
+      }
+    };
+    
+    // Set default widget configuration
+    window.Tawk_API.customStyle = {
+      widget: {
+        position: 'bottom-right'
+      }
+    };
 
     tawkLoadTimeout = setTimeout(() => {
       window.Tawk_LoadStart = new Date();
