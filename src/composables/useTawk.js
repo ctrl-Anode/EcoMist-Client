@@ -58,6 +58,16 @@ export function useTawk() {
       name: auth.currentUser.displayName || 'Vue User',
       email: auth.currentUser.email,
     };
+
+    // Inject CSS to hide tooltips
+    const style = document.createElement('style');
+    style.textContent = `
+      [id^="tawk-"] [title] {
+        title: "" !important;
+        pointer-events: none !important;
+      }
+    `;
+    document.head.appendChild(style);
     
     // Configure Tawk to prevent i18n issues
     window.Tawk_API.onLoad = function() {
@@ -69,6 +79,13 @@ export function useTawk() {
             window.Tawk_API.showWidget();
           }, 500);
         }
+
+        // Force English (or any language)
+        window.Tawk_API.setAttributes({
+          lang: 'en' // force English so $i18n gets replaced
+        }, function (error) {
+          if (error) console.warn('[TAWK] Language set failed', error);
+        });
       } catch (e) {
         console.warn('[TAWK] Widget initialization failed:', e);
       }
