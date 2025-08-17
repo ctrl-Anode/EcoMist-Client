@@ -67,7 +67,7 @@ export function useTawk() {
           window.Tawk_API.hideWidget();
           setTimeout(() => {
             window.Tawk_API.showWidget();
-          }, 100);
+          }, 500);
         }
       } catch (e) {
         console.warn('[TAWK] Widget initialization failed:', e);

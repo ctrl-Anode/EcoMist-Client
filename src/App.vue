@@ -40,3 +40,10 @@ watch(() => route.path, checkTawkStatus, { immediate: true });
 // 👤 Watch auth state changes
 onAuthStateChanged(auth, checkTawkStatus);
 </script>
+
+<style>
+.tawk-tooltip {
+  display: none !important;
+}
+
+</style>
