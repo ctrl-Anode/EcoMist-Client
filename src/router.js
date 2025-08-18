@@ -31,6 +31,7 @@ import EcoAdmin_DeviceManagement from './components/EcoAdmin/EcoAdmin_Child/EcoA
 import EcoAdmin_SystemLogs from './components/EcoAdmin/EcoAdmin_Child/EcoAdmin_SystemLogs.vue';
 import EcoAdmin_SMTP from './components/EcoAdmin/EcoAdmin_Child/EcoAdmin_SMTP.vue';
 import EcoAdmin_Logger from './components/EcoAdmin/EcoAdmin_Child/EcoAdmin_Logger.vue';
+import EcoAdmin_Export from './components/EcoAdmin/EcoAdmin_Export.vue';  
 
 import EcoUnAuth from './components/EcoUnauthorized.vue';
 import EcoAdmin_CropAnalytics from './components/EcoAdmin/EcoAdmin_Child/EcoAdmin_CropAnalytics.vue';
@@ -87,6 +88,8 @@ const routes = [
        { path: 'logger', component: EcoAdmin_Logger, meta: { requiresAuth: true, role: 'admin' } },
        { path: 'crop-analysis-analytics-management', component: EcoAdmin_CropAnalytics, meta: { requiresAuth: true, role: 'admin' } },
        { path: 'manage-feedback', component: EcoAdmin_ManageFeedback, meta: { requiresAuth: true, role: 'admin' } },
+       { path: 'exports', component: EcoAdmin_Export, meta: { requiresAuth: true, role: 'admin' } },
+       
      ]
   },
 ];
