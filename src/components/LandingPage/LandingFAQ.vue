@@ -23,24 +23,24 @@
 <script setup>
 const faqs = [
   {
-    question: "What is EcoMist?",
+    question: "What is AeroTech?",
     answer:
-      "EcoMist is an IoT-driven aeroponics farming system designed to optimize growth, reduce resource consumption, and provide real-time insights for sustainable agriculture.",
+      "AeroTech is an IoT-driven aeroponics farming system designed to optimize growth, reduce resource consumption, and provide real-time insights for sustainable agriculture.",
   },
   {
-    question: "How does EcoMist work?",
+    question: "How does AeroTech work?",
     answer:
-      "EcoMist uses IoT sensors to monitor environmental conditions and automate nutrient delivery and misting cycles for optimal plant growth. The system connects to your wireless network for seamless data transmission and control.",
+      "AeroTech uses IoT sensors to monitor environmental conditions and automate nutrient delivery and misting cycles for optimal plant growth. The system connects to your wireless network for seamless data transmission and control.",
   },
   {
-    question: "Is EcoMist suitable for all crops?",
+    question: "Is AeroTech suitable for all crops?",
     answer:
-      "EcoMist is ideal for a wide range of crops, particularly those that thrive in aeroponic systems, such as leafy greens, herbs, and many other high-value crops that benefit from precise environmental control.",
+      "AeroTech is ideal for a wide range of crops, particularly those that thrive in aeroponic systems, such as leafy greens, herbs, and many other high-value crops that benefit from precise environmental control.",
   },
   {
     question: "What kind of support do you offer?",
     answer:
-      "We provide comprehensive support including installation guidance, system training, regular software updates, and technical assistance to ensure your EcoMist system operates at peak performance.",
+      "We provide comprehensive support including installation guidance, system training, regular software updates, and technical assistance to ensure your AeroTech system operates at peak performance.",
   },
 ];
 </script>

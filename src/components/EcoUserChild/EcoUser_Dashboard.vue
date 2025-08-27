@@ -266,7 +266,7 @@ const dashboardCards = ref([
 
 const alerts = ref([
   { 
-    message: 'Device Eco-1 missed a scheduled mist.', 
+    message: 'Device AeroTech-1 missed a scheduled mist.', 
     timestamp: '2 minutes ago',
     icon: AlertTriangleIcon,
     bgClass: 'bg-amber-50',
@@ -276,7 +276,7 @@ const alerts = ref([
     iconColor: 'text-amber-600'
   },
   { 
-    message: 'High TDS level detected in Eco-2.', 
+    message: 'High TDS level detected in AeroTech-2.', 
     timestamp: '5 minutes ago',
     icon: AlertTriangleIcon,
     bgClass: 'bg-red-50',

@@ -62,7 +62,7 @@ const exportUserData = async () => {
 
       // Add a logo placeholder and header
       XLSX.utils.sheet_add_aoa(worksheet, [
-        ['EcoMist Inc.'], // Logo placeholder
+        ['AeroTech Inc.'], // Logo placeholder
         ['User Data Export'], // Title row
         ['Generated On:', new Date().toLocaleString()], // Metadata row
         [], // Empty row for spacing
@@ -73,7 +73,7 @@ const exportUserData = async () => {
       worksheet['!cols'] = columnWidths;
 
       // Add a footer row
-      const footerRow = [['', '', '© 2025 EcoMist Inc. All rights reserved. | Contact: support@ecomist.com']];
+      const footerRow = [['', '', '© 2025 AeroTech Inc. All rights reserved. | Contact: support@aerotech.com']];
       XLSX.utils.sheet_add_aoa(worksheet, footerRow, { origin: -1 }); // Append to the end
 
       // Create a workbook and append the worksheet

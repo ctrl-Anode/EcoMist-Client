@@ -8,7 +8,7 @@
           <div class="relative">
             <div class="absolute inset-0 bg-gradient-to-br from-green-400/20 to-green-600/20 rounded-full blur-3xl"></div>
             <div class="bg-white p-6 rounded-2xl shadow-2xl relative">
-              <img src="/ecomist-hero.png" alt="EcoMist System" class="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 filter drop-shadow-[0_0_30px_rgba(22,163,74,0.5)] animate-float-logo" loading="lazy" />
+              <img src="/aerotech-rbg.png" alt="AeroTech System" class="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 filter drop-shadow-[0_0_30px_rgba(22,163,74,0.5)] animate-float-logo" loading="lazy" />
             </div>
           </div>
         </div>
@@ -16,10 +16,10 @@
         <!-- Left Content -->
         <div class="w-full md:w-1/2 text-center md:text-left order-last md:order-first">
           <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-green-800 leading-tight mb-4">
-            <span class="bg-clip-text text-transparent bg-gradient-to-r from-green-800 to-green-600">IoT-Driven</span> Aeroponics Farming
+            <span class="bg-clip-text text-transparent bg-gradient-to-r from-green-800 to-green-600">AEROTECH</span> Aeroponics Farming
           </h1>
           <p class="text-green-600 text-lg sm:text-xl font-medium mb-6">
-            Web-based System for Automated Management and Monitoring of Aeroponics Farming
+            An IoT-Based Aeroponics Management System Using Sequential Convolutional Neural Network.
           </p>
           <p class="text-gray-700 mb-8 max-w-xl mx-auto md:mx-0 text-lg">
             Revolutionize your farming with our cutting-edge IoT solution that optimizes growth,

@@ -51,7 +51,7 @@
   required
   autocomplete="off"
   class="input"
-  placeholder="e.g. EcoMist Alerts"
+  placeholder="e.g. AeroTech Alerts"
 />
 
   </div>

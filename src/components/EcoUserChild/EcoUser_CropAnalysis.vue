@@ -1975,7 +1975,7 @@ const exportHistoryToCSV = () => {
 
   const link = document.createElement('a');
   link.href = url;
-  link.setAttribute('download', 'EcoMist-Detection-Report.csv');
+  link.setAttribute('download', 'AeroTech-Detection-Report.csv');
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -2062,7 +2062,7 @@ const exportInsightsToPDF = async () => {
     dy += 10;
   });
 
-  pdf.save('EcoMist-Analytics-&-Insights-Report.pdf');
+  pdf.save('AeroTech-Analytics-&-Insights-Report.pdf');
 };
 
 
@@ -2329,7 +2329,7 @@ const exportComparisonToCSV = () => {
 
   const link = document.createElement('a');
   link.href = url;
-  link.setAttribute('download', 'EcoMist-Comparison-History.csv');
+  link.setAttribute('download', 'AeroTech-Comparison-History.csv');
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -2340,7 +2340,7 @@ const exportComparisonToPDF = async () => {
   let y = 10;
 
   pdf.setFontSize(18);
-  pdf.text("EcoMist - Comparison History Report", 14, y);
+  pdf.text("AeroTech - Comparison History Report", 14, y);
   y += 10;
 
   pdf.setFontSize(12);
@@ -2368,7 +2368,7 @@ const exportComparisonToPDF = async () => {
     y += 8;
   });
 
-  pdf.save('EcoMist-Comparison-History.pdf');
+  pdf.save('AeroTech-Comparison-History.pdf');
 };
 
 const deleteComparison = async (id) => {

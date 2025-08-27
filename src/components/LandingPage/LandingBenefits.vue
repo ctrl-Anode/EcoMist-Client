@@ -4,7 +4,7 @@
       <!-- Header -->
       <div class="text-center mb-12 sm:mb-16">
         <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
-          Benefits of EcoMist
+          Benefits of AeroTech
         </h2>
         <div class="w-20 sm:w-24 h-1 sm:h-1.5 bg-gradient-to-r from-green-500 to-emerald-400 mx-auto rounded-full"></div>
       </div>
@@ -20,7 +20,7 @@
             <div>
               <h3 class="text-green-800 text-xl sm:text-2xl font-bold mb-2">Resource Efficiency</h3>
               <p class="text-gray-600 text-sm sm:text-base leading-relaxed">
-                EcoMist's precision control system reduces water usage by up to 95% compared to traditional farming methods.
+                AeroTech's precision control system reduces water usage by up to 95% compared to traditional farming methods.
               </p>
             </div>
           </div>

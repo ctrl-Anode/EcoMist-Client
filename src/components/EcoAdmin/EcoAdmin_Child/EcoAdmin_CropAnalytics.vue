@@ -6,7 +6,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 class="text-4xl font-bold text-gray-900 mb-2">📊 Admin Analytics Dashboard</h1>
-            <p class="text-gray-600">Comprehensive analysis and insights for EcoMist Crop Analysis</p>
+            <p class="text-gray-600">Comprehensive analysis and insights for AeroTech Crop Analysis</p>
           </div>
           <div class="mt-4 sm:mt-0 flex items-center space-x-3">
             <div class="flex items-center space-x-2 text-sm text-gray-500">
@@ -864,7 +864,7 @@ const exportToCSV = () => {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.setAttribute('download', `EcoMist_Analytics_${new Date().toISOString().split('T')[0]}.csv`);
+  link.setAttribute('download', `AeroTech_Analytics_${new Date().toISOString().split('T')[0]}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -881,7 +881,7 @@ const exportToPDF = async () => {
     
     // Header
     pdf.setFontSize(20);
-    pdf.text('EcoMist Admin Analytics Report', 14, y);
+    pdf.text('AeroTech Admin Analytics Report', 14, y);
     y += 15;
     
     pdf.setFontSize(12);
@@ -927,7 +927,7 @@ const exportToPDF = async () => {
     await addChartToPDF(chartConfidence.value, 'Confidence Distribution');
     await addChartToPDF(chartTimeSeries.value, 'Analysis Trends');
     
-    pdf.save(`EcoMist_Analytics_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+    pdf.save(`AeroTech_Analytics_Report_${new Date().toISOString().split('T')[0]}.pdf`);
     showToast('PDF exported successfully!', 'bg-green-500');
   } catch (error) {
     console.error('Error exporting PDF:', error);
@@ -959,7 +959,7 @@ const exportToJSON = () => {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.setAttribute('download', `EcoMist_Analytics_${new Date().toISOString().split('T')[0]}.json`);
+  link.setAttribute('download', `AeroTech_Analytics_${new Date().toISOString().split('T')[0]}.json`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

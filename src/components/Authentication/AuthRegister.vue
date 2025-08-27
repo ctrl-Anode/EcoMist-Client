@@ -17,7 +17,7 @@
 
     <!-- Header -->
     <header class="text-center space-y-1">
-      <img src="/eco-mist-logo.png" alt="EcoMist Logo" class="w-20 h-20 mb-2 mx-auto rounded-full object-cover" />
+      <img src="/aerotech-rbg-index.png" alt="AeroTech Logo" class="w-20 h-20 mb-2 mx-auto rounded-full object-cover" />
       <h1 class="text-xl font-bold text-white">Register</h1>
       <p class="text-sm text-white/80">Create an account to get started</p>
     </header>

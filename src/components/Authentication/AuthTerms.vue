@@ -27,7 +27,7 @@
                     Terms of Service
                   </h3>
                   <p class="text-sm text-gray-600">
-                    EcoMist IoT System - Effective May 2025
+                    AeroTech IoT System - Effective May 2025
                   </p>
                 </div>
                 <button
@@ -56,7 +56,7 @@
                         </svg>
                       </div>
                       <div>
-                        <h4 class="text-lg font-semibold text-gray-900 mb-2">EcoMist System</h4>
+                        <h4 class="text-lg font-semibold text-gray-900 mb-2">AeroTech System</h4>
                         <p class="text-sm text-gray-600 mb-1">IoT-Driven Web-based System for Automated Management and Monitoring of Aeroponics Farming</p>
                         <p class="text-xs text-blue-600 font-medium">Mindoro State University – Calapan Campus</p>
                       </div>
@@ -75,7 +75,7 @@
                         <h5 class="font-semibold text-gray-900">Acceptance of Terms</h5>
                       </div>
                       <p class="text-sm text-gray-600 leading-relaxed">
-                        By accessing and using the EcoMist system, users agree to comply with all terms and conditions set forth herein. This system is developed for educational and agricultural use, particularly for use by the Agricultural Training Institute (ATI) and registered users such as farmers and researchers.
+                        By accessing and using the AeroTech system, users agree to comply with all terms and conditions set forth herein. This system is developed for educational and agricultural use, particularly for use by the Agricultural Training Institute (ATI) and registered users such as farmers and researchers.
                       </p>
                     </div>
 
@@ -88,7 +88,7 @@
                         <h5 class="font-semibold text-gray-900">System Description</h5>
                       </div>
                       <p class="text-sm text-gray-600 mb-3">
-                        EcoMist is an IoT-powered system designed to automate and monitor aeroponics farming. It includes:
+                        AeroTech is an IoT-powered system designed to automate and monitor aeroponics farming. It includes:
                       </p>
                       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div class="flex items-start space-x-2">

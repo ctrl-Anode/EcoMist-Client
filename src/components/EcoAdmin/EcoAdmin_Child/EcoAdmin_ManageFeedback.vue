@@ -198,7 +198,7 @@ const sendReply = async (feedback) => {
         const result = await sendSecureNotification(
           fcmToken,
           '📩 Admin Reply',
-          'You have a new reply from EcoMist Admin.'
+          'You have a new reply from AeroTech Admin.'
         )
         if (!result.success) {
           console.warn('⚠️ Failed to send user FCM:', result.error)

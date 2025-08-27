@@ -8,9 +8,9 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        <img src="/eco-mist-index.png" alt="EcoMist Logo" class="h-7 w-7 mr-3 rounded-lg shadow-md bg-white p-1.5" @error="handleLogoError" />
+        <img src="/aerotech-rbg-index.png" alt="AeroTech Logo" class="h-7 w-7 mr-3 rounded-lg shadow-md bg-white p-1.5" @error="handleLogoError" />
         <div>
-          <h1 class="text-xl font-bold text-white">EcoMist</h1>
+          <h1 class="text-xl font-bold text-white">AeroTech</h1>
         </div>
       </div>
 
