@@ -143,11 +143,11 @@
      <div>
   <select
     v-model="registerForm.gender"
-    :class="[
-      'w-full rounded-lg px-4 py-3 transition-all focus:outline-none focus:ring-1 appearance-none',
+    :class="[ 
+      'w-full rounded-lg px-4 py-3 transition-all focus:outline-none focus:ring-1 appearance-none text-black',
       registerForm.gender
-        ? 'border-green-500 bg-green-100/40 text-black'
-        : 'bg-white/20 border-white/30 text-white placeholder-white/50'
+        ? 'border-green-500 bg-green-100/40'
+        : 'bg-white/20 border-white/30 placeholder-white/50'
     ]"
     :disabled="loading"
     required
@@ -323,7 +323,7 @@
       </svg>
     </button>
   </div>
-
+</div>
 </div>
 <!-- Password Requirements Note -->
 <p class="text-white/60 text-xs mb-1">
@@ -362,8 +362,6 @@
     :style="{ width: passwordStrength.score * 33 + '%' }"
     class="h-full rounded-full transition-all"
   ></div>
-</div>
-
 </div>
 
 
@@ -624,7 +622,7 @@ showVerificationPrompt.value = true;
 
 
   emit('toggleView'); // ✅ This tells the parent to show the Login page
-}, 1000);
+}, 10000);
   } catch (error) {
     if (error.code === "auth/email-already-in-use") {
       toast.error("❗ Email is already in use. Please use a different email.");
