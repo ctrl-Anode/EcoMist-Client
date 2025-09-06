@@ -91,7 +91,12 @@ const tabs = computed(() => {
       name: 'SampleResetPassword',
       label: 'Reset Password',
       path: `${basePath}/reset-password`
-    }
+    },
+    // {
+    //   name: 'ChangeEmail',
+    //   label: 'Change Email',
+    //   path: `${basePath}/change-email`
+    // }
   ]
 })
 

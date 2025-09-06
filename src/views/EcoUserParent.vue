@@ -126,13 +126,7 @@ const navigationSections = computed(() => [
     ]
   },
   {
-    title: 'USER MANAGEMENT',
-    routes: [
-      { path: '/user/settings/profile-display', name: 'Settings', meta: { requiresAuth: true } },
-    ]
-  },
-  {
-    title: 'DATA & TOOLS',
+    title: 'FEATURES',
     routes: [
       { path: '/user/financial-management', name: 'Financial Management', meta: { requiresAuth: true } },
       { path: '/user/sensor_data', name: 'Sensor Data', meta: { requiresAuth: true } },
@@ -140,12 +134,11 @@ const navigationSections = computed(() => [
     ]
   },
   {
-    title: 'ADMIN CONTROLS',
+    title: 'MANAGEMENT',
     routes: [
-      { path: '/admin-dashboard', name: 'Admin Dashboard', meta: { requiresAuth: true, role: 'admin' } },
-      { path: '/admin-management', name: 'Admin Management', meta: { requiresAuth: true, role: 'admin' } }
+      { path: '/user/settings/profile-display', name: 'Settings', meta: { requiresAuth: true } },
     ]
-  }
+  },
 ]);
 
 const toggleSidebar = () => {

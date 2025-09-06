@@ -127,14 +127,21 @@
     placeholder="Cellphone"
     :class="[
       'w-full rounded-lg px-4 py-3 transition-all focus:outline-none focus:ring-1',
-      registerForm.cellphone && registerForm.cellphone.length >= 10
+      registerErrors.cellphone
+        ? 'border-red-500 bg-red-100/40'
+        : registerForm.cellphone.length === 11
         ? 'border-green-500 bg-green-100/40'
         : 'bg-white/20 border-white/30 text-white placeholder-white/50'
     ]"
     :disabled="loading"
     required
+    maxlength="11"
+    @input="onCellphoneInput"
   />
-  <p v-if="registerForm.cellphone && registerForm.cellphone.length >= 10" class="text-green-400 text-xs mt-1">
+  <p v-if="registerErrors.cellphone" class="text-red-400 text-xs mt-1">
+    {{ registerErrors.cellphone }}
+  </p>
+  <p v-else-if="registerForm.cellphone.length === 11" class="text-green-400 text-xs mt-1">
     ✓ Valid phone number
   </p>
 </div>
@@ -731,7 +738,31 @@ const checkDeviceCompatibility = () => {
 
 onMounted(() => {
   checkDeviceCompatibility();
+  // Pre-fill cellphone with '09' if empty
+  if (!registerForm.cellphone) {
+    registerForm.cellphone = "09";
+  }
 });
+
+const onCellphoneInput = (e) => {
+  // Only allow numbers, always start with '09'
+  let value = e.target.value.replace(/\D/g, "");
+  if (!value.startsWith("09")) {
+    value = "09" + value.replace(/^09/, "");
+  }
+  // Limit to 11 digits
+  if (value.length > 11) value = value.slice(0, 11);
+  registerForm.cellphone = value;
+  validateCellphone();
+};
+
+const validateCellphone = () => {
+  if (!/^09\d{9}$/.test(registerForm.cellphone)) {
+    registerErrors.cellphone = "Phone number must start with 09 and be 11 digits.";
+  } else {
+    registerErrors.cellphone = "";
+  }
+};
 </script>
 
 

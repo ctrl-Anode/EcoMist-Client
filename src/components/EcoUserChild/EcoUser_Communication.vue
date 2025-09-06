@@ -1,5 +1,47 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-green-50 via-green-100 to-green-200 flex flex-col">
+    <!-- Desktop Header -->
+    <header class="hidden md:block sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/50">
+      <div class="w-full p-4 flex items-center justify-between">
+        <!-- Left: Logo + Title -->
+        <div class="flex items-center gap-3">
+          <div class="bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 p-2.5 rounded-xl shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-slate-800">Community Chat</h2>
+            <p class="text-sm text-slate-600">Real-time conversations</p>
+          </div>
+        </div>
+
+        <!-- Right: Search + Online + Notifications -->
+        <div class="flex items-center gap-4">
+          <div class="relative w-96">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <input 
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search messages, users, or files..."
+              class="w-full pl-12 pr-4 py-2 bg-white/60 backdrop-blur-sm border border-slate-200/50 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all shadow-sm text-sm"
+            />
+          </div>
+
+          <!-- Online Status -->
+          <div class="flex items-center gap-2 px-3 py-1.5 bg-white/60 backdrop-blur-sm rounded-lg border border-slate-200/50">
+            <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
+            <span class="text-sm text-slate-700">Online</span>
+          </div>
+
+        </div>
+      </div>
+    </header>
+
     <!-- Mobile Header -->
     <header class="md:hidden bg-white/80 backdrop-blur-xl border-b border-slate-200/50 px-4 py-3 flex items-center justify-between sticky top-0 z-40 shadow-sm">
       <div class="flex items-center gap-3">
@@ -26,105 +68,11 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </button>
-        <button 
-          @click="toggleNotificationPanel"
-          class="relative p-2.5 rounded-xl bg-slate-100/80 text-slate-600 hover:bg-slate-200/80 transition-all duration-200 hover:scale-105"
-          aria-label="Toggle notifications"
-          :aria-expanded="notificationPanelOpen"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-          </svg>
-          <span v-if="hasUnreadNotifications" class="absolute -top-1 -right-1 h-5 w-5 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-lg animate-bounce" aria-label="Unread notifications">
-            {{ notificationCount > 9 ? '9+' : notificationCount }}
-          </span>
-        </button>
-        <button 
-          @click="showChatInfo = !showChatInfo"
-          class="p-2.5 rounded-xl bg-slate-100/80 text-slate-600 hover:bg-slate-200/80 transition-all duration-200 hover:scale-105"
-          aria-label="Toggle chat info"
-          :aria-expanded="showChatInfo"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </button>
       </div>
     </header>
 
-    <!-- Main Content Area -->
-    <div class="flex flex-1 flex-col md:flex-row overflow-hidden">
       <!-- Desktop Header -->
-      <main class="flex-1 overflow-y-auto bg-transparent px-3 py-4 sm:px-4 md:p-6">
-        <header class="hidden md:block mb-8">
-          <div class="p-6 border-b border-slate-100/50 bg-gradient-to-r from-emerald-50/50 via-teal-50/50 to-cyan-50/50 backdrop-blur-sm rounded-2xl">
-            <div class="flex justify-between items-center">
-              <!-- Chat Title & Icon -->
-              <div class="flex items-center gap-4">
-                <div class="bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 p-4 rounded-2xl shadow-lg">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                  </svg>
-                </div>
-                <div>
-                  <h2 class="text-2xl font-bold text-slate-800">Community Chat</h2>
-                  <p class="text-base text-slate-600">Real-time conversations</p>
-                </div>
-              </div>
-
-              <!-- Search + Online Status + Notifications -->
-              <div class="flex items-center gap-4">
-                <!-- Search Input -->
-                <div class="relative w-72">
-                  <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                  </div>
-                  <input 
-                    v-model="searchQuery"
-                    type="text"
-                    placeholder="Search messages, users, or files..."
-                    class="w-full pl-12 pr-12 py-3 bg-white/60 backdrop-blur-sm border border-white/20 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all shadow-sm text-sm focus:bg-white/80"
-                    aria-label="Search messages"
-                  />
-                  <button 
-                    v-if="searchQuery" 
-                    @click="searchQuery = ''" 
-                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
-                    aria-label="Clear search"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-
-                <!-- Online Users -->
-                <div class="flex items-center gap-3 px-4 py-2 bg-white/60 backdrop-blur-sm rounded-xl shadow-sm border border-white/20">
-                  <div class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse" aria-hidden="true"></div>
-                  <span class="text-sm font-semibold text-slate-700">{{ onlineUsers }} Online</span>
-                </div>
-
-                <!-- Notifications -->
-                <button 
-                  @click="toggleNotificationPanel"
-                  class="relative p-3 rounded-xl bg-white/60 backdrop-blur-sm shadow-sm border border-white/20 hover:bg-white/80 transition-all duration-300 group"
-                  :class="{ 'ring-2 ring-emerald-500 bg-white/80': notificationPanelOpen }"
-                  aria-label="Toggle notifications"
-                  :aria-expanded="notificationPanelOpen"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-600 group-hover:text-slate-800 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                  </svg>
-                  <span v-if="hasUnreadNotifications" class="absolute -top-2 -right-2 h-5 w-5 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-lg animate-bounce" aria-label="Unread notifications">
-                    {{ notificationCount > 9 ? '9+' : notificationCount }}
-                  </span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
+      <main class="flex-1 overflow-y-auto bg-transparent px-3 py-4 sm:px-4 md:p-2">
 
         <!-- Mobile Search Bar -->
         <div v-if="showMobileSearch" class="md:hidden mb-6">
@@ -176,67 +124,9 @@
                 </button>
               </div>
               
-              <div class="mb-8">
-                <h4 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-wider">Active Users</h4>
-                <div class="space-y-3" role="list">
-                  <div v-for="(user, index) in activeUsers" :key="index" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-slate-50/50 transition-all duration-200 cursor-pointer" role="listitem">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-sm font-bold shadow-lg" :aria-label="`${user.name} avatar`">
-                      <!-- {{ getInitials(user.name) }} -->
-                      {{ user.name }}
-                    </div>
-                    <div>
-                      <div class="text-base font-semibold text-slate-800">{{ user.name }}</div>
-                      <div class="text-sm text-slate-500">{{ user.status }}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="mb-8">
-                <h4 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-wider">Chat Settings</h4>
-                <div class="space-y-4">
-                  <div class="flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50/50 transition-all duration-200">
-                    <span class="text-base font-semibold text-slate-700">Notifications</span>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" v-model="chatSettings.notifications" class="sr-only peer" @change="toggleNotifications" aria-label="Toggle notifications">
-                      <div class="toggle-switch"></div>
-                    </label>
-                  </div>
-                  <div class="flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50/50 transition-all duration-200">
-                    <span class="text-base font-semibold text-slate-700">Sound Effects</span>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" v-model="chatSettings.soundEffects" class="sr-only peer" aria-label="Toggle sound effects">
-                      <div class="toggle-switch"></div>
-                    </label>
-                  </div>
-                  <div class="flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50/50 transition-all duration-200">
-                    <span class="text-base font-semibold text-slate-700">Read Receipts</span>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" v-model="chatSettings.readReceipts" class="sr-only peer" aria-label="Toggle read receipts">
-                      <div class="toggle-switch"></div>
-                    </label>
-                  </div>
-                </div>
-              </div>
 
-              <!-- Quick Actions Section -->
-              <div class="mb-8">
-                <h4 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-wider">Quick Actions</h4>
-                <div class="grid grid-cols-2 gap-3">
-                  <button @click="exportChat" class="p-4 bg-blue-50 hover:bg-blue-100 rounded-2xl transition-all duration-200 text-center" aria-label="Export chat">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    <span class="text-xs font-semibold text-blue-700">Export</span>
-                  </button>
-                  <button @click="clearChat" class="p-4 bg-red-50 hover:bg-red-100 rounded-2xl transition-all duration-200 text-center" aria-label="Clear chat">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                    <span class="text-xs font-semibold text-red-700">Clear</span>
-                  </button>
-                </div>
-              </div>
+              
+
             </div>
           </div>
           
@@ -634,225 +524,224 @@
               </div>
             </div>
           </div>
-        </div>
-      </main>
-    </div>
-
-    <!-- Edit Message Modal -->
-    <div 
-      v-if="editingMessage" 
-      class="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50 p-4"
-      @click.self="cancelEditing"
-      role="dialog"
-      aria-labelledby="edit-modal-title"
-      aria-modal="true"
-    >
-      <div class="bg-white/95 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-6 md:p-8 w-full max-w-lg">
-        <h3 id="edit-modal-title" class="text-2xl font-bold text-slate-800 mb-6">Edit Message</h3>
-        <textarea
-          ref="editMessageInput"
-          v-model="editedMessageText"
-          class="border border-slate-300/50 rounded-2xl px-4 py-3 md:px-6 md:py-4 text-base w-full min-h-[120px] md:min-h-[140px] focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 resize-none bg-white/80 backdrop-blur-sm"
-          placeholder="Edit your message…"
-          aria-label="Edit message text"
-        ></textarea>
-        <div class="flex justify-end mt-6 gap-4">
-          <button 
-            @click="cancelEditing()" 
-            class="px-6 py-3 bg-slate-100/80 text-slate-700 rounded-2xl text-base font-semibold hover:bg-slate-200/80 transition-all duration-200 backdrop-blur-sm"
-          >
-            Cancel
-          </button>
-          <button 
-            @click="saveEditedMessage()" 
-            class="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl text-base font-semibold hover:from-emerald-600 hover:to-teal-700 transition-all duration-200 shadow-lg"
-          >
-            Save Changes
-          </button>
-        </div>
+          </div>
+        </main>
       </div>
-    </div>
 
-    <!-- Quick Reactions Popup -->
-    <div 
-      v-if="quickReactionsVisible && selectedMessage" 
-      id="quick-reactions"
-      class="quick-reactions-popup"
-      @click.stop
-      role="dialog"
-      aria-label="Quick reactions"
-    >
-      <div class="flex flex-col">
-        <div class="text-sm md:text-base text-slate-500 mb-3 md:mb-4 font-bold">Quick Reactions</div>
-        <div class="flex flex-col sm:flex-row gap-3 md:gap-4">
-          <button 
-            v-for="emoji in ['👍', '❤️', '😂', '😮', '😢', '👏']" 
-            :key="emoji" 
-            @click="addReaction(selectedMessage.id, emoji); quickReactionsVisible = false; selectedMessage = null;" 
-            class="text-2xl md:text-3xl hover:bg-slate-100/80 rounded-2xl p-3 md:p-4 transition-all duration-200 hover:scale-125 shadow-sm"
-            :aria-label="`React with ${emoji}`"
-          >
-            {{ emoji }}
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Notification Panel -->
-    <div 
-      v-if="notificationPanelOpen"
-      class="notification-panel"
-      role="dialog"
-      aria-labelledby="notifications-title"
-      aria-modal="true"
-    >
-      <div class="p-4 md:p-6 border-b border-slate-100/50">
-        <div class="flex items-center justify-between">
-          <h3 id="notifications-title" class="font-bold text-slate-800 text-lg md:text-xl">Notifications</h3>
-          <div class="flex gap-3">
+      <!-- Edit Message Modal -->
+      <div 
+        v-if="editingMessage" 
+        class="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50 p-4"
+        @click.self="cancelEditing"
+        role="dialog"
+        aria-labelledby="edit-modal-title"
+        aria-modal="true"
+      >
+        <div class="bg-white/95 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-6 md:p-8 w-full max-w-lg">
+          <h3 id="edit-modal-title" class="text-2xl font-bold text-slate-800 mb-6">Edit Message</h3>
+          <textarea
+            ref="editMessageInput"
+            v-model="editedMessageText"
+            class="border border-slate-300/50 rounded-2xl px-4 py-3 md:px-6 md:py-4 text-base w-full min-h-[120px] md:min-h-[140px] focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 resize-none bg-white/80 backdrop-blur-sm"
+            placeholder="Edit your message…"
+            aria-label="Edit message text"
+          ></textarea>
+          <div class="flex justify-end mt-6 gap-4">
             <button 
-              @click="markAllNotificationsAsRead"
-              class="text-sm text-emerald-600 hover:text-emerald-700 font-semibold px-3 py-1.5 rounded-lg hover:bg-emerald-50/80 transition-all duration-200"
+              @click="cancelEditing()" 
+              class="px-6 py-3 bg-slate-100/80 text-slate-700 rounded-2xl text-base font-semibold hover:bg-slate-200/80 transition-all duration-200 backdrop-blur-sm"
             >
-              Mark all read
+              Cancel
             </button>
             <button 
-              @click="clearAllNotifications"
-              class="text-sm text-slate-500 hover:text-slate-700 font-semibold px-3 py-1.5 rounded-lg hover:bg-slate-50/80 transition-all duration-200"
+              @click="saveEditedMessage()" 
+              class="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl text-base font-semibold hover:from-emerald-600 hover:to-teal-700 transition-all duration-200 shadow-lg"
             >
-              Clear all
+              Save Changes
             </button>
           </div>
         </div>
       </div>
-      <div class="max-h-96 md:max-h-[28rem] overflow-y-auto">
-        <div v-if="notifications.length === 0" class="p-8 md:p-12 text-center text-slate-500">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-          </svg>
-          <p class="text-lg font-semibold">No notifications yet</p>
-          <p class="text-sm mt-1">You're all caught up!</p>
-        </div>
-        <div v-for="notification in notifications" :key="notification.id" 
-             @click="handleNotificationClick(notification)"
-             class="p-4 md:p-5 border-b border-slate-50/50 hover:bg-slate-50/50 cursor-pointer transition-all duration-200"
-             :class="{ 'bg-emerald-50/50': !notification.read }"
-             tabindex="0"
-             @keydown.enter="handleNotificationClick(notification)"
-        >
-          <div class="flex items-start gap-3 md:gap-4">
-            <div class="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-2xl flex items-center justify-center shadow-sm"
-                 :class="getNotificationTypeClass(notification.type)"
-            >
-              <svg v-if="notification.type === 'message'" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
-              <svg v-else-if="notification.type === 'mention'" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-              <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-            </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-sm md:text-base font-semibold text-slate-800 truncate">{{ notification.title }}</p>
-              <p class="text-sm md:text-base text-slate-600 mt-1 leading-relaxed">{{ notification.message }}</p>
-              <p class="text-xs md:text-sm text-slate-400 mt-2 font-medium">{{ formatTimestamp(notification.timestamp) }}</p>
-            </div>
-            <div v-if="!notification.read" class="w-3 h-3 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full flex-shrink-0 shadow-sm" aria-label="Unread notification"></div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Image Lightbox -->
-    <div v-if="lightboxImage" class="fixed inset-0 bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 z-50" @click="lightboxImage = null" role="dialog" aria-label="Image lightbox">
-      <div class="relative max-w-6xl w-full">
-        <button @click.stop="lightboxImage = null" class="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-2xl p-4 text-white hover:bg-white/40 transition-all duration-200 shadow-lg" aria-label="Close lightbox">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-        <img :src="lightboxImage" class="max-h-[85vh] max-w-full mx-auto object-contain rounded-2xl shadow-2xl" alt="Enlarged image" />
-      </div>
-    </div>
-
-    <!-- Toast Notification -->
-    <div 
-      v-if="toast.show" 
-      class="toast-notification"
-      :class="{
-        'bg-emerald-50/95 text-emerald-800 border-emerald-200/50': toast.type === 'success',
-        'bg-red-50/95 text-red-800 border-red-200/50': toast.type === 'error',
-        'bg-blue-50/95 text-blue-800 border-blue-200/50': toast.type === 'info',
-        'bg-slate-50/95 text-slate-800 border-slate-200/50': toast.type === 'loading'
-      }"
-      role="alert"
-      aria-live="polite"
-    >
-      <div class="flex items-center">
-        <div v-if="toast.type === 'loading'" class="spinner-enhanced mr-4" aria-hidden="true">
-          <div></div><div></div><div></div><div></div><div></div><div></div>
-        </div>
-        <svg 
-          v-else-if="toast.type === 'success'" 
-          class="h-6 w-6 mr-4 flex-shrink-0" 
-          xmlns="http://www.w3.org/2000/svg" 
-          viewBox="0 0 20 20" 
-          fill="currentColor"
-          aria-hidden="true"
-        >
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-        </svg>
-        <svg 
-          v-else-if="toast.type === 'error'" 
-          class="h-6 w-6 mr-4 flex-shrink-0" 
-          xmlns="http://www.w3.org/2000/svg" 
-          viewBox="0 0 20 20" 
-          fill="currentColor"
-          aria-hidden="true"
-        >
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-        </svg>
-        <svg 
-          v-else-if="toast.type === 'info'" 
-          class="h-6 w-6 mr-4 flex-shrink-0" 
-          xmlns="http://www.w3.org/2000/svg" 
-          viewBox="0 0 20 20" 
-          fill="currentColor"
-          aria-hidden="true"
-        >
-          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-        </svg>
-        <span class="font-semibold text-sm md:text-base">{{ toast.message }}</span>
-      </div>
-    </div>
-
-    <!-- Browser Notification Permission Request -->
-    <div v-if="showNotificationPermissionRequest" class="notification-permission-request">
-      <div class="flex items-start">
-        <div class="w-14 h-14 md:w-16 md:h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mr-4 md:mr-6 flex-shrink-0 shadow-lg">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 md:h-8 md:w-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-          </svg>
-        </div>
-        <div>
-          <h3 class="font-bold text-slate-800 mb-3 text-lg md:text-xl">Enable Notifications</h3>
-          <p class="text-sm md:text-base text-slate-600 mb-4 md:mb-6 leading-relaxed">
-            Stay updated with messages, mentions, and reactions by enabling browser notifications.
-          </p>
+      <!-- Quick Reactions Popup -->
+      <div 
+        v-if="quickReactionsVisible && selectedMessage" 
+        id="quick-reactions"
+        class="quick-reactions-popup"
+        @click.stop
+        role="dialog"
+        aria-label="Quick reactions"
+      >
+        <div class="flex flex-col">
+          <div class="text-sm md:text-base text-slate-500 mb-3 md:mb-4 font-bold">Quick Reactions</div>
           <div class="flex flex-col sm:flex-row gap-3 md:gap-4">
-            <button @click="requestNotificationPermission" class="px-5 py-3 md:px-6 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-sm md:text-base font-semibold rounded-xl hover:from-emerald-600 hover:to-teal-700 transition-all duration-200 shadow-lg">
-              Enable
-            </button>
-            <button @click="dismissPermissionRequest" class="px-5 py-3 md:px-6 bg-slate-100/80 text-slate-700 text-sm md:text-base font-semibold rounded-xl hover:bg-slate-200/80 transition-all duration-200 backdrop-blur-sm">
-              Not Now
+            <button 
+              v-for="emoji in ['👍', '❤️', '😂', '😮', '😢', '👏']" 
+              :key="emoji" 
+              @click="addReaction(selectedMessage.id, emoji); quickReactionsVisible = false; selectedMessage = null;" 
+              class="text-2xl md:text-3xl hover:bg-slate-100/80 rounded-2xl p-3 md:p-4 transition-all duration-200 hover:scale-125 shadow-sm"
+              :aria-label="`React with ${emoji}`"
+            >
+              {{ emoji }}
             </button>
           </div>
         </div>
       </div>
-    </div>
-  </div>
+
+      <!-- Notification Panel -->
+      <div 
+        v-if="notificationPanelOpen"
+        class="notification-panel"
+        role="dialog"
+        aria-labelledby="notifications-title"
+        aria-modal="true"
+      >
+        <div class="p-4 md:p-6 border-b border-slate-100/50">
+          <div class="flex items-center justify-between">
+            <h3 id="notifications-title" class="font-bold text-slate-800 text-lg md:text-xl">Notifications</h3>
+            <div class="flex gap-3">
+              <button 
+                @click="markAllNotificationsAsRead"
+                class="text-sm text-emerald-600 hover:text-emerald-700 font-semibold px-3 py-1.5 rounded-lg hover:bg-emerald-50/80 transition-all duration-200"
+              >
+                Mark all read
+              </button>
+              <button 
+                @click="clearAllNotifications"
+                class="text-sm text-slate-500 hover:text-slate-700 font-semibold px-3 py-1.5 rounded-lg hover:bg-slate-50/80 transition-all duration-200"
+              >
+                Clear all
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="max-h-96 md:max-h-[28rem] overflow-y-auto">
+          <div v-if="notifications.length === 0" class="p-8 md:p-12 text-center text-slate-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            <p class="text-lg font-semibold">No notifications yet</p>
+            <p class="text-sm mt-1">You're all caught up!</p>
+          </div>
+          <div v-for="notification in notifications" :key="notification.id" 
+               @click="handleNotificationClick(notification)"
+               class="p-4 md:p-5 border-b border-slate-50/50 hover:bg-slate-50/50 cursor-pointer transition-all duration-200"
+               :class="{ 'bg-emerald-50/50': !notification.read }"
+               tabindex="0"
+               @keydown.enter="handleNotificationClick(notification)"
+          >
+            <div class="flex items-start gap-3 md:gap-4">
+              <div class="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-2xl flex items-center justify-center shadow-sm"
+                   :class="getNotificationTypeClass(notification.type)"
+              >
+                <svg v-if="notification.type === 'message'" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                <svg v-else-if="notification.type === 'mention'" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm md:text-base font-semibold text-slate-800 truncate">{{ notification.title }}</p>
+                <p class="text-sm md:text-base text-slate-600 mt-1 leading-relaxed">{{ notification.message }}</p>
+                <p class="text-xs md:text-sm text-slate-400 mt-2 font-medium">{{ formatTimestamp(notification.timestamp) }}</p>
+              </div>
+              <div v-if="!notification.read" class="w-3 h-3 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full flex-shrink-0 shadow-sm" aria-label="Unread notification"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Image Lightbox -->
+      <div v-if="lightboxImage" class="fixed inset-0 bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 z-50" @click="lightboxImage = null" role="dialog" aria-label="Image lightbox">
+        <div class="relative max-w-6xl w-full">
+          <button @click.stop="lightboxImage = null" class="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-2xl p-4 text-white hover:bg-white/40 transition-all duration-200 shadow-lg" aria-label="Close lightbox">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <img :src="lightboxImage" class="max-h-[85vh] max-w-full mx-auto object-contain rounded-2xl shadow-2xl" alt="Enlarged image" />
+        </div>
+      </div>
+
+      <!-- Toast Notification -->
+      <div 
+        v-if="toast.show" 
+        class="toast-notification"
+        :class="{
+          'bg-emerald-50/95 text-emerald-800 border-emerald-200/50': toast.type === 'success',
+          'bg-red-50/95 text-red-800 border-red-200/50': toast.type === 'error',
+          'bg-blue-50/95 text-blue-800 border-blue-200/50': toast.type === 'info',
+          'bg-slate-50/95 text-slate-800 border-slate-200/50': toast.type === 'loading'
+        }"
+        role="alert"
+        aria-live="polite"
+      >
+        <div class="flex items-center">
+          <div v-if="toast.type === 'loading'" class="spinner-enhanced mr-4" aria-hidden="true">
+            <div></div><div></div><div></div><div></div><div></div><div></div>
+          </div>
+          <svg 
+            v-else-if="toast.type === 'success'" 
+            class="h-6 w-6 mr-4 flex-shrink-0" 
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 20 20" 
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+          <svg 
+            v-else-if="toast.type === 'error'" 
+            class="h-6 w-6 mr-4 flex-shrink-0" 
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 20 20" 
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          </svg>
+          <svg 
+            v-else-if="toast.type === 'info'" 
+            class="h-6 w-6 mr-4 flex-shrink-0" 
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 20 20" 
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+          </svg>
+          <span class="font-semibold text-sm md:text-base">{{ toast.message }}</span>
+        </div>
+      </div>
+
+      <!-- Browser Notification Permission Request -->
+      <div v-if="showNotificationPermissionRequest" class="notification-permission-request">
+        <div class="flex items-start">
+          <div class="w-14 h-14 md:w-16 md:h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mr-4 md:mr-6 flex-shrink-0 shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 md:h-8 md:w-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-800 mb-3 text-lg md:text-xl">Enable Notifications</h3>
+            <p class="text-sm md:text-base text-slate-600 mb-4 md:mb-6 leading-relaxed">
+              Stay updated with messages, mentions, and reactions by enabling browser notifications.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-3 md:gap-4">
+              <button @click="requestNotificationPermission" class="px-5 py-3 md:px-6 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-sm md:text-base font-semibold rounded-xl hover:from-emerald-600 hover:to-teal-700 transition-all duration-200 shadow-lg">
+                Enable
+              </button>
+              <button @click="dismissPermissionRequest" class="px-5 py-3 md:px-6 bg-slate-100/80 text-slate-700 text-sm md:text-base font-semibold rounded-xl hover:bg-slate-200/80 transition-all duration-200 backdrop-blur-sm">
+                Not Now
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 </template>
 
 <script setup>
@@ -1070,7 +959,7 @@ const showBrowserNotification = (title, body, icon = null) => {
   if (window.Notification && Notification.permission === 'granted' && chatSettings.value.notifications) {
     const notification = new Notification(title, {
       body,
-      icon: icon || '/eco-mist-logo.png'
+      icon: icon || '/aerotech-rbg.png'
     });
     
     notification.onclick = function() {
@@ -1230,11 +1119,20 @@ const sendMessage = async () => {
     return;
   }
   
+  let messageUsername;
+  try {
+    const userDoc = await getDoc(doc(db, "users", user.value.uid));
+    messageUsername = userDoc.exists() ? userDoc.data().username : (username.value || "User");
+  } catch (error) {
+    console.error("Error fetching username for message:", error);
+    messageUsername = username.value || "User";
+  }
+
   const message = {
     text: newMessage.value,
     fileUrl: fileToSend.value || null,
     userId: user.value.uid,
-    username: username.value || user.value.displayName || "Anonymous",
+    username: messageUsername,
     timestamp: new Date(),
     edited: false,
     readBy: {},
@@ -1606,10 +1504,19 @@ const addReply = async (msg) => {
   if (!msg.newReply.trim()) return;
   try {
     const docRef = doc(db, "messages", msg.id);
+    let replyUsername;
+    try {
+      const userDoc = await getDoc(doc(db, "users", user.value.uid));
+      replyUsername = userDoc.exists() ? userDoc.data().username : (username.value || "User");
+    } catch (error) {
+      console.error("Error fetching username for reply:", error);
+      replyUsername = username.value || "User";
+    }
+
     const reply = {
       id: Date.now().toString(),
       text: msg.newReply,
-      username: username.value || "Anonymous",
+      username: replyUsername,
       timestamp: new Date(),
     };
     const updatedReplies = [...(msg.replies || []), reply];
@@ -1760,10 +1667,21 @@ onMounted(async () => {
     updateNotificationBadge();
   }, 1000);
   
-  onAuthStateChanged(auth, (currentUser) => {
+  onAuthStateChanged(auth, async (currentUser) => {
     if (currentUser) {
       user.value = currentUser;
-      username.value = currentUser.displayName || "User";
+      const db = getFirestore();
+      try {
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+        if (userDoc.exists() && userDoc.data().username) {
+          username.value = userDoc.data().username;
+        } else {
+          username.value = currentUser.displayName || "User";
+        }
+      } catch (error) {
+        console.error("Error fetching username:", error);
+        username.value = currentUser.displayName || "User";
+      }
       profileImageUrl.value = currentUser.photoURL || "";
     } else {
       router.push('/auth');
@@ -2116,3 +2034,4 @@ onBeforeUnmount(() => {
   }
 }
 </style>
+<!-- aa -->

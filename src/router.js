@@ -21,6 +21,7 @@ import EcoUser_SettingsParent from './components/EcoUserChild/EcoUser_SettingsPa
 import EcoUser_CropAnalysis from './components/EcoUserChild/EcoUser_CropAnalysis.vue';
 import EcoUser_Financial from './components/EcoUserChild/EcoUser_Financial.vue';
 import EcoUser_Device from './components/EcoUserChild/EcoUser_Device.vue';
+import EcoUser_ChangeEmail from './components/EcoUserChild/EcoUser_ChangeEmail.vue';
 
 ///Admin
 import EcoAdmin_Dashboard from './components/EcoAdmin/EcoAdmin_Child/EcoAdmin_Dashboard.vue';
@@ -59,6 +60,7 @@ const routes = [
          { path: 'profile-display', component: EcoUser_ProfilePage, meta: { requiresAuth: true, role: 'user' } },
          { path: 'edit-profile', component: EcoUser_EditProfile, meta: { requiresAuth: true, role: 'user' } },
          { path: 'reset-password', component: EcoUser_ResetPassword, meta: { requiresAuth: true, role: 'user' } },
+         { path: 'change-email', component: EcoUser_ChangeEmail, meta: { requiresAuth: true, role: 'user' } },
       ]
        },
     ]
@@ -78,6 +80,7 @@ const routes = [
          { path: 'profile-display', component: EcoUser_ProfilePage, meta: { requiresAuth: true, role: 'admin' } },
          { path: 'edit-profile', component: EcoUser_EditProfile, meta: { requiresAuth: true, role: 'admin' } },
          { path: 'reset-password', component: EcoUser_ResetPassword, meta: { requiresAuth: true, role: 'admin' } },
+         { path: 'change-email', component: EcoUser_ChangeEmail, meta: { requiresAuth: true, role: 'admin' } },
       ]
        },
        { path: 'guest-contacts', component: EcoAdmin_GuestContacts, meta: { requiresAuth: true, role: 'admin'} },
