@@ -1,18 +1,21 @@
+
 #include <ESP8266WiFi.h>
+#include <WiFiManager.h>
 #include <FirebaseESP8266.h>
+#include <ArduinoJson.h>
+#include <time.h>
 #include <DHT.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
-// WiFi credentials
-#define WIFI_SSID "Cherry Mobile 4G"
-#define WIFI_PASSWORD "101111AdEvA1211"
+// ---------------- Firebase Config ----------------
+#define API_KEY "AIzaSyDI4-BnlhJz5BQflocmopqpEIsc6WoHiE0"
+#define DATABASE_URL "https://ecomist-3082f-default-rtdb.asia-southeast1.firebasedatabase.app"
+FirebaseData fbdo;
+FirebaseAuth auth;
+FirebaseConfig config;
 
-// Firebase configuration
-#define FIREBASE_HOST "ecomist-3082f-default-rtdb.asia-southeast1.firebasedatabase.app"
-#define FIREBASE_AUTH "C1KiaCZnL7SlMmntNgOVdNsdk1QJLvhJCaAdLqkP"
-
-// Sensor Pins
+// ---------------- Pins ----------------
 #define DHTPIN D8
 #define DHTTYPE DHT22
 #define TRIGGER_PIN D5
@@ -20,151 +23,369 @@
 #define PH_PIN A0
 #define TDS_PIN A0
 #define ONE_WIRE_BUS D7
+#define MIST_PIN D4     // Relay control
 
-// Sensor objects
+// ---------------- Sensors ----------------
 DHT dht(DHTPIN, DHTTYPE);
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature ds18b20(&oneWire);
-FirebaseData fbdo;
-FirebaseConfig config;
 
-// Threshold struct with default values
+// ---------------- Thresholds ----------------
 struct Thresholds {
-  float humidity_min = 50, humidity_max = 70;
-  float air_temp_min = 18, air_temp_max = 25;
-  float water_temp_min = 18, water_temp_max = 22;
-  float water_level_min = 10;
-  float ph_min = 5.5, ph_max = 6.5;
-  float tds_min = 560, tds_max = 840;
-} thresholds;
+  float humidity_min=50, humidity_max=70;
+  float air_temp_min=18, air_temp_max=25;
+  float water_temp_min=18, water_temp_max=22;
+  float water_level_min=10;
+  float ph_min=5.5, ph_max=6.5;
+  float tds_min=560, tds_max=840;
+} thresholds, defaultThresholds;
 
-// Sensor values
+// ---------------- Sensor Readings ----------------
 float humidity, airTemp, waterTemp, distance, ph, tds;
-unsigned long previousMillis = 0;
-const long interval = 5000;  // Update every 5 seconds
+
+// ---------------- Timing ----------------
+unsigned long lastCheck=0;
+const unsigned long checkInterval=5000;
+unsigned long mistStart=0;
+bool misting=false;
+
+// ---------------- Firebase Paths ----------------
+String machineId, basePath;
+String thresholdsPath, readingsPath, historyPath;
+String mistPath, autoMistPath, scheduleMistPath;
+String ssidPath, ipPath, statusPath, ownerPath, devicenamePath, registeredPath;
+String reconnectPath, disconnectPath, wifiSsidPath, wifiPassPath, lastActionPath, initializedPath;
+String restoreDefaultThresholdPath, userDevicePath;
+
+// ---------------- Function Prototypes ----------------
+void logError(String label);
+void syncTime();
+void readSensors();
+void pushReadings();
+void fetchThresholds();
+void checkMistAutomation();
+void pushDefaultThresholds();
 
 void setup() {
   Serial.begin(115200);
+  delay(2000);
 
-  pinMode(TRIGGER_PIN, OUTPUT);
-  pinMode(ECHO_PIN, INPUT);
+  pinMode(MIST_PIN, OUTPUT);
+  digitalWrite(MIST_PIN, LOW);
 
   dht.begin();
   ds18b20.begin();
 
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  Serial.print("Connecting to WiFi");
-  while (WiFi.status() != WL_CONNECTED) {
-    Serial.print(".");
-    delay(500);
-  }
-  Serial.println("\nConnected to WiFi");
+  pinMode(TRIGGER_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
 
-  config.database_url = FIREBASE_HOST;
-  config.signer.tokens.legacy_token = FIREBASE_AUTH;
-  Firebase.begin(&config, nullptr);
+
+  machineId = String(ESP.getChipId());
+  Serial.println("🚀 Booting EcoMist Device");
+  Serial.println("📟 Device ID: " + machineId);
+
+  // ---------------- WiFi Setup ----------------
+  WiFiManager wifiManager;
+  wifiManager.setConfigPortalTimeout(180);
+  if (!wifiManager.autoConnect("EcoMist-Setup")) {
+    ESP.restart();
+  }
+
+  syncTime();
+
+  // ---------------- Firebase Auth ----------------
+  auth.user.email = "ecomist111@gmail.com";
+  auth.user.password = "Ecomist@111";
+  config.api_key = API_KEY;
+  config.database_url = DATABASE_URL;
+  config.time_zone = 8; // Asia/Manila
+  Firebase.begin(&config, &auth);
   Firebase.reconnectWiFi(true);
 
-  fetchThresholds(); // Fetch thresholds on startup
+  // ---------------- Firebase Paths ----------------
+  basePath = "/devices/" + machineId;
+  thresholdsPath = basePath + "/thresholds";
+  readingsPath = basePath + "/sensor_readings/latest";
+  historyPath = basePath + "/sensor_readings/history";
+  mistPath = basePath + "/mist/manual";
+  autoMistPath = basePath + "/mist/auto";
+  scheduleMistPath = basePath + "/mist/schedule";
+
+  ssidPath = basePath + "/state/connected_ssid";
+  ipPath = basePath + "/state/ip_address";
+  statusPath = basePath + "/status";
+  ownerPath = basePath + "/owner";
+  devicenamePath = basePath + "/devicename";
+  registeredPath = basePath + "/registered";
+  reconnectPath = basePath + "/state/reconnect";
+  disconnectPath = basePath + "/state/disconnect";
+  wifiSsidPath = basePath + "/state/wifi_ssid";
+  wifiPassPath = basePath + "/state/wifi_password";
+  lastActionPath = basePath + "/state/last_action_result";
+  initializedPath = basePath + "/state/initialized";
+  restoreDefaultThresholdPath = thresholdsPath + "/restore_defaults";
+  userDevicePath = "/users/" + String(auth.token.uid.length() > 0 ? auth.token.uid.c_str() : "unknown") + "/devices/" + machineId;
+
+  defaultThresholds = thresholds;
+
+  // ---------------- First-time initialization ----------------
+  Serial.println("📤 Checking and pushing initial device info if not yet set...");
+
+  if (!Firebase.getBool(fbdo, initializedPath) || !fbdo.boolData()) {
+    if (!Firebase.setString(fbdo, ssidPath, WiFi.SSID())) logError("set ssid");
+    if (!Firebase.setString(fbdo, ipPath, WiFi.localIP().toString())) logError("set ip");
+    if (!Firebase.setString(fbdo, statusPath, "waiting_for_registration")) logError("set status");
+    if (!Firebase.setString(fbdo, ownerPath, "Unregistered")) logError("set owner");
+    if (!Firebase.setString(fbdo, devicenamePath, "Device-" + machineId)) logError("set devicename");
+    if (!Firebase.setBool(fbdo, registeredPath, false)) logError("set registered");
+
+    Firebase.setString(fbdo, basePath + "/credentials/email", "");
+    Firebase.setString(fbdo, basePath + "/credentials/password", "");
+
+    if (!Firebase.setString(fbdo, basePath + "/admin/adminname", "EcoMist Admin")) logError("set adminname");
+    if (!Firebase.setString(fbdo, basePath + "/admin/adminid", 
+      auth.token.uid.length() > 0 ? auth.token.uid.c_str() : "unknown")) logError("set adminid");
+    if (!Firebase.setString(fbdo, basePath + "/admin/adminemail", auth.user.email.c_str())) logError("set adminemail");
+
+    pushDefaultThresholds();
+    Firebase.setBool(fbdo, initializedPath, true);
+  } else {
+    Serial.println("⚠️ Initial data already exists. Skipping overwrite.");
+  }
+
+  // Fetch thresholds into runtime struct
+  fetchThresholds();
+
+  Serial.println("✅ Device setup complete.");
 }
 
 void loop() {
-  unsigned long currentMillis = millis();
-  
-  if (currentMillis - previousMillis >= interval) {
-    previousMillis = currentMillis;
+  unsigned long now = millis();
+  if (Firebase.ready() && now - lastCheck >= checkInterval) {
+    lastCheck = now;
 
-    readDHT22();
-    readUltrasonic();
-    readDS18B20();
-    readPH();
-    readTDS();
-    
-    sendToFirebase();
-    fetchThresholds(); // Refresh thresholds periodically
+    if (WiFi.status() == WL_CONNECTED) {
+      Firebase.setInt(fbdo, basePath + "/last_online", time(nullptr));
+    }
+
+    // Handle admin commands: reconnect / disconnect
+    if (Firebase.getBool(fbdo, reconnectPath) && fbdo.boolData()) {
+      Serial.println("🔄 Reconnect command received.");
+      Firebase.setBool(fbdo, reconnectPath, false);
+      Firebase.setString(fbdo, lastActionPath, "reconnect_triggered");
+      WiFi.disconnect();
+      ESP.restart();
+    }
+
+    if (Firebase.getBool(fbdo, disconnectPath) && fbdo.boolData()) {
+      Serial.println("🚫 Disconnect command received.");
+      Firebase.setBool(fbdo, disconnectPath, false);
+      Firebase.setString(fbdo, lastActionPath, "disconnected");
+      WiFi.disconnect(true);
+      delay(1000);
+    }
+
+    // WiFi credential change
+    if (Firebase.getString(fbdo, wifiSsidPath) && fbdo.stringData() != "" && fbdo.stringData() != WiFi.SSID()) {
+      String newSsid = fbdo.stringData();
+      if (Firebase.getString(fbdo, wifiPassPath)) {
+        String newPass = fbdo.stringData();
+
+        Serial.println("📶 Changing WiFi credentials...");
+        Firebase.setString(fbdo, wifiSsidPath, "");
+        Firebase.setString(fbdo, wifiPassPath, "");
+
+        WiFi.begin(newSsid.c_str(), newPass.c_str());
+
+        int retries = 0;
+        while (WiFi.status() != WL_CONNECTED && retries < 15) {
+          delay(1000);
+          Serial.print(".");
+          retries++;
+        }
+
+        if (WiFi.status() == WL_CONNECTED) {
+          Serial.println("✅ WiFi reconnected.");
+          Firebase.setString(fbdo, ssidPath, WiFi.SSID());
+          Firebase.setString(fbdo, ipPath, WiFi.localIP().toString());
+          Firebase.setString(fbdo, lastActionPath, "wifi_changed_success");
+        } else {
+          Serial.println("❌ Failed to connect with new WiFi.");
+          Firebase.setString(fbdo, lastActionPath, "wifi_change_failed");
+        }
+      }
+    }
+
+    // Restore default thresholds if requested
+    if (Firebase.getBool(fbdo, restoreDefaultThresholdPath) && fbdo.boolData()) {
+      pushDefaultThresholds();
+      Firebase.setBool(fbdo, restoreDefaultThresholdPath, false);
+    }
+
+    // Regular operations: read sensors, push readings, automation
+    fetchThresholds();
+    readSensors();
+    pushReadings();
+    checkMistAutomation();
   }
 }
 
-void readDHT22() {
+// ---------------- Functions --------------------
+
+void logError(String label) {
+  Serial.print("❌ Failed to ");
+  Serial.print(label);
+  Serial.print(": ");
+  Serial.println(fbdo.errorReason());
+}
+
+void syncTime() {
+  configTime(8 * 3600, 0, "pool.ntp.org", "time.nist.gov");
+  Serial.println("🕒 Syncing time with NTP...");
+  time_t now = time(nullptr);
+  while (now < 100000) {
+    delay(500);
+    Serial.print(".");
+    now = time(nullptr);
+  }
+  Serial.println();
+  Serial.print("✅ Time synced: ");
+  Serial.println(now);
+}
+
+void readSensors() {
+  // DHT22
   humidity = dht.readHumidity();
   airTemp = dht.readTemperature();
 
-  if (isnan(humidity) || isnan(airTemp)) {
-    Serial.println("DHT22 reading error");
-    return;
-  }
-}
-
-void readUltrasonic() {
+  // Ultrasonic
+  digitalWrite(TRIGGER_PIN, LOW); delayMicroseconds(2);
+  digitalWrite(TRIGGER_PIN, HIGH); delayMicroseconds(10);
   digitalWrite(TRIGGER_PIN, LOW);
-  delayMicroseconds(2);
-  digitalWrite(TRIGGER_PIN, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIGGER_PIN, LOW);
-
-  long duration = pulseIn(ECHO_PIN, HIGH);
+  long duration = pulseIn(ECHO_PIN, HIGH, 30000);
   distance = duration * 0.034 / 2;
-}
 
-void readDS18B20() {
+  // DS18B20
   ds18b20.requestTemperatures();
-  waterTemp = ds18b20.getTempCByIndex(0);
-}
+  float temp = ds18b20.getTempCByIndex(0);
+  waterTemp = (temp > -100 && temp < 100) ? temp : NAN;
 
-void readPH() {
-  int samples = 10;
+  // pH
   float voltage = 0;
-
-  for (int i = 0; i < samples; i++) {
-    voltage += analogRead(PH_PIN) * (5.0 / 1024.0);
-    delay(10);
-  }
+  const int samples = 10;
+  for (int i=0;i<samples;i++){voltage += analogRead(PH_PIN)*(5.0/1024.0); delay(10);}
   voltage /= samples;
+  ph = 7.0 + ((2.5 - voltage)/((2.5-3.1)/3.0));
+  if(ph<0||ph>14) ph=NAN;
 
-  ph = 7.0 + ((2.5 - voltage) / ((2.5 - 3.1) / 3.0));
+  // TDS
+  float total=0;
+  for(int i=0;i<samples;i++){total+=analogRead(TDS_PIN); delay(10);}
+  float v=total/samples*5.0/1024.0;
+  float compV=v/(1.0+0.02*(waterTemp-25.0));
+  tds = 133.42*pow(compV,3)-255.86*pow(compV,2)+857.39*compV;
+  if(tds<0||tds>3000) tds=NAN;
 }
 
-void readTDS() {
-  float voltage = analogRead(TDS_PIN) * 5.0 / 1024.0;
-  float compensationVoltage = voltage / (1.0 + 0.02 * (waterTemp - 25.0));
-  tds = (133.42 * pow(compensationVoltage, 3) - 255.86 * pow(compensationVoltage, 2) + 857.39 * compensationVoltage);
-}
+void pushReadings() {
+  String timestamp = String(time(nullptr));
 
-void sendToFirebase() {
-  FirebaseJson json;
-  json.set("humidity", humidity);
-  json.set("air_temperature", airTemp);
-  json.set("water_temperature", waterTemp);
-  json.set("water_level", distance);
-  json.set("ph", ph);
-  json.set("tds", tds);
+  // Latest
+  Firebase.setFloat(fbdo, readingsPath+"/humidity", humidity);
+  Firebase.setFloat(fbdo, readingsPath+"/airTemp", airTemp);
+  Firebase.setFloat(fbdo, readingsPath+"/waterTemp", waterTemp);
+  Firebase.setFloat(fbdo, readingsPath+"/distance", distance);
+  if(!isnan(ph)) Firebase.setFloat(fbdo, readingsPath+"/ph", ph);
+  if(!isnan(tds)) Firebase.setFloat(fbdo, readingsPath+"/tds", tds);
 
-  if (Firebase.pushJSON(fbdo, "/sensor_data", json)) {
-    Serial.println("Data sent successfully");
-  } else {
-    Serial.println("Failed to send data: " + fbdo.errorReason());
-  }
+  // History
+  String histPath = historyPath+"/"+timestamp;
+  Firebase.setFloat(fbdo, histPath+"/humidity", humidity);
+  Firebase.setFloat(fbdo, histPath+"/airTemp", airTemp);
+  Firebase.setFloat(fbdo, histPath+"/waterTemp", waterTemp);
+  Firebase.setFloat(fbdo, histPath+"/distance", distance);
+  if(!isnan(ph)) Firebase.setFloat(fbdo, histPath+"/ph", ph);
+  if(!isnan(tds)) Firebase.setFloat(fbdo, histPath+"/tds", tds);
 }
 
 void fetchThresholds() {
-  if (Firebase.getJSON(fbdo, "/thresholds")) {
-    FirebaseJson &json = fbdo.jsonObject();
-    FirebaseJsonData data;
+  Firebase.getFloat(fbdo, thresholdsPath+"/humidity_min") ? thresholds.humidity_min=fbdo.floatData() : 0;
+  Firebase.getFloat(fbdo, thresholdsPath+"/humidity_max") ? thresholds.humidity_max=fbdo.floatData() : 0;
+  Firebase.getFloat(fbdo, thresholdsPath+"/air_temp_min") ? thresholds.air_temp_min=fbdo.floatData() : 0;
+  Firebase.getFloat(fbdo, thresholdsPath+"/air_temp_max") ? thresholds.air_temp_max=fbdo.floatData() : 0;
+  Firebase.getFloat(fbdo, thresholdsPath+"/water_temp_min") ? thresholds.water_temp_min=fbdo.floatData() : 0;
+  Firebase.getFloat(fbdo, thresholdsPath+"/water_temp_max") ? thresholds.water_temp_max=fbdo.floatData() : 0;
+  Firebase.getFloat(fbdo, thresholdsPath+"/water_level_min") ? thresholds.water_level_min=fbdo.floatData() : 0;
+  Firebase.getFloat(fbdo, thresholdsPath+"/ph_min") ? thresholds.ph_min=fbdo.floatData() : 0;
+  Firebase.getFloat(fbdo, thresholdsPath+"/ph_max") ? thresholds.ph_max=fbdo.floatData() : 0;
+  Firebase.getFloat(fbdo, thresholdsPath+"/tds_min") ? thresholds.tds_min=fbdo.floatData() : 0;
+  Firebase.getFloat(fbdo, thresholdsPath+"/tds_max") ? thresholds.tds_max=fbdo.floatData() : 0;
+}
 
-    if (json.get(data, "humidity_min")) thresholds.humidity_min = data.to<float>();
-    if (json.get(data, "humidity_max")) thresholds.humidity_max = data.to<float>();
-    if (json.get(data, "air_temp_min")) thresholds.air_temp_min = data.to<float>();
-    if (json.get(data, "air_temp_max")) thresholds.air_temp_max = data.to<float>();
-    if (json.get(data, "water_temp_min")) thresholds.water_temp_min = data.to<float>();
-    if (json.get(data, "water_temp_max")) thresholds.water_temp_max = data.to<float>();
-    if (json.get(data, "water_level_min")) thresholds.water_level_min = data.to<float>();
-    if (json.get(data, "ph_min")) thresholds.ph_min = data.to<float>();
-    if (json.get(data, "ph_max")) thresholds.ph_max = data.to<float>();
-    if (json.get(data, "tds_min")) thresholds.tds_min = data.to<float>();
-    if (json.get(data, "tds_max")) thresholds.tds_max = data.to<float>();
+void pushDefaultThresholds() {
+  Firebase.setFloat(fbdo, thresholdsPath + "/humidity_min", defaultThresholds.humidity_min);
+  Firebase.setFloat(fbdo, thresholdsPath + "/humidity_max", defaultThresholds.humidity_max);
+  Firebase.setFloat(fbdo, thresholdsPath + "/air_temp_min", defaultThresholds.air_temp_min);
+  Firebase.setFloat(fbdo, thresholdsPath + "/air_temp_max", defaultThresholds.air_temp_max);
+  Firebase.setFloat(fbdo, thresholdsPath + "/water_temp_min", defaultThresholds.water_temp_min);
+  Firebase.setFloat(fbdo, thresholdsPath + "/water_temp_max", defaultThresholds.water_temp_max);
+  Firebase.setFloat(fbdo, thresholdsPath + "/water_level_min", defaultThresholds.water_level_min);
+  Firebase.setFloat(fbdo, thresholdsPath + "/ph_min", defaultThresholds.ph_min);
+  Firebase.setFloat(fbdo, thresholdsPath + "/ph_max", defaultThresholds.ph_max);
+  Firebase.setFloat(fbdo, thresholdsPath + "/tds_min", defaultThresholds.tds_min);
+  Firebase.setFloat(fbdo, thresholdsPath + "/tds_max", defaultThresholds.tds_max);
+}
 
-    Serial.println("Thresholds updated from Firebase!");
-  } else {
-    Serial.println("⚠️ Using default thresholds.");
+void checkMistAutomation() {
+  // Manual mist
+  bool manualMist = false;
+  if(Firebase.getBool(fbdo, mistPath)) {
+    manualMist = fbdo.boolData();
+    Firebase.setBool(fbdo, mistPath,false);
+  }
+
+  // Automatic mist based on thresholds
+  bool autoMist = false;
+  if(Firebase.getBool(fbdo, autoMistPath)) autoMist = fbdo.boolData();
+
+  // Scheduled mist (optional)
+  int schedInterval=3600, schedDuration=5; // defaults in seconds
+  if(Firebase.getInt(fbdo, scheduleMistPath+"/interval")) schedInterval=fbdo.intData();
+  if(Firebase.getInt(fbdo, scheduleMistPath+"/duration")) schedDuration=fbdo.intData();
+
+  unsigned long currentTime = millis()/1000;
+
+  bool thresholdMist=false;
+  if(autoMist){
+    if(!isnan(humidity) && humidity<thresholds.humidity_min) thresholdMist=true;
+    if(!isnan(waterTemp) && waterTemp>thresholds.water_temp_max) thresholdMist=true;
+  }
+
+  bool turnOn = manualMist || thresholdMist || (currentTime % schedInterval < schedDuration);
+
+  if(turnOn){
+    if(!misting){
+      digitalWrite(MIST_PIN,HIGH);
+      mistStart=millis();
+      misting=true;
+      Serial.println("💧 Mist ON");
+
+      String path = basePath + "/mist/logs/" + String(time(nullptr));
+      Firebase.setString(fbdo, path+"/action","ON");
+      Firebase.setFloat(fbdo, path+"/humidity", humidity);
+      Firebase.setFloat(fbdo, path+"/waterTemp", waterTemp);
+    }
+  }else{
+    if(misting && millis()-mistStart>=1000){
+      digitalWrite(MIST_PIN,LOW);
+      misting=false;
+      Serial.println("💧 Mist OFF");
+
+      String path = basePath + "/mist/logs/" + String(time(nullptr));
+      Firebase.setString(fbdo, path+"/action","OFF");
+      Firebase.setFloat(fbdo, path+"/humidity", humidity);
+      Firebase.setFloat(fbdo, path+"/waterTemp", waterTemp);
+    }
   }
 }
+
