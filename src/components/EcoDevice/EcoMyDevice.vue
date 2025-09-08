@@ -1,5 +1,9 @@
 <template>
   <div class="p-6 max-w-4xl mx-auto">
+    <!-- Toast Notification -->
+    <div v-if="toast.show" :class="['fixed top-6 right-6 z-50 px-6 py-4 rounded-lg shadow-lg text-white transition-all', toast.type === 'error' ? 'bg-red-600' : 'bg-green-600']">
+      {{ toast.message }}
+    </div>
     <h2 class="text-2xl font-semibold mb-4">My Registered Devices</h2>
 
     <div class="mb-4">
@@ -67,7 +71,12 @@ export default {
       loading: true,
       searchQuery: '',
       currentPage: 1,
-      perPage: 3
+      perPage: 3,
+      toast: {
+        show: false,
+        message: '',
+        type: 'success'
+      }
     };
   },
   computed: {
@@ -88,6 +97,12 @@ export default {
     }
   },
   methods: {
+    showToast(message, type = 'success') {
+      this.toast.message = message;
+      this.toast.type = type;
+      this.toast.show = true;
+      setTimeout(() => { this.toast.show = false; }, 2500);
+    },
     formatTime(epochSeconds) {
       if (!epochSeconds) return 'N/A';
       const date = new Date(epochSeconds * 1000);
@@ -99,15 +114,18 @@ export default {
       return now - lastOnline <= 60;
     },
     async renameDevice(deviceId, newName) {
-      if (!newName || !deviceId) return;
+      if (!newName || !deviceId) {
+        this.showToast('Please enter a new name.', 'error');
+        return;
+      }
       const db = getDatabase();
       const deviceRef = ref(db, `devices/${deviceId}`);
       try {
         await update(deviceRef, { devicename: newName });
-        alert('Device name updated successfully.');
+        this.showToast('Device name updated successfully.', 'success');
       } catch (err) {
         console.error('Rename failed:', err);
-        alert('Failed to rename device.');
+        this.showToast('Failed to rename device.', 'error');
       }
     },
     async sendCommand(deviceId, action) {
@@ -116,21 +134,20 @@ export default {
       updates[`devices/${deviceId}/state/${action}`] = true;
       try {
         await update(ref(db), updates);
-        alert(`${action} command sent to device.`);
+        this.showToast(`${action} command sent to device.`, 'success');
       } catch (err) {
-        alert(`Failed to send ${action} command: ` + err.message);
+        this.showToast(`Failed to send ${action} command: ${err.message}`, 'error');
       }
     },
     selectDevice(deviceId) {
-  const device = this.devices.find(d => d.id === deviceId);
-  if (device) {
-    this.$emit('select-device', {
-      id: deviceId,
-      name: device.devicename || ''
-    });
-  }
-},
-
+      const device = this.devices.find(d => d.id === deviceId);
+      if (device) {
+        this.$emit('select-device', {
+          id: deviceId,
+          name: device.devicename || ''
+        });
+      }
+    },
     fetchUserDevices() {
       const auth = getAuth();
       const user = auth.currentUser;

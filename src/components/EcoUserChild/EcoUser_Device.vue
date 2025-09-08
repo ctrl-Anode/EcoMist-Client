@@ -62,6 +62,7 @@ import EcoDeviceWifi from '../EcoDevice/EcoDeviceWifi.vue';
 import EcoDeviceData from '../EcoDevice/EcoDeviceData.vue';
 import EcoMyDevice from '../EcoDevice/EcoMyDevice.vue';
 import EcoDeviceManager from '../EcoDevice/EcoDeviceManager.vue';
+import EcoDeviceVisuals from '../EcoDevice/DeviceVisuals.vue';
 
 export default {
   name: 'DeviceManagerTabs',
@@ -69,7 +70,8 @@ export default {
     EcoDeviceWifi,
     EcoDeviceData,
     EcoMyDevice,
-    EcoDeviceManager
+    EcoDeviceManager,
+    EcoDeviceVisuals
   },
   data() {
   return {
@@ -81,7 +83,8 @@ export default {
       { name: 'EcoMyDevice', label: '📋 My Devices' },
       { name: 'EcoDeviceManager', label: '🔐 Register/Unregister' },
       { name: 'EcoDeviceWifi', label: '📶 Update WiFi' },
-      { name: 'EcoDeviceData', label: '⚙️ Thresholds & Sensors' }
+      { name: 'EcoDeviceData', label: '⚙️ Thresholds & Sensors' },
+      { name: 'EcoDeviceVisuals', label: '📊 Device Reports' }
     ]
   };
 },

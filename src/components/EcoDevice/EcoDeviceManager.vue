@@ -1,7 +1,21 @@
 <template>
   <div class="p-6 max-w-xl mx-auto">
+    <!-- Toast Notification -->
+    <div v-if="toast.show" :class="['fixed top-6 right-6 z-50 px-6 py-4 rounded-lg shadow-lg text-white transition-all', toast.type === 'error' ? 'bg-red-600' : 'bg-green-600']">
+      {{ toast.message }}
+    </div>
+    <!-- Confirmation Modal -->
+    <div v-if="showConfirm" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+      <div class="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full">
+        <h3 class="text-lg font-semibold mb-2">Confirm Unregister</h3>
+        <p class="mb-4">⚠️ Are you sure you want to unregister this device? This action cannot be undone.</p>
+        <div class="flex justify-end space-x-2">
+          <button @click="showConfirm = false" class="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Cancel</button>
+          <button @click="confirmUnregister" class="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700">Unregister</button>
+        </div>
+      </div>
+    </div>
     <h2 class="text-2xl font-semibold mb-4">Register or Unregister Your Device</h2>
-
     <form @submit.prevent="registerDevice" class="space-y-4">
       <!-- Device ID -->
       <div>
@@ -11,7 +25,6 @@
           class="w-full border px-3 py-2 rounded bg-gray-100 text-gray-600"
         />
       </div>
-
       <!-- Device Name -->
       <div>
         <label class="block font-medium mb-1">Device Name</label>
@@ -21,7 +34,6 @@
           required
         />
       </div>
-
       <!-- User Email -->
       <div>
         <label class="block font-medium mb-1">Your Email</label>
@@ -31,7 +43,6 @@
           readonly
         />
       </div>
-
       <!-- Password -->
       <div>
         <label class="block font-medium mb-1">Your Password</label>
@@ -42,18 +53,16 @@
           required
         />
       </div>
-
       <!-- Action Buttons -->
       <div class="flex space-x-2">
         <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
           Register Device
         </button>
-        <button type="button" @click="unregisterDevice" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+        <button type="button" @click="showConfirm = true" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
           Unregister Device
         </button>
       </div>
     </form>
-
     <p v-if="error" class="text-red-600 mt-4">{{ error }}</p>
     <p v-if="success" class="text-green-600 mt-4">{{ success }}</p>
   </div>
@@ -76,7 +85,13 @@ export default {
       userEmail: '',
       userPassword: '',
       error: '',
-      success: ''
+      success: '',
+      toast: {
+        show: false,
+        message: '',
+        type: 'success'
+      },
+      showConfirm: false
     };
   },
   watch: {
@@ -102,6 +117,12 @@ export default {
     });
   },
   methods: {
+    showToast(message, type = 'success') {
+      this.toast.message = message;
+      this.toast.type = type;
+      this.toast.show = true;
+      setTimeout(() => { this.toast.show = false; }, 2500);
+    },
     async reauthenticate() {
       const auth = getAuth();
       const user = auth.currentUser;
@@ -125,6 +146,7 @@ export default {
 
         if (!snapshot.exists()) {
           this.error = 'Device not found. Ensure it is online and initialized.';
+          this.showToast(this.error, 'error');
           return;
         }
 
@@ -134,9 +156,11 @@ export default {
           this.error = deviceData.owner === user.uid
             ? 'This device is already registered to your account.'
             : 'This device is already registered to another account.';
+          this.showToast(this.error, 'error');
           return;
         }
 
+        // Align with firmware: set owner, devicename, registered, status
         const updates = {
           owner: user.uid,
           devicename: this.localDeviceName,
@@ -146,27 +170,31 @@ export default {
 
         await update(deviceRef, updates);
         this.success = 'Device registered successfully!';
+        this.showToast(this.success, 'success');
       } catch (err) {
         this.error = err.message || 'An error occurred.';
+        this.showToast(this.error, 'error');
       }
     },
 
-    async unregisterDevice() {
-       const confirmed = confirm('⚠️ Are you sure you want to unregister this device? This action cannot be undone.');
-       if (!confirmed) return;
+    async confirmUnregister() {
+      this.showConfirm = false;
+      await this.unregisterDevice();
+    },
 
-       this.error = '';
-       this.success = '';
+    async unregisterDevice() {
+      this.error = '';
+      this.success = '';
 
       try {
         const user = await this.reauthenticate();
-
         const db = getDatabase();
         const deviceRef = ref(db, `devices/${this.localDeviceId}`);
         const snapshot = await get(deviceRef);
 
         if (!snapshot.exists()) {
           this.error = 'Device not found.';
+          this.showToast(this.error, 'error');
           return;
         }
 
@@ -174,9 +202,11 @@ export default {
 
         if (deviceData.owner !== user.uid) {
           this.error = 'You are not authorized to unregister this device.';
+          this.showToast(this.error, 'error');
           return;
         }
 
+        // Align with firmware: set owner, devicename, registered, status
         const updates = {
           owner: 'Unregistered',
           devicename: `Device-${this.localDeviceId}`,
@@ -186,8 +216,10 @@ export default {
 
         await update(deviceRef, updates);
         this.success = 'Device unregistered successfully!';
+        this.showToast(this.success, 'success');
       } catch (err) {
         this.error = err.message || 'An error occurred.';
+        this.showToast(this.error, 'error');
       }
     }
   }

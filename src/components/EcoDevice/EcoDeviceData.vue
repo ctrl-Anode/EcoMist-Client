@@ -1,8 +1,14 @@
 <template>
   <div>
     <div v-if="loading" class="text-gray-500">Loading sensor mode...</div>
-    <SensorSimulated v-else-if="isSimulated" :device-id="deviceId" />
-    <SensorRealtime v-else :device-id="deviceId" />
+    <SensorSimulated
+      v-else-if="isSimulated"
+      :device-id="deviceId"
+    />
+    <SensorRealtime
+      v-else
+      :device-id="deviceId"
+    />
   </div>
 </template>
 
@@ -12,7 +18,12 @@ import SensorSimulated from '../EcoDevice/DeviceSimulation.vue';
 import SensorRealtime from '../EcoDevice/DeviceRealtime.vue';
 
 export default {
-  props: ['deviceId'],
+  props: {
+    deviceId: {
+      type: String,
+      required: true
+    }
+  },
   components: {
     SensorSimulated,
     SensorRealtime,
