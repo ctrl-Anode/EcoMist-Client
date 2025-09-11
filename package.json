@@ -15,6 +15,7 @@
     "axios": "^1.8.3",
     "bowser": "^2.11.0",
     "chart.js": "^4.4.9",
+    "chartjs-adapter-date-fns": "^3.0.0",
     "core-js": "^3.8.3",
     "date-fns": "^4.1.0",
     "dompurify": "^3.2.4",

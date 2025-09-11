@@ -1,14 +1,24 @@
 <template>
-  <div v-if="toast.show" :class="['fixed top-6 right-6 z-50 px-6 py-4 rounded-lg shadow-lg text-white transition-all', toast.type === 'error' ? 'bg-red-600' : 'bg-green-600']">
-    {{ toast.message }}
-  </div>
-  <div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4">
+  <div>
+    <div v-if="toast.show" :class="['fixed top-6 right-6 z-50 px-6 py-4 rounded-lg shadow-lg text-white transition-all', toast.type === 'error' ? 'bg-red-600' : 'bg-green-600']">
+      {{ toast.message }}
+    </div>
+    <div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4">
     <div class="max-w-7xl mx-auto">
-        <!-- Header -->
+      <!-- Header -->
       <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900 mb-2">Sensor Dashboard</h1>
         <p class="text-gray-600">Monitor and configure your device sensors in real-time</p>
       </div>
+      <!-- Sensor Graph Section -->
+      <div class="mb-8">
+        <SensorGraph
+          :device-id="deviceId"
+          :sensor-readings="sensorReadings"
+          :thresholds="thresholds"
+        />
+      </div>
+
       <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
         <!-- 🤪 Sensor Data Section -->
         <div class="order-1">
@@ -140,6 +150,7 @@
         </div>
       </div>
     </div>
+    </div>
   </div>
 </template>
 
@@ -147,6 +158,8 @@
 
 <script>
 import { getDatabase, ref, onValue, set, update } from "firebase/database";
+import SensorGraph from './SensorGraph.vue';
+import { useToast } from 'vue-toastification';
 
 const SENSOR_ORDER = [
   { key: 'humidity', label: 'Humidity (%)', min: 'humidity_min', max: 'humidity_max' },
@@ -176,6 +189,9 @@ const THRESHOLD_PAIRS = [
 
 export default {
   props: ['deviceId'],
+  components: {
+    SensorGraph
+  },
   data() {
     return {
       thresholds: {},
@@ -186,7 +202,9 @@ export default {
         show: false,
         message: '',
         type: 'success'
-      }
+      },
+      isOnline: navigator.onLine,
+      alertedSensors: new Set()
     };
   },
   watch: {
@@ -294,36 +312,60 @@ export default {
         });
     },
     loadData() {
-  const db = getDatabase();
+      const db = getDatabase();
 
-  if (this.thresholdsUnsub) this.thresholdsUnsub();
-  if (this.sensorUnsub) this.sensorUnsub();
+      if (this.thresholdsUnsub) this.thresholdsUnsub();
+      if (this.sensorUnsub) this.sensorUnsub();
 
-  this.loadingThresholds = true;
-  this.loadingSensors = true;
+      this.loadingThresholds = true;
+      this.loadingSensors = true;
 
-  const thresholdsRef = ref(db, `/devices/${this.deviceId}/thresholds`);
-  const sensorRef = ref(db, `/devices/${this.deviceId}/sensor_readings`);
+      const thresholdsRef = ref(db, `/devices/${this.deviceId}/thresholds`);
+      const sensorRef = ref(db, `/devices/${this.deviceId}/sensor_readings`);
 
-  this.thresholdsUnsub = onValue(thresholdsRef, (snapshot) => {
-    if (snapshot.exists()) {
-      this.thresholds = snapshot.val();
-    } else {
-      this.thresholds = {};
-    }
-    this.loadingThresholds = false;
-  });
+      this.thresholdsUnsub = onValue(thresholdsRef, (snapshot) => {
+        if (snapshot.exists()) {
+          this.thresholds = snapshot.val();
+        } else {
+          this.thresholds = {};
+        }
+        this.loadingThresholds = false;
+      });
 
-  this.sensorUnsub = onValue(sensorRef, (snapshot) => {
-    if (snapshot.exists()) {
-      this.sensorReadings = snapshot.val();
-    } else {
-      this.sensorReadings = {};
-    }
-    this.loadingSensors = false;
-  });
-},
+      this.sensorUnsub = onValue(sensorRef, (snapshot) => {
+        if (snapshot.exists()) {
+          this.sensorReadings = snapshot.val();
+          this.checkThresholdBreaches();
+        } else {
+          this.sensorReadings = {};
+        }
+        this.loadingSensors = false;
+      });
+    },
+    checkThresholdBreaches() {
+      // Check each sensor reading against thresholds and show toast if breached
+      for (const sensor of SENSOR_ORDER) {
+        const key = sensor.key;
+        const value = this.sensorReadings?.latest?.[key];
+        if (value === null || value === undefined) continue;
 
+        const minKey = sensor.min;
+        const maxKey = sensor.max;
+        const minThreshold = this.thresholds[minKey];
+        const maxThreshold = this.thresholds[maxKey];
+
+        let breached = false;
+        if (minThreshold !== undefined && value < minThreshold) breached = true;
+        if (maxThreshold !== undefined && value > maxThreshold) breached = true;
+
+        if (breached && !this.alertedSensors.has(key)) {
+          this.showToast(`⚠️ ${sensor.label} breached threshold: ${value}`, 'error');
+          this.alertedSensors.add(key);
+        } else if (!breached && this.alertedSensors.has(key)) {
+          this.alertedSensors.delete(key);
+        }
+      }
+    },
     thresholdLabel(key) {
       // Human-friendly labels for each threshold
       const map = {
@@ -342,10 +384,8 @@ export default {
       return map[key] || key.replaceAll('_', ' ');
     },
     showToast(message, type = 'success') {
-      this.toast.message = message;
-      this.toast.type = type;
-      this.toast.show = true;
-      setTimeout(() => { this.toast.show = false; }, 2500);
+      const toast = useToast();
+      toast(message, { type });
     }
   },
   beforeUnmount() {
