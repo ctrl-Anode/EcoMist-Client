@@ -15,6 +15,19 @@ export const authGuard = async (to, from, next) => {
     return next();
   }
   
+  // Check session data in local storage
+  const session = localStorage.getItem('session');
+  if (!session) {
+    // No session data, redirect to login
+    return next({
+      path: '/auth',
+      query: { redirect: to.fullPath }
+    });
+  }
+
+  const parsedSession = JSON.parse(session);
+  console.log('Session data:', parsedSession);
+
   // Get the current user
   const currentUser = await getCurrentUser();
   

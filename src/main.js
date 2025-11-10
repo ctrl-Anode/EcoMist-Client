@@ -105,7 +105,13 @@ onAuthStateChanged(auth, () => {
   }
 });
 
-
+// Restore session from local storage
+const session = localStorage.getItem('session');
+if (session) {
+  const parsedSession = JSON.parse(session);
+  console.log('Restored session:', parsedSession);
+  // Optionally, validate the session token here
+}
 
 // ✅ Apply dark mode on load
 if (localStorage.getItem("darkMode") === "true") {

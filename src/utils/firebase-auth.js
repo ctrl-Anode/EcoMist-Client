@@ -69,6 +69,45 @@ export const checkIsAdmin = async () => {
 };
 
 /**
+ * Log in a user and store session data in local storage
+ * @param {string} email - User's email
+ * @param {string} password - User's password
+ * @returns {Promise<Object>} Authenticated user object
+ */
+export const loginUser = async (email, password) => {
+  try {
+    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+    const user = userCredential.user;
+
+    // Store session data in local storage
+    localStorage.setItem('session', JSON.stringify({
+      uid: user.uid,
+      email: user.email,
+      token: await user.getIdToken(),
+    }));
+
+    return user;
+  } catch (error) {
+    console.error("Login failed:", error);
+    throw error;
+  }
+};
+
+/**
+ * Log out a user and clear session data from local storage
+ */
+export const logoutUser = async () => {
+  try {
+    await auth.signOut();
+    localStorage.removeItem('session');
+    console.log('Session cleared on logout');
+  } catch (error) {
+    console.error("Logout failed:", error);
+    throw error;
+  }
+};
+
+/**
  * Create a composable for Vue to use authentication
  * @returns {Object} Auth utilities
  */

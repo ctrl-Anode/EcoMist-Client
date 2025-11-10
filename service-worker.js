@@ -1,11 +1,13 @@
-// Cache names
-const CACHE_NAME = 'aerotech-cache-v1';
+// Cache names with dynamic versioning
+const CACHE_VERSION = 'v1';
+const CACHE_NAME = `aerotech-cache-${CACHE_VERSION}`;
 const urlsToCache = [
   '/',
   '/index.html',
   '/style.css',
   '/main.js',
-  '/aerotech-rbg-index.png'
+  '/icons/aerotech-192x192.png',
+  '/icons/aerotech-512x512.png'
 ];
 
 // Install event
@@ -14,20 +16,23 @@ self.addEventListener('install', event => {
     caches.open(CACHE_NAME).then(cache => {
       console.log('Opened cache');
       return cache.addAll(urlsToCache);
-    })
+    }).catch(err => console.error('Cache open failed:', err))
   );
 });
 
-// Fetch event
+// Fetch event with error handling
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request).then(response => {
-      return response || fetch(event.request);
+      return response || fetch(event.request).catch(() => {
+        console.error('Fetch failed for:', event.request.url);
+        return new Response('Network error occurred', { status: 408 });
+      });
     })
   );
 });
 
-// Activate event
+// Activate event with cache busting
 self.addEventListener('activate', event => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
@@ -35,6 +40,7 @@ self.addEventListener('activate', event => {
       return Promise.all(
         cacheNames.map(cacheName => {
           if (!cacheWhitelist.includes(cacheName)) {
+            console.log('Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
