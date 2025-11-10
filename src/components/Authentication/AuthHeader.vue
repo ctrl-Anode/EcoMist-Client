@@ -134,7 +134,7 @@ const toast = useToast();
 
 const mobileMenuOpen = ref(false);
 const deferredPrompt = ref(null);
-const showInstallButton = ref(false);
+const showInstallButton = ref(true);
 const isInstalling = ref(false);
 
 const navLinks = [
