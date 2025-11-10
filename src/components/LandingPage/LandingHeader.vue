@@ -46,22 +46,6 @@
           {{ link.label }}
         </a>
         
-        <!-- Install Button (Desktop) -->
-        <button
-          v-if="showInstallButton"
-          @click="installPWA"
-          class="bg-green-700 text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg border border-green-600/20 hover:-translate-y-0.5 transition-all shadow-lg shadow-green-700/20 active:scale-95 touch-manipulation font-medium text-sm lg:text-base whitespace-nowrap flex items-center gap-2"
-          role="menuitem"
-          tabindex="0"
-          aria-label="Install AeroTech App"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path d="M12 15v-6m0 0l-3 3m3-3l3 3" />
-            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2z" />
-          </svg>
-          Install App
-        </button>
-        
         <router-link
           to="/auth"
           class="bg-gradient-to-r from-green-600 to-green-500 text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg border border-green-500/20 hover:-translate-y-0.5 transition-all shadow-lg shadow-green-600/20 active:scale-95 touch-manipulation font-medium text-sm lg:text-base whitespace-nowrap"
@@ -102,22 +86,6 @@
           >
             {{ link.label }}
           </a>
-          
-          <!-- Install Button (Mobile) -->
-          <button
-            v-if="showInstallButton"
-            @click="installPWA"
-            class="bg-green-700 text-white px-4 py-3 rounded-lg border border-green-600/20 flex items-center justify-center gap-2 active:scale-95 touch-manipulation font-medium"
-            role="menuitem"
-            tabindex="0"
-            aria-label="Install AeroTech App"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path d="M12 15v-6m0 0l-3 3m3-3l3 3" />
-              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2z" />
-            </svg>
-            Install App
-          </button>
           
           <router-link
             to="/auth"
@@ -162,8 +130,6 @@ const navLinks = [
 ];
 
 const mobileMenuOpen = ref(false);
-const showInstallButton = ref(false);
-let deferredPrompt = null;
 
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value;
@@ -185,68 +151,4 @@ const scrollToSection = (id) => {
   }
 };
 
-// PWA Install functionality
-const installPWA = async () => {
-  if (!deferredPrompt) {
-    alert('App is already installed or browser does not support installation');
-    return;
-  }
-
-  // Show the install prompt
-  deferredPrompt.prompt();
-  
-  // Wait for the user to respond to the prompt
-  const { outcome } = await deferredPrompt.userChoice;
-  
-  if (outcome === 'accepted') {
-    console.log('User accepted the install prompt');
-  } else {
-    console.log('User dismissed the install prompt');
-  }
-  
-  // Clear the deferredPrompt
-  deferredPrompt = null;
-  showInstallButton.value = false;
-};
-
-// Close menu on escape key
-const handleEscape = (e) => {
-  if (e.key === 'Escape' && mobileMenuOpen.value) {
-    closeMobileMenu();
-  }
-};
-
-// Capture the beforeinstallprompt event
-const handleBeforeInstallPrompt = (e) => {
-  // Prevent the mini-infobar from appearing on mobile
-  e.preventDefault();
-  // Stash the event so it can be triggered later
-  deferredPrompt = e;
-  // Show the install button
-  showInstallButton.value = true;
-};
-
-// Handle app installed event
-const handleAppInstalled = () => {
-  console.log('PWA was installed');
-  showInstallButton.value = false;
-  deferredPrompt = null;
-};
-
-onMounted(() => {
-  document.addEventListener('keydown', handleEscape);
-  window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-  window.addEventListener('appinstalled', handleAppInstalled);
-  
-  // Check if app is already installed
-  if (window.matchMedia('(display-mode: standalone)').matches) {
-    showInstallButton.value = false;
-  }
-});
-
-onUnmounted(() => {
-  document.removeEventListener('keydown', handleEscape);
-  window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-  window.removeEventListener('appinstalled', handleAppInstalled);
-});
 </script>
