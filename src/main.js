@@ -124,4 +124,24 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+
+// Register the service worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(registration => {
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      })
+      .catch(error => {
+        console.log('ServiceWorker registration failed: ', error);
+      });
+  });
+}
+
+// Ensure prompt() is called when the user interacts with the "Download App" button
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault(); // Prevent the default banner
+  window.deferredPrompt = e; // Save the event for later use
+});
+
 //google authinticator/nodemailer
