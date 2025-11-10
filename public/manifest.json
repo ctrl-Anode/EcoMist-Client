@@ -1,0 +1,19 @@
+{
+  "name": "AeroTech",
+  "short_name": "AeroTech",
+  "description": "Monitor and optimize your agricultural operations with AeroTech",
+  "theme_color": "#059669",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/aerotech-rbg-index.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

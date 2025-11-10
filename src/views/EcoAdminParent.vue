@@ -135,7 +135,8 @@ const navigationSections = computed(() => [
       { path: '/admin/device-logs', name: 'Device Logs', meta: { requiresAuth: true } },
       { path: '/admin/guest-contacts', name: 'Guest Contacts', meta: { requiresAuth: true } },
       { path: '/admin/manage-feedback', name: 'Manage-Feedback', meta: { requiresAuth: true } },
-      { path: '/admin/exports', name: 'Export Data', meta: { requiresAuth: true } }
+      { path: '/admin/exports', name: 'Export Data', meta: { requiresAuth: true } },
+      { path: '/admin/x', name: '', meta: { requiresAuth: true } }
     ]
   }
 ]);

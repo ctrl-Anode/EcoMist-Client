@@ -1,5 +1,5 @@
 <template>
-  <section id="contact" class="px-4 sm:px-6 py-20 sm:py-24 relative z-10">
+  <section id="contact" class="px-4 sm:px-6 py-8 sm:py-12 relative z-10">
     <div class="max-w-7xl mx-auto">
       <div class="max-w-3xl mx-auto bg-white/95 backdrop-blur-sm rounded-2xl border border-green-100 shadow-xl p-8 sm:p-10 text-center">
         <h2 class="text-3xl sm:text-4xl font-bold text-green-800 mb-4">Ready to Transform Your Farming?</h2>

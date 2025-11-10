@@ -81,13 +81,13 @@ void setup() {
 
 
   machineId = String(ESP.getChipId());
-  Serial.println("🚀 Booting EcoMist Device");
+  Serial.println("🚀 Booting AeroTech Device");
   Serial.println("📟 Device ID: " + machineId);
 
   // ---------------- WiFi Setup ----------------
   WiFiManager wifiManager;
   wifiManager.setConfigPortalTimeout(180);
-  if (!wifiManager.autoConnect("EcoMist-Setup")) {
+  if (!wifiManager.autoConnect("AeroTech-Setup")) {
     ESP.restart();
   }
 

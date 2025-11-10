@@ -46,7 +46,7 @@
     <AuthAlert :alert="globalAlert" @close="closeGlobalAlert" />
 
     <!-- Centered Login/Register card container with margin-top -->
-    <div class="flex-grow flex justify-center items-center mt-16 px-4 py-8">
+    <div class="flex-grow flex justify-center items-center mt-12 px-4 py-8">
       <transition name="slide-fade" mode="out-in">
         <AuthLogin
           v-if="isLoginView"
@@ -301,7 +301,12 @@ const loginUser = async () => {
   }
   loading.value = true;
   try {
-    await setPersistence(auth, loginForm.rememberMe ? browserLocalPersistence : browserSessionPersistence);
+    // Set session persistence based on the "Remember Me" checkbox
+    await setPersistence(
+      auth,
+      loginForm.rememberMe ? browserLocalPersistence : browserSessionPersistence
+    );
+
     const { user } = await signInWithEmailAndPassword(auth, loginForm.email, loginForm.password);
     if (!user.emailVerified) {
       loginErrors.email = "Please verify your email.";

@@ -63,11 +63,25 @@ const resetPassword = async () => {
   loading.value = true;
   try {
     const auth = getAuth();
-    await sendPasswordResetEmail(auth, email.value);
-    success.value = "Password reset link sent to your email.";
+    
+    // Firebase will only send reset emails to users with email/password auth
+    // OAuth users won't receive emails (this is handled by Firebase automatically)
+    await sendPasswordResetEmail(auth, email.value, {
+      url: window.location.origin,
+      handleCodeInApp: false,
+    });
+    
+    success.value = "If an account exists with email/password authentication, a reset link has been sent.";
     email.value = "";
   } catch (err) {
-    error.value = "Failed to send reset link. Please try again.";
+    console.error('Reset password error:', err);
+    if (err.code === 'auth/user-not-found') {
+      error.value = "No account found with this email address.";
+    } else if (err.code === 'auth/invalid-email') {
+      error.value = "Invalid email address.";
+    } else {
+      error.value = "Failed to send reset link. Please try again.";
+    }
   } finally {
     loading.value = false;
   }

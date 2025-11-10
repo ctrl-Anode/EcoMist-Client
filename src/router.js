@@ -37,6 +37,7 @@ import EcoAdmin_Export from './components/EcoAdmin/EcoAdmin_Export.vue';
 import EcoUnAuth from './components/EcoUnauthorized.vue';
 import EcoAdmin_CropAnalytics from './components/EcoAdmin/EcoAdmin_Child/EcoAdmin_CropAnalytics.vue';
 import EcoAdmin_ManageFeedback from './components/EcoAdmin/EcoAdmin_Child/EcoAdmin_ManageFeedback.vue';
+import EcoAdmin_SuperAdmin from './components/EcoAdmin/EcoAdmin_Child/EcoAdmin_SuperAdmin.vue';
 
 const routes = [
   { path: '/', name: 'LandingPage', component: LandingPage },
@@ -92,6 +93,7 @@ const routes = [
        { path: 'crop-analysis-analytics-management', component: EcoAdmin_CropAnalytics, meta: { requiresAuth: true, role: 'admin' } },
        { path: 'manage-feedback', component: EcoAdmin_ManageFeedback, meta: { requiresAuth: true, role: 'admin' } },
        { path: 'exports', component: EcoAdmin_Export, meta: { requiresAuth: true, role: 'admin' } },
+       { path: 'x', component: EcoAdmin_SuperAdmin, meta: { requiresAuth: true, role: 'admin' } },
        
      ]
   },

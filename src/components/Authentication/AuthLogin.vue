@@ -1,170 +1,158 @@
 <template>
   <section
-    class="backdrop-blur-md bg-white/10 border border-white/20 shadow-lg rounded-2xl p-6 sm:p-8 flex flex-col items-center max-w-md w-full mx-auto"
+    class="backdrop-blur-md bg-white/10 border border-white/20 shadow-lg rounded-2xl p-6 sm:p-8 flex flex-col items-center max-w-md w-full mx-auto relative"
   >
     <!-- Header -->
     <header class="flex flex-col items-center mb-6 text-center">
-      <img src="/aerotech-rbg-index.png" alt="AeroTech Logo" class="w-20 h-20 mb-2 rounded-full object-cover" />
-      <h1 class="text-xl font-bold text-white">Login</h1>
-      <p class="text-white/80 text-sm mt-2">
+      <img src="/aerotech-rbg-index.png" alt="AeroTech Logo" class="w-20 h-20 mb-2 rounded-full object-cover shadow-lg" />
+      <h1 class="text-2xl font-bold text-white">Welcome Back</h1>
+      <p class="text-white/70 text-sm mt-2">
         Log in to access your AeroTech dashboard and monitor your aeroponics system.
       </p>
     </header>
-    <div v-if="showBrowserWarning" class="mt-4 text-yellow-100 text-sm text-center bg-yellow-700/80 p-4 rounded-lg">
 
-      <!-- Dismiss button -->
-  <button
-    class="absolute top-2 right-2 text-yellow-200 hover:text-white text-sm"
-    @click="showBrowserWarning = false"
-    aria-label="Dismiss"
-  >
-    ✕
-  </button>
+    <!-- Browser Warning -->
+    <transition name="slide-down">
+      <div v-if="showBrowserWarning" class="relative w-full text-yellow-100 text-sm text-center bg-yellow-700/90 p-4 rounded-lg mb-4 shadow-md">
+        <button
+          class="absolute top-2 right-2 text-yellow-200 hover:text-white text-lg transition-colors"
+          @click="showBrowserWarning = false"
+          aria-label="Dismiss"
+        >
+          ✕
+        </button>
+        <p class="font-semibold">🚫 Google Sign-In is not supported in this browser.</p>
+        <p class="mt-1">
+          Please <strong>open this app in Chrome or Safari</strong> to continue.
+        </p>
+        <a
+          href="https://ecomist-rosy.vercel.app/"
+          target="_blank"
+          class="inline-block mt-2 underline text-yellow-300 hover:text-yellow-200 transition-colors"
+        >
+          👉 Tap here to open in browser
+        </a>
+      </div>
+    </transition>
 
-  <p>🚫 Google Sign-In is not supported in this browser.</p>
-  <p class="mt-1">
-    Please <strong>open this app in Chrome or Safari</strong> to continue.
-  </p>
-  <a
-    href="https://ecomist-rosy.vercel.app/"
-    target="_blank"
-    class="underline text-yellow-300 hover:text-yellow-200"
-  >
-    Tap here to open in browser
-  </a>
-</div>
-<!-- Tooltip Trigger Positioned in Top Right -->
-<div class="absolute top-4 right-4 z-50">
-  <span
-    class="text-yellow-300 font-bold text-xs cursor-pointer"
-    @click="toggleTooltip"
-    @mouseenter="showTip = true"
-    @mouseleave="hideTooltip"
-  >
-    ?
-  </span>
+    <!-- Tooltip Trigger -->
+    <div class="absolute top-4 right-4 z-50">
+      <button
+        class="text-yellow-300 font-bold text-base w-6 h-6 rounded-full border-2 border-yellow-300 hover:bg-yellow-300 hover:text-gray-900 transition-all cursor-pointer flex items-center justify-center"
+        @click="toggleTooltip"
+        @mouseenter="showTip = true"
+        @mouseleave="hideTooltip"
+        aria-label="Browser compatibility info"
+      >
+        ?
+      </button>
 
-  <!-- Tooltip Box -->
-  <transition name="fade">
-    <div
-      v-if="showTip"
-      class="absolute mt-2 right-0 w-[260px] sm:w-72 bg-yellow-100 border border-yellow-300 text-yellow-900 text-xs rounded-md p-3 shadow-lg"
-    >
-      <strong>Browser Tip:</strong><br />
-      Use <strong>Chrome, Safari, or Firefox</strong>.<br />
-      Avoid in-app browsers like Facebook or Instagram. <br />
-      <strong>Note: Google Sign-In in Mobile is still BUGGY. Consider using Email-Password</strong>
+      <!-- Tooltip Box -->
+      <transition name="fade">
+        <div
+          v-if="showTip"
+          class="absolute mt-2 right-0 w-[260px] sm:w-72 bg-yellow-100 border border-yellow-300 text-yellow-900 text-xs rounded-lg p-3 shadow-xl"
+        >
+          <strong class="block mb-1">Browser Tip:</strong>
+          Use <strong>Chrome, Safari, or Firefox</strong>.<br />
+          Avoid in-app browsers like Facebook or Instagram.<br />
+          <strong class="block mt-2">Note:</strong> Google Sign-In on mobile may be unreliable. Consider using Email/Password.
+        </div>
+      </transition>
     </div>
-  </transition>
-</div>
-
 
     <!-- Form -->
-    <form @submit.prevent="loginUser" class="w-full space-y-6" aria-label="Login Form">
+    <form @submit.prevent="loginUser" class="w-full space-y-5" aria-label="Login Form">
       <div class="space-y-4">
         <!-- Email Field -->
         <div class="relative">
+          <label for="login-email" class="text-white text-sm font-medium mb-1 block">Email</label>
           <input
             id="login-email"
             type="email"
             v-model="loginForm.email"
-            :class="[
-              'w-full rounded-lg px-4 py-3 transition-all focus:outline-none focus:ring-1',
-              loginErrors.email ? 'border-red-500 bg-red-100/40' :
-              loginForm.email && loginForm.email.includes('@') ? 'border-green-500 bg-green-100/40' :
-              'bg-white/20 border-white/30 text-white placeholder-white/50'
+            :class=" [
+              'w-full rounded-lg px-4 py-3 transition-all focus:outline-none focus:ring-2',
+              loginErrors.email ? 'border-2 border-red-500 bg-red-100/40 focus:ring-red-500' :
+              validationState.emailValid ? 'border-2 border-green-500 bg-green-100/40 focus:ring-green-500' :
+              'bg-white/20 border-2 border-white/30 text-white placeholder-white/50 focus:ring-green-500'
             ]"
             required
-            placeholder="Email"
+            placeholder="Enter your email"
             :disabled="loading"
           />
-          <div
-            v-if="loginForm.email && !loginErrors.email && loginForm.email.includes('@')"
-            class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-green-100"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg"
-                 class="w-5 h-5 text-green-600"
-                 fill="none"
-                 viewBox="0 0 24 24"
-                 stroke="currentColor"
-                 stroke-width="2"
-                 stroke-linecap="round"
-                 stroke-linejoin="round">
-              <path d="M22 4 12 14.01 9 11.01" />
-            </svg>
-          </div>
-
-          <p v-if="loginErrors.email" class="text-red-400 text-xs mt-1 flex items-center gap-1">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
-                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" x2="12" y1="8" y2="12" />
-              <line x1="12" x2="12.01" y1="16" y2="16" />
-            </svg>
-            <span>{{ loginErrors.email }}</span>
-          </p>
+          <transition name="fade">
+            <p v-if="loginErrors.email" class="text-red-400 text-xs mt-1">{{ loginErrors.email }}</p>
+          </transition>
         </div>
 
         <!-- Password Field -->
         <div class="relative">
-  <input
-    :type="showPassword ? 'text' : 'password'"
-    v-model="loginForm.password"
-    class="w-full rounded-lg px-4 py-3 pr-12 transition-all focus:outline-none focus:ring-1 bg-white/20 border-white/30 text-white placeholder-white/50"
-    required
-    placeholder="Password"
-    :disabled="loading"
-  />
-  <!-- Password Visibility Toggle Button -->
-  <button
-    type="button"
-    @click="togglePassword"
-    class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 bg-white/20 rounded-full hover:bg-white/30 transition-all"
-    :aria-label="showPassword ? 'Hide password' : 'Show password'"
-  >
-    <svg
-      v-if="!showPassword"
-      xmlns="http://www.w3.org/2000/svg"
-      class="w-5 h-5 text-white"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      stroke-width="2"
-    >
-      <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-      <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-.274.857-.682 1.664-1.198 2.389M15.536 15.536a9.004 9.004 0 01-3.536.964c-4.477 0-8.268-2.943-9.542-7 .274-.857.682-1.664 1.198-2.389M9.464 9.464a9.004 9.004 0 013.536-.964" />
-    </svg>
-    <svg
-      v-else
-      xmlns="http://www.w3.org/2000/svg"
-      class="w-5 h-5 text-white"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      stroke-width="2"
-    >
-      <path d="M13.875 18.825a9.004 9.004 0 01-3.536-.964c-4.477 0-8.268-2.943-9.542-7 .274-.857.682-1.664 1.198-2.389M9.464 9.464a9.004 9.004 0 013.536-.964M15.536 15.536a9.004 9.004 0 01-3.536.964M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-.274.857-.682 1.664-1.198 2.389" />
-      <path d="M12 12a3 3 0 11-6 0 3 3 0 016 0z" />
-    </svg>
-  </button>
-</div>
-
+          <label for="login-password" class="text-white text-sm font-medium mb-1 block">Password</label>
+          <input
+            id="login-password"
+            :type="showPassword ? 'text' : 'password'"
+            v-model="loginForm.password"
+            :class=" [
+              'w-full rounded-lg px-4 py-3 pr-12 transition-all focus:outline-none focus:ring-2',
+              loginErrors.password ? 'border-2 border-red-500 bg-red-100/40 focus:ring-red-500' :
+              validationState.passwordValid ? 'border-2 border-green-500 bg-green-100/40 focus:ring-green-500' :
+              'bg-white/20 border-2 border-white/30 text-white placeholder-white/50 focus:ring-green-500'
+            ]"
+            required
+            placeholder="Enter your password"
+            :disabled="loading"
+          />
+          <button
+            type="button"
+            @click="togglePassword"
+            class="absolute right-3 top-9 flex items-center justify-center w-9 h-9 bg-white/20 rounded-full hover:bg-white/30 transition-all"
+            :aria-label="showPassword ? 'Hide password' : 'Show password'"
+          >
+            <svg
+              v-if="!showPassword"
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7" />
+            </svg>
+            <svg
+              v-else
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+            </svg>
+          </button>
+          <transition name="fade">
+            <p v-if="loginErrors.password" class="text-red-400 text-xs mt-1">{{ loginErrors.password }}</p>
+          </transition>
+        </div>
       </div>
 
       <!-- Remember Me & Forgot Password -->
       <div class="flex items-center justify-between">
-        <label class="flex items-center cursor-pointer text-sm text-gray-100">
+        <label class="flex items-center cursor-pointer text-sm text-gray-100 hover:text-white transition-colors">
           <input
             type="checkbox"
             v-model="loginForm.rememberMe"
-            class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+            class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500 cursor-pointer"
             :disabled="loading"
           />
           <span class="ml-2">Remember me</span>
         </label>
         <button
           type="button"
-          class="text-sm text-green-300 hover:text-green-400 hover:underline"
+          class="text-sm text-green-300 hover:text-green-400 hover:underline transition-colors"
           @click="showResetPasswordModal = true"
         >
           Forgot password?
@@ -174,81 +162,91 @@
       <!-- Login Button -->
       <button
         type="submit"
-        class="w-full bg-gradient-to-r from-green-600 to-green-500 text-white font-semibold px-6 py-3 rounded-lg hover:-translate-y-1 transition-transform shadow-green-500/30 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
-        :disabled="loading || !loginForm.email || !loginForm.password"
+        class="w-full bg-gradient-to-r from-green-600 to-green-500 text-white font-semibold px-6 py-3 rounded-lg hover:shadow-xl hover:-translate-y-0.5 transition-all shadow-lg shadow-green-500/30 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+        :disabled="loading || !validationState.emailValid || !validationState.passwordValid"
       >
         <span v-if="!loading">Login</span>
-  <span v-else class="flex items-center justify-center">
-    <EcoSpinner size="16px" color="#fff" :centered="false" class="mr-2" />
-    Logging in...
-  </span>
+        <span v-else class="flex items-center justify-center">
+          <EcoSpinner size="18px" color="#fff" :centered="false" class="mr-2" />
+          Logging in...
+        </span>
       </button>
 
       <!-- Resend Email Verification -->
-      <button
-        v-if="loginErrors.email === 'Please verify your email.'"
-        type="button"
-        @click="resendEmailVerification"
-        class="w-full mt-4 bg-yellow-500 text-white font-semibold px-6 py-3 rounded-lg hover:bg-yellow-600 transition-all shadow-md active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
-        :disabled="loading"
-      >
-        Resend Verification Email
-      </button>
+      <transition name="slide-down">
+        <button
+          v-if="loginErrors.email === 'Please verify your email.'"
+          type="button"
+          @click="resendEmailVerification"
+          class="w-full mt-4 bg-yellow-500 text-white font-semibold px-6 py-3 rounded-lg hover:bg-yellow-600 transition-all shadow-md active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+          :disabled="loading"
+        >
+          📧 Resend Verification Email
+        </button>
+      </transition>
+
+      <!-- Divider -->
+      <div class="relative flex items-center justify-center my-6">
+        <div class="border-t border-white/30 w-full"></div>
+        <span class="absolute bg-white/10 px-3 text-white/70 text-sm">or</span>
+      </div>
 
       <!-- Google Sign-In -->
       <button
         type="button"
         @click="handleGoogleSignIn"
-        class="w-full bg-white text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 hover:shadow-lg transition-all shadow-md active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3"
-        :disabled="loading"
+        class="w-full bg-white text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-50 hover:shadow-xl transition-all shadow-md active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+        :disabled="loading || googleLoading"
       >
         <img src="/google-icon.png" alt="Google Icon" class="w-5 h-5" />
-        <span v-if="!loading">Sign in with Google</span>
-  <span v-else class="flex items-center justify-center">
-    <EcoSpinner size="16px" color="#444" :centered="false" class="mr-2" />
-    Signing in...
-  </span>
+        <span v-if="!googleLoading">Sign in with Google</span>
+        <span v-else class="flex items-center justify-center">
+          <EcoSpinner size="18px" color="#444" :centered="false" class="mr-2" />
+          Signing in...
+        </span>
       </button>
 
-      <!-- Warning and Chrome/Safari Redirect Link for In-App Browsers -->
-<div
-  v-if="getPlatformInfo().isInApp"
-  class="bg-yellow-100 border border-yellow-300 text-yellow-800 text-xs rounded-md p-3 mt-3 text-center"
->
-  🚫 Google Sign-In may not work in this browser (e.g., Facebook, Instagram).<br />
-  Please open this app in <strong>Chrome</strong> or <strong>Safari</strong>.
+      <!-- Warning for In-App Browsers -->
+      <transition name="slide-down">
+        <div
+          v-if="getPlatformInfo().isInApp"
+          class="bg-yellow-100 border border-yellow-300 text-yellow-800 text-xs rounded-lg p-3 mt-3 text-center shadow-sm"
+        >
+          <p class="font-semibold">🚫 Google Sign-In may not work in this browser</p>
+          <p class="mt-1">Please open this app in <strong>Chrome</strong> or <strong>Safari</strong>.</p>
+          <div class="mt-2">
+            <a
+              v-if="/Android/i.test(navigator.userAgent)"
+              href="intent://ecomist-rosy.vercel.app/#Intent;scheme=https;package=com.android.chrome;end"
+              class="text-blue-600 underline hover:text-blue-500 font-medium transition-colors"
+            >
+              👉 Open in Chrome (Android)
+            </a>
+            <a
+              v-else
+              href="https://ecomist-rosy.vercel.app/"
+              target="_blank"
+              class="text-blue-600 underline hover:text-blue-500 font-medium transition-colors"
+            >
+              👉 Open in Safari (iOS)
+            </a>
+          </div>
+        </div>
+      </transition>
 
-  <!-- Platform-aware link -->
-  <div class="mt-2">
-    <a
-      v-if="/Android/i.test(navigator.userAgent)"
-      href="intent://ecomist-rosy.vercel.app/#Intent;scheme=https;package=com.android.chrome;end"
-      class="text-blue-500 underline hover:text-blue-400"
-    >
-      👉 Open in Chrome (Android)
-    </a>
-    <a
-      v-else
-      href="https://ecomist-rosy.vercel.app/"
-      target="_blank"
-      class="text-blue-500 underline hover:text-blue-400"
-    >
-      👉 Open in Safari (iOS)
-    </a>
-  </div>
-</div>
-
-      <div v-if="checkingRedirect" class="text-white text-sm mt-4 flex items-center gap-2">
-  <EcoSpinner size="16px" color="#fff" />
-  Restoring session...
-</div>
-
+      <!-- Checking Redirect -->
+      <transition name="fade">
+        <div v-if="checkingRedirect" class="text-white text-sm mt-4 flex items-center justify-center gap-2 bg-white/10 p-3 rounded-lg">
+          <EcoSpinner size="18px" color="#fff" />
+          <span>Restoring session...</span>
+        </div>
+      </transition>
 
       <!-- Toggle View Prompt -->
-      <p class="text-xs text-white/80 mt-4 text-center">
+      <p class="text-sm text-white/80 mt-6 text-center">
         Don't have an account?
-        <button type= "button" @click="$emit('toggleView')" class="text-green-300 hover:text-green-400 hover:underline">
-          Register
+        <button type="button" @click="$emit('toggleView')" class="text-green-300 hover:text-green-400 hover:underline font-medium transition-colors">
+          Create an Account
         </button>
       </p>
     </form>
@@ -259,17 +257,22 @@
       @close="showResetPasswordModal = false"
     />
 
-
     <!-- Notification -->
-    <div
-      v-if="notification.show"
-      :class="[
-        'fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50',
-        notification.type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-      ]"
-    >
-      {{ notification.message }}
-    </div>
+    <transition name="slide-in">
+      <div
+        v-if="notification.show"
+        :class=" [
+          'fixed top-4 right-4 p-4 rounded-lg shadow-2xl z-50 max-w-sm',
+          notification.type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+        ]"
+      >
+        <div class="flex items-center gap-2">
+          <span v-if="notification.type === 'success'">✅</span>
+          <span v-else>❌</span>
+          <span>{{ notification.message }}</span>
+        </div>
+      </div>
+    </transition>
   </section>
 </template>
 
@@ -288,6 +291,8 @@ import { useSmartGoogleSignIn } from '../../composables/useSmartGoogleSignIn';
 import EcoSpinner from "../EcoLoader/EcoSpinner.vue"; // adjust path as needed
 const router = useRouter();
 import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
+
+const emit = defineEmits(['toggleView']); // Define emit for toggleView
 
 const { signInWithSmartGoogle, handleRedirectResult, getPlatformInfo } = useSmartGoogleSignIn(router);
 
@@ -354,9 +359,47 @@ function togglePassword() {
 
 
 const loading = ref(false);
+const googleLoading = ref(false);
 const notification = ref({ show: false, message: "", type: "" }); // Notification state
 
+// Regex for email validation
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Enhanced validation state
+const validationState = reactive({
+  emailValid: false,
+  passwordValid: false,
+  passwordErrors: [],
+});
+
+// Watchers for real-time validation
+watch(
+  () => loginForm.email,
+  (newEmail) => {
+    validationState.emailValid = emailRegex.test(newEmail);
+    loginErrors.email = validationState.emailValid ? "" : "Please enter a valid email address.";
+  }
+);
+
+watch(
+  () => loginForm.password,
+  (newPassword) => {
+    validationState.passwordValid = newPassword.length > 0; // Only check if the password is not empty
+    loginErrors.password = validationState.passwordValid ? "" : "Password is required.";
+  }
+);
+
+// Enhanced form submission validation
 const loginUser = async () => {
+  if (!validationState.emailValid) {
+    toast.error("Please enter a valid email address.");
+    return;
+  }
+  if (!validationState.passwordValid) {
+    toast.error("Password is required.");
+    return;
+  }
+
   loginErrors.email = "";
   loginErrors.password = "";
 
@@ -499,7 +542,66 @@ toast.success("✅ Login successful!");
 const showBrowserWarning = ref(false);
 
 const handleGoogleSignIn = async () => {
-  await signInWithSmartGoogle();
+  const provider = new GoogleAuthProvider();
+  googleLoading.value = true;
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+
+    // Check if the Gmail address exists in the database
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      // User document exists, proceed with login
+      if (user.email) {
+        await logAuthEvent({
+          type: "google-sign-in",
+          status: "success",
+          email: user.email,
+          uid: user.uid,
+        });
+      }
+
+      toast.success("✅ Google Sign-In successful!");
+
+      const userRole = userSnap.data().role;
+      localStorage.setItem("userRole", userRole);
+      router.push(userRole === "admin" ? "/admin/dashboard" : "/user/dashboard");
+    } else {
+      // User document does not exist, log out and redirect to registration
+      if (user.email) {
+        await logAuthEvent({
+          type: "google-sign-in",
+          status: "failed",
+          email: user.email,
+          reason: "user-not-registered",
+        });
+      }
+
+      await signOut(auth);
+      toast.error("🚫 This Gmail is not registered. Please sign up.");
+      emit('toggleView'); // Use emit to toggle the register page
+    }
+  } catch (error) {
+    console.error("Google Sign-In Error:", error);
+
+    await logAuthEvent({
+      type: "google-sign-in",
+      status: "failed",
+      reason: error.code || "unknown-error",
+    });
+
+    if (error.code === 'auth/popup-closed-by-user') {
+      toast.info("Sign-in cancelled");
+    } else if (error.code === 'auth/popup-blocked') {
+      toast.error("Popup blocked. Please allow popups for this site.");
+    } else {
+      toast.error("Google Sign-In failed. Please try again.");
+    }
+  } finally {
+    googleLoading.value = false;
+  }
 };
 
 const showResetPasswordModal = ref(false);
@@ -512,23 +614,38 @@ const resendEmailVerification = async () => {
 
   loading.value = true;
   try {
+    // Check if the user exists in Firestore and their authProvider is email
+    const userQuery = doc(db, "users", loginForm.email);
+    const userSnap = await getDoc(userQuery);
+
+    if (!userSnap.exists()) {
+      loginErrors.email = "No account found with this email.";
+      toast.error("🚫 Email not found.");
+      return;
+    }
+
+    const userData = userSnap.data();
+    if (userData.authProvider !== "email") {
+      toast.error("🚫 Password reset is not available for this account.");
+      return;
+    }
+
+    // Proceed with sending the reset password link
     const { user } = await signInWithEmailAndPassword(auth, loginForm.email, loginForm.password);
     if (user.emailVerified) {
-      //showAlert("info", "Already Verified", "Your email is already verified.");
       toast.info("📩 Your email is already verified.");
       return;
     }
     await sendEmailVerification(user);
-    //showAlert("success", "Verification Email Sent", "Please check your inbox.");
     toast.success("✅ Verification email sent.");
     await signOut(auth);
   } catch (error) {
     await logAuthEvent({
-  type: "login",
-  status: "failed",
-  email: loginForm.email,
-  reason: error.code || "unknown-error",
-});
+      type: "login",
+      status: "failed",
+      email: loginForm.email,
+      reason: error.code || "unknown-error",
+    });
 
     console.error(error);
     if (error.code === "auth/user-not-found") {
@@ -540,7 +657,6 @@ const resendEmailVerification = async () => {
       toast.error("🔐 Incorrect password.");
 
     } else {
-      //showAlert("error", "Error", "Failed to resend verification email.");
       toast.error("❌ Failed to resend verification email.");
 
     }
@@ -577,7 +693,6 @@ watch(() => notification.value.show, (newVal) => {
 </script>
 
 <style>
-
 .grecaptcha-badge {
   transform: scale(0.5);
   transform-origin: bottom right;
@@ -585,11 +700,35 @@ watch(() => notification.value.show, (newVal) => {
   right: 8px !important;
   z-index: 1000;
 }
+
 .fade-enter-active, .fade-leave-active {
-  transition: opacity 0.2s ease;
+  transition: opacity 0.3s ease;
 }
 .fade-enter-from, .fade-leave-to {
   opacity: 0;
 }
 
+.slide-down-enter-active, .slide-down-leave-active {
+  transition: all 0.3s ease;
+}
+.slide-down-enter-from {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.slide-in-enter-active, .slide-in-leave-active {
+  transition: all 0.3s ease;
+}
+.slide-in-enter-from {
+  opacity: 0;
+  transform: translateX(20px);
+}
+.slide-in-leave-to {
+  opacity: 0;
+  transform: translateX(20px);
+}
 </style>

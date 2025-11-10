@@ -21,10 +21,6 @@
           <p class="text-green-600 text-lg sm:text-xl font-medium mb-6">
             An IoT-Based Aeroponics Management System Using Sequential Convolutional Neural Network.
           </p>
-          <p class="text-gray-700 mb-8 max-w-xl mx-auto md:mx-0 text-lg">
-            Revolutionize your farming with our cutting-edge IoT solution that optimizes growth,
-            reduces resource consumption, and delivers real-time insights for maximum yield.
-          </p>
           <div class="flex flex-col sm:flex-row gap-6 justify-center md:justify-start">
             <router-link
               to="/auth"
