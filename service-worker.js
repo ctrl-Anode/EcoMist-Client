@@ -1,5 +1,5 @@
 // Cache names with dynamic versioning
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v2';
 const CACHE_NAME = `aerotech-cache-${CACHE_VERSION}`;
 const urlsToCache = [
   '/',
@@ -7,7 +7,8 @@ const urlsToCache = [
   '/style.css',
   '/main.js',
   '/icons/aerotech-192x192.png',
-  '/icons/aerotech-512x512.png'
+  '/icons/aerotech-512x512.png',
+  '/offline.html' // Add offline fallback page
 ];
 
 // Install event
@@ -20,14 +21,18 @@ self.addEventListener('install', event => {
   );
 });
 
-// Fetch event with error handling
+// Fetch event with dynamic caching and offline fallback
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request).then(response => {
-      return response || fetch(event.request).catch(() => {
-        console.error('Fetch failed for:', event.request.url);
-        return new Response('Network error occurred', { status: 408 });
+      return response || fetch(event.request).then(fetchResponse => {
+        return caches.open(CACHE_NAME).then(cache => {
+          cache.put(event.request, fetchResponse.clone()); // Dynamically cache new requests
+          return fetchResponse;
+        });
       });
+    }).catch(() => {
+      return caches.match('/offline.html'); // Serve offline fallback
     })
   );
 });

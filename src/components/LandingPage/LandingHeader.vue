@@ -49,21 +49,17 @@
         <!-- Install App Button for Desktop -->
         <button
           v-if="showInstallButton"
-          @click="installApp"
-          :disabled="isInstalling"
-          class="group relative bg-white text-green-700 px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg border-2 border-green-600 hover:bg-green-50 hover:-translate-y-0.5 transition-all shadow-md hover:shadow-lg active:scale-95 touch-manipulation font-medium text-sm lg:text-base whitespace-nowrap flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
+          @click="showInstallModal = true"
+          class="group relative bg-gradient-to-r from-green-600 to-green-500 text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg hover:from-green-700 hover:to-green-600 hover:-translate-y-0.5 transition-all shadow-md hover:shadow-xl active:scale-95 touch-manipulation font-medium text-sm lg:text-base whitespace-nowrap flex items-center gap-2 overflow-hidden"
           role="menuitem"
           tabindex="0"
         >
-          <span class="absolute inset-0 bg-gradient-to-r from-green-600/10 to-green-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></span>
-          <svg v-if="!isInstalling" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <span class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
-          <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          <span class="relative z-10">{{ isInstalling ? 'Installing...' : 'Install App' }}</span>
+          <span class="relative z-10">Install App</span>
+          <span class="relative z-10 text-xs bg-white/20 px-2 py-0.5 rounded-full">Free</span>
         </button>
 
         <router-link
@@ -110,21 +106,17 @@
           <!-- Install App Button for Mobile -->
           <button
             v-if="showInstallButton"
-            @click="installApp"
-            :disabled="isInstalling"
-            class="group relative bg-white text-green-700 px-4 py-3 rounded-lg border-2 border-green-600 hover:bg-green-50 flex items-center justify-center gap-2 active:scale-95 touch-manipulation font-medium disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
+            @click="showInstallModal = true"
+            class="group relative bg-gradient-to-r from-green-600 to-green-500 text-white px-4 py-3 rounded-lg hover:from-green-700 hover:to-green-600 flex items-center justify-center gap-2 active:scale-95 touch-manipulation font-medium overflow-hidden"
             role="menuitem"
             tabindex="0"
           >
-            <span class="absolute inset-0 bg-gradient-to-r from-green-600/10 to-green-500/10 opacity-0 group-active:opacity-100 transition-opacity"></span>
-            <svg v-if="!isInstalling" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <span class="absolute inset-0 bg-white/20 opacity-0 group-active:opacity-100 transition-opacity"></span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
-            <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <span class="relative z-10">{{ isInstalling ? 'Installing...' : 'Install App' }}</span>
+            <span class="relative z-10">Install App</span>
+            <span class="relative z-10 text-xs bg-white/20 px-2 py-0.5 rounded-full">Free</span>
           </button>
           
           <router-link
@@ -140,6 +132,21 @@
       </div>
     </transition>
   </nav>
+
+  <!-- PWA Install Modal -->
+  <PwaInstallModal
+    :show="showInstallModal"
+    :deferredPrompt="deferredPrompt"
+    @close="showInstallModal = false"
+    @install="installApp"
+  />
+
+  <!-- PWA Install Banner -->
+  <PwaInstallBanner
+    :show="showInstallButton && !showInstallModal"
+    @install="showInstallModal = true"
+    @dismiss="() => {}"
+  />
 
   <!-- Overlay for mobile menu -->
   <transition
@@ -162,6 +169,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import { useToast } from "vue-toastification";
+import PwaInstallModal from "../PWA/PwaInstallModal.vue";
+import PwaInstallBanner from "../PWA/PwaInstallBanner.vue";
 
 const toast = useToast();
 
@@ -176,6 +185,7 @@ const mobileMenuOpen = ref(false);
 const deferredPrompt = ref(null);
 const showInstallButton = ref(true);
 const isInstalling = ref(false);
+const showInstallModal = ref(false);
 
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value;
@@ -211,12 +221,13 @@ const installApp = async () => {
         timeout: 5000,
       });
       showInstallButton.value = false;
-      // Store installation status in localStorage
+      showInstallModal.value = false;
       localStorage.setItem("pwaInstalled", "true");
     } else {
       toast.info("Installation cancelled. You can install the app anytime from the menu.", {
         timeout: 4000,
       });
+      showInstallModal.value = false;
     }
     
     deferredPrompt.value = null;
