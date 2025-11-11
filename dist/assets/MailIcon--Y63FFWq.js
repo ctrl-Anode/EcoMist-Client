@@ -1,0 +1,2 @@
+import{_ as n,c as t,o as r,a as o}from"./main-C71ZyO3O.js";const s={},c={xmlns:"http://www.w3.org/2000/svg",class:"w-5 h-5 flex-shrink-0 text-green-600 mt-1",fill:"none",viewBox:"0 0 24 24",stroke:"currentColor","stroke-width":"2"};function l(a,e){return r(),t("svg",c,e[0]||(e[0]=[o("path",{"stroke-linecap":"round","stroke-linejoin":"round",d:`M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2\r
+      2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z`},null,-1),o("polyline",{points:"22,6 12,13 2,6"},null,-1)]))}const d=n(s,[["render",l]]);export{d as default};

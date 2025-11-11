@@ -13,18 +13,6 @@
     "utilities",
     "tools"
   ],
-  "screenshots": [
-    {
-      "src": "/aerotech-rbg-index.png",
-      "sizes": "1080x1920",
-      "type": "image/png"
-    },
-    {
-      "src": "/aerotech-rbg-index.png",
-      "sizes": "1080x1920",
-      "type": "image/png"
-    }
-  ],
   "icons": [
     {
       "src": "/icons/aerotech-48x48.png",
