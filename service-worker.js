@@ -6,8 +6,8 @@ const urlsToCache = [
   '/index.html',
   '/style.css',
   '/main.js',
-  '/icons/aerotech-192x192.png',
-  '/icons/aerotech-512x512.png',
+  '/icons/aerotech-185x192.png',
+  '/icons/aerotech-493x512.png',
   '/offline.html' // Add offline fallback page
 ];
 
