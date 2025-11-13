@@ -45,22 +45,6 @@
         >
           {{ link.label }}
         </a>
-        
-        <!-- Install App Button for Desktop -->
-        <button
-          v-if="showInstallButton"
-          @click="showInstallModal = true"
-          class="group relative bg-gradient-to-r from-green-600 to-green-500 text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg hover:from-green-700 hover:to-green-600 hover:-translate-y-0.5 transition-all shadow-md hover:shadow-xl active:scale-95 touch-manipulation font-medium text-sm lg:text-base whitespace-nowrap flex items-center gap-2 overflow-hidden"
-          role="menuitem"
-          tabindex="0"
-        >
-          <span class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></span>
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-          </svg>
-          <span class="relative z-10">Install App</span>
-          <span class="relative z-10 text-xs bg-white/20 px-2 py-0.5 rounded-full">Free</span>
-        </button>
 
         <router-link
           to="/auth"
@@ -102,23 +86,7 @@
           >
             {{ link.label }}
           </a>
-          
-          <!-- Install App Button for Mobile -->
-          <button
-            v-if="showInstallButton"
-            @click="showInstallModal = true"
-            class="group relative bg-gradient-to-r from-green-600 to-green-500 text-white px-4 py-3 rounded-lg hover:from-green-700 hover:to-green-600 flex items-center justify-center gap-2 active:scale-95 touch-manipulation font-medium overflow-hidden"
-            role="menuitem"
-            tabindex="0"
-          >
-            <span class="absolute inset-0 bg-white/20 opacity-0 group-active:opacity-100 transition-opacity"></span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-            </svg>
-            <span class="relative z-10">Install App</span>
-            <span class="relative z-10 text-xs bg-white/20 px-2 py-0.5 rounded-full">Free</span>
-          </button>
-          
+
           <router-link
             to="/auth"
             @click="closeMobileMenu()"
@@ -132,21 +100,6 @@
       </div>
     </transition>
   </nav>
-
-  <!-- PWA Install Modal -->
-  <PwaInstallModal
-    :show="showInstallModal"
-    :deferredPrompt="deferredPrompt"
-    @close="showInstallModal = false"
-    @install="installApp"
-  />
-
-  <!-- PWA Install Banner -->
-  <PwaInstallBanner
-    :show="showInstallButton && !showInstallModal"
-    @install="showInstallModal = true"
-    @dismiss="() => {}"
-  />
 
   <!-- Overlay for mobile menu -->
   <transition
@@ -167,12 +120,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
-import { useToast } from "vue-toastification";
-import PwaInstallModal from "../PWA/PwaInstallModal.vue";
-import PwaInstallBanner from "../PWA/PwaInstallBanner.vue";
-
-const toast = useToast();
+import { ref } from "vue";
 
 const navLinks = [
   { id: "features", label: "Features", href: "#features" },
@@ -182,10 +130,6 @@ const navLinks = [
 ];
 
 const mobileMenuOpen = ref(false);
-const deferredPrompt = ref(null);
-const showInstallButton = ref(true);
-const isInstalling = ref(false);
-const showInstallModal = ref(false);
 
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value;
@@ -206,74 +150,4 @@ const scrollToSection = (id) => {
     closeMobileMenu();
   }
 };
-
-const installApp = async () => {
-  if (!deferredPrompt.value || isInstalling.value) return;
-
-  try {
-    isInstalling.value = true;
-    await deferredPrompt.value.prompt();
-    
-    const choiceResult = await deferredPrompt.value.userChoice;
-    
-    if (choiceResult.outcome === "accepted") {
-      toast.success("🎉 App installed successfully! You can now use AeroTech offline.", {
-        timeout: 5000,
-      });
-      showInstallButton.value = false;
-      showInstallModal.value = false;
-      localStorage.setItem("pwaInstalled", "true");
-    } else {
-      toast.info("Installation cancelled. You can install the app anytime from the menu.", {
-        timeout: 4000,
-      });
-      showInstallModal.value = false;
-    }
-    
-    deferredPrompt.value = null;
-  } catch (error) {
-    console.error("Error during installation:", error);
-    toast.error("Failed to install the app. Please try again.", {
-      timeout: 3000,
-    });
-  } finally {
-    isInstalling.value = false;
-  }
-};
-
-onMounted(() => {
-  // Check if app is already installed
-  const isInstalled = localStorage.getItem("pwaInstalled") === "true";
-  
-  // Check if running as standalone (installed PWA)
-  const isStandalone = window.matchMedia("(display-mode: standalone)").matches || 
-                       window.navigator.standalone === true;
-  
-  if (isInstalled || isStandalone) {
-    showInstallButton.value = false;
-    return;
-  }
-
-  const handleBeforeInstallPrompt = (e) => {
-    e.preventDefault();
-    deferredPrompt.value = e;
-    showInstallButton.value = true;
-  };
-
-  const handleAppInstalled = () => {
-    showInstallButton.value = false;
-    localStorage.setItem("pwaInstalled", "true");
-    toast.success("✅ App installed successfully!", {
-      timeout: 3000,
-    });
-  };
-
-  window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-  window.addEventListener("appinstalled", handleAppInstalled);
-
-  onUnmounted(() => {
-    window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-    window.removeEventListener("appinstalled", handleAppInstalled);
-  });
-});
 </script>
