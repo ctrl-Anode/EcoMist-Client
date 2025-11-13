@@ -1,35 +1,35 @@
 <template>
   <nav
-    class="fixed top-0 left-0 w-full z-50 px-3 sm:px-4 md:px-6 lg:px-8 bg-white/95 backdrop-blur-md border-b border-green-100 shadow-xl"
+    class="fixed top-0 left-0 w-full z-50 px-2 sm:px-3 md:px-6 lg:px-8 bg-white/95 backdrop-blur-md border-b border-green-100 shadow-xl"
     role="navigation"
     aria-label="Primary navigation"
     tabindex="0"
   >
-    <div class="flex justify-between items-center py-2 sm:py-3 md:py-4 relative">
+    <div class="flex justify-between items-center py-1 sm:py-2 md:py-4 relative">
       <!-- Mobile Menu Toggle - always visible -->
       <button
-        class="md:hidden absolute left-3 sm:left-4 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-green-800 bg-green-100 rounded-lg active:bg-green-200 touch-manipulation"
+        class="md:hidden absolute left-2 sm:left-3 w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center text-green-800 bg-green-100 rounded-lg active:bg-green-200 touch-manipulation"
         @click="toggleMobileMenu"
         aria-label="Toggle menu"
         aria-expanded="mobileMenuOpen"
         aria-controls="mobile-menu"
         tabindex="0"
       >
-        <svg v-if="!mobileMenuOpen" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg v-if="!mobileMenuOpen" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <line x1="4" x2="20" y1="12" y2="12" />
           <line x1="4" x2="20" y1="6" y2="6" />
           <line x1="4" x2="20" y1="18" y2="18" />
         </svg>
-        <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path d="M18 6 6 18" />
           <path d="m6 6 12 12" />
         </svg>
       </button>
 
       <!-- Branding (centered on mobile) -->
-      <div class="flex items-center gap-2 sm:gap-3 mx-auto md:mx-0">
-        <img src="/aerotech-rbg-index.png" alt="AeroTech Logo" class="w-8 h-8 sm:w-10 sm:h-10 object-contain" loading="lazy" />
-        <span class="text-green-800 text-lg sm:text-xl md:text-3xl font-bold">AeroTech</span>
+      <div class="flex items-center gap-1 sm:gap-2 mx-auto md:mx-0">
+        <img src="/aerotech-rbg-index.png" alt="AeroTech Logo" class="w-7 h-7 sm:w-9 sm:h-9 object-contain" loading="lazy" />
+        <span class="text-green-800 text-base sm:text-lg md:text-3xl font-bold">AeroTech</span>
       </div>
 
       <!-- Desktop Nav -->
@@ -45,7 +45,16 @@
         >
           {{ link.label }}
         </a>
-
+<button 
+        @click="installPWA" 
+        v-if="deferredPrompt && !isAppInstalled" 
+        class="bg-green-500 text-white px-3 py-1.5 rounded shadow hover:bg-green-600"
+      >
+        Download App
+      </button>
+      <p v-if="isIOS" class="text-xs text-gray-600">
+        To install on iOS, tap the "Share" button and select "Add to Home Screen."
+      </p>
         <router-link
           to="/auth"
           class="bg-gradient-to-r from-green-600 to-green-500 text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg border border-green-500/20 hover:-translate-y-0.5 transition-all shadow-lg shadow-green-600/20 active:scale-95 touch-manipulation font-medium text-sm lg:text-base whitespace-nowrap"
@@ -70,27 +79,36 @@
       <div
         v-if="mobileMenuOpen"
         id="mobile-menu"
-        class="md:hidden absolute top-full left-0 w-full border-t border-green-100 p-4 bg-white/95 backdrop-blur-md shadow-md"
+        class="md:hidden absolute top-full left-0 w-full border-t border-green-100 p-3 bg-white/95 backdrop-blur-md shadow-md"
         role="menu"
         aria-label="Mobile menu"
       >
-        <div class="flex flex-col space-y-4">
+        <div class="flex flex-col space-y-3">
           <a
             v-for="link in navLinks"
             :key="link.id"
             :href="link.href"
             @click="closeMobileMenu(link.href.slice(1))"
-            class="text-green-800 py-2 hover:text-green-600 transition-colors font-medium active:bg-green-50 rounded-lg px-3 touch-manipulation"
+            class="text-green-800 py-1.5 hover:text-green-600 transition-colors font-medium active:bg-green-50 rounded-lg px-2 touch-manipulation"
             role="menuitem"
             tabindex="0"
           >
             {{ link.label }}
           </a>
-
+<button 
+        @click="installPWA" 
+        v-if="deferredPrompt && !isAppInstalled" 
+        class="bg-green-500 text-white px-3 py-1.5 rounded shadow hover:bg-green-600"
+      >
+        Download App
+      </button>
+      <p v-if="isIOS" class="text-xs text-gray-600">
+        To install on iOS, tap the "Share" button and select "Add to Home Screen."
+      </p>
           <router-link
             to="/auth"
             @click="closeMobileMenu()"
-            class="bg-gradient-to-r from-green-600 to-green-500 text-white px-4 py-3 rounded-lg border border-green-500/20 flex items-center justify-center active:scale-95 touch-manipulation font-medium"
+            class="bg-gradient-to-r from-green-600 to-green-500 text-white px-3 py-2 rounded-lg border border-green-500/20 flex items-center justify-center active:scale-95 touch-manipulation font-medium"
             role="menuitem"
             tabindex="0"
           >
@@ -117,10 +135,26 @@
       aria-hidden="true"
     ></div>
   </transition>
+
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from 'vue'
+
+
+const deferredPrompt = ref(null)
+const isAppInstalled = ref(false)
+const isIOS = ref(/iPhone|iPad|iPod/i.test(navigator.userAgent))
+const showBanner = ref(false)
+
+onMounted(() => {
+  // Check if the banner should be shown from localStorage
+  const storedPrompt = localStorage.getItem('deferredPrompt')
+  if (storedPrompt) {
+    deferredPrompt.value = JSON.parse(storedPrompt)
+    showBanner.value = true
+  }
+})
 
 const navLinks = [
   { id: "features", label: "Features", href: "#features" },
@@ -150,4 +184,48 @@ const scrollToSection = (id) => {
     closeMobileMenu();
   }
 };
+
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  console.log('beforeinstallprompt event fired'); // Debugging log
+  e.preventDefault()
+  deferredPrompt.value = e
+  localStorage.setItem('deferredPrompt', JSON.stringify(e))
+  showBanner.value = true
+  console.log('Deferred prompt set and stored:', deferredPrompt.value) // Debugging log
+})
+
+window.addEventListener('appinstalled', () => {
+  console.log('PWA was installed'); // Debugging log
+  isAppInstalled.value = true
+  showBanner.value = false
+  localStorage.removeItem('deferredPrompt')
+  console.log('isAppInstalled set to true and banner hidden') // Debugging log
+})
+
+function installPWA() {
+  console.log('Install PWA triggered') // Debugging log
+  if (deferredPrompt.value) {
+    deferredPrompt.value.prompt()
+    deferredPrompt.value.userChoice.then(choiceResult => {
+      console.log('User choice result:', choiceResult) // Debugging log
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the A2HS prompt')
+      } else {
+        console.log('User dismissed the A2HS prompt')
+      }
+      deferredPrompt.value = null
+      showBanner.value = false
+      localStorage.removeItem('deferredPrompt')
+    })
+  } else {
+    console.log('No deferredPrompt available') // Debugging log
+  }
+}
 </script>
+<style scoped>
+/* Add any styles for the header or banner if needed */
+.fixed {
+  position: fixed;
+}
+</style>
