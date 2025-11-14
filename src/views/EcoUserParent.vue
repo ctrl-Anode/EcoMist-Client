@@ -128,7 +128,7 @@ const navigationSections = computed(() => [
   {
     title: 'FEATURES',
     routes: [
-      { path: '/user/financial-management', name: 'Financial Management', meta: { requiresAuth: true } },
+      { path: '/user/financial-management', name: 'Financial', meta: { requiresAuth: true } },
       { path: '/user/sensor_data', name: 'Sensor Data', meta: { requiresAuth: true } },
       { path: '/user/model', name: 'Crop Analysis', meta: { requiresAuth: true } }
     ]
@@ -213,6 +213,15 @@ onMounted(() => {
     } else {
       router.push('/auth'); // 🚪 Redirect if logged out
     }
+  });
+
+  // Listen for custom events from dashboard
+  window.addEventListener('open-feedback', () => {
+    showFeedbackFormModal.value = true;
+  });
+
+  window.addEventListener('open-feedback-list', () => {
+    showFeedbackListModal.value = true;
   });
 });
 

@@ -1,41 +1,41 @@
 <template>
-<div class="min-h-screen bg-gray-50 flex flex-col">
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col">
 <!-- Main Content Area -->
 <div class="flex flex-1 overflow-hidden">
   <!-- Main Content -->
-  <main class="flex-1 overflow-y-auto bg-gray-50 p-2 sm:p-4 md:p-6">
+  <main class="flex-1 overflow-y-auto bg-transparent p-2 sm:p-4 md:p-6 lg:p-8">
     <!-- Page Header -->
-    <div class="mb-4 sm:mb-6">
-      <h1 class="text-xl sm:text-2xl font-bold text-gray-800">Financial Management</h1>
-      <p class="text-sm sm:text-base text-gray-600">Track income, expenses, and financial performance</p>
+    <div class="mb-3 sm:mb-4 md:mb-6">
+      <h1 class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-800 mb-1">Financial Management</h1>
+      <p class="text-xs sm:text-sm md:text-base text-gray-600">Track income, expenses, and financial performance</p>
     </div>
 
     <!-- Financial Summary Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 md:mb-6">
       <!-- Income Card -->
-      <div class="bg-white rounded-lg shadow-sm p-3 sm:p-4 border-l-4 border-green-500">
+      <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-2.5 sm:p-3 md:p-4 border-l-4 border-green-500">
         <div class="flex justify-between items-start">
-          <div>
-            <p class="text-xs sm:text-sm font-medium text-gray-500">Total Income</p>
-            <h3 class="text-lg sm:text-2xl font-bold text-gray-800 mt-1">₱{{ safeToLocaleString(totalIncome) }}</h3>
-            <div class="flex items-center mt-1">
+          <div class="flex-1 min-w-0">
+            <p class="text-[10px] sm:text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wide truncate">Total Income</p>
+            <h3 class="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-0.5 sm:mt-1 truncate">₱{{ safeToLocaleString(totalIncome) }}</h3>
+            <div class="flex items-center mt-0.5 sm:mt-1">
               <span :class="[
                 incomeGrowth >= 0 ? 'text-green-600' : 'text-red-600',
-                'text-xs sm:text-sm font-medium flex items-center'
+                'text-[9px] sm:text-xs md:text-sm font-medium flex items-center'
               ]">
-                <svg v-if="incomeGrowth >= 0" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                <svg v-if="incomeGrowth >= 0" xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 mr-0.5 sm:mr-1" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414 3.707 6.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
                 </svg>
-                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 mr-0.5 sm:mr-1" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1V9a1 1 0 10-2 0v3.586l-4.293-4.293a1 1 0 00-1.414 0L8 10.586 3.707 6.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 10.586 14.586 14H12z" clip-rule="evenodd" />
                 </svg>
-                {{ Math.abs(incomeGrowth).toFixed(1) }}%
+                <span class="truncate">{{ Math.abs(incomeGrowth).toFixed(1) }}%</span>
               </span>
-              <span class="text-gray-500 text-xs ml-1">vs last month</span>
+              <span class="text-gray-500 text-[8px] sm:text-[9px] md:text-xs ml-0.5 sm:ml-1 truncate hidden sm:inline">vs last month</span>
             </div>
           </div>
-          <div class="p-2 bg-green-100 rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-6 sm:w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div class="p-1.5 sm:p-2 md:p-2.5 bg-green-100 rounded-lg flex-shrink-0 ml-1 sm:ml-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 lg:h-6 lg:w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
@@ -43,29 +43,29 @@
       </div>
 
       <!-- Expenses Card -->
-      <div class="bg-white rounded-lg shadow-sm p-3 sm:p-4 border-l-4 border-red-500">
+      <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-2.5 sm:p-3 md:p-4 border-l-4 border-red-500">
         <div class="flex justify-between items-start">
-          <div>
-            <p class="text-xs sm:text-sm font-medium text-gray-500">Total Expenses</p>
-            <h3 class="text-lg sm:text-2xl font-bold text-gray-800 mt-1">₱{{ safeToLocaleString(totalExpenses) }}</h3>
-            <div class="flex items-center mt-1">
+          <div class="flex-1 min-w-0">
+            <p class="text-[10px] sm:text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wide truncate">Total Expenses</p>
+            <h3 class="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-0.5 sm:mt-1 truncate">₱{{ safeToLocaleString(totalExpenses) }}</h3>
+            <div class="flex items-center mt-0.5 sm:mt-1">
               <span :class="[
                 expenseGrowth <= 0 ? 'text-green-600' : 'text-red-600',
-                'text-xs sm:text-sm font-medium flex items-center'
+                'text-[9px] sm:text-xs md:text-sm font-medium flex items-center'
               ]">
-                <svg v-if="expenseGrowth <= 0" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                <svg v-if="expenseGrowth <= 0" xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 mr-0.5 sm:mr-1" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1V9a1 1 0 10-2 0v3.586l-4.293-4.293a1 1 0 00-1.414 0L8 10.586 3.707 6.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 10.586 14.586 14H12z" clip-rule="evenodd" />
                 </svg>
-                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 mr-0.5 sm:mr-1" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
                 </svg>
-                {{ Math.abs(expenseGrowth).toFixed(1) }}%
+                <span class="truncate">{{ Math.abs(expenseGrowth).toFixed(1) }}%</span>
               </span>
-              <span class="text-gray-500 text-xs ml-1">vs last month</span>
+              <span class="text-gray-500 text-[8px] sm:text-[9px] md:text-xs ml-0.5 sm:ml-1 truncate hidden sm:inline">vs last month</span>
             </div>
           </div>
-          <div class="p-2 bg-red-100 rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-6 sm:w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div class="p-1.5 sm:p-2 md:p-2.5 bg-red-100 rounded-lg flex-shrink-0 ml-1 sm:ml-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 lg:h-6 lg:w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
             </svg>
           </div>
@@ -73,29 +73,29 @@
       </div>
 
       <!-- Net Profit Card -->
-      <div class="bg-white rounded-lg shadow-sm p-3 sm:p-4 border-l-4 border-blue-500">
+      <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-2.5 sm:p-3 md:p-4 border-l-4 border-blue-500">
         <div class="flex justify-between items-start">
-          <div>
-            <p class="text-xs sm:text-sm font-medium text-gray-500">Net Profit</p>
-            <h3 class="text-lg sm:text-2xl font-bold text-gray-800 mt-1">₱{{ safeToLocaleString(netProfit) }}</h3>
-            <div class="flex items-center mt-1">
+          <div class="flex-1 min-w-0">
+            <p class="text-[10px] sm:text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wide truncate">Net Profit</p>
+            <h3 class="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-0.5 sm:mt-1 truncate">₱{{ safeToLocaleString(netProfit) }}</h3>
+            <div class="flex items-center mt-0.5 sm:mt-1">
               <span :class="[
                 profitGrowth >= 0 ? 'text-green-600' : 'text-red-600',
-                'text-xs sm:text-sm font-medium flex items-center'
+                'text-[9px] sm:text-xs md:text-sm font-medium flex items-center'
               ]">
-                <svg v-if="profitGrowth >= 0" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                <svg v-if="profitGrowth >= 0" xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 mr-0.5 sm:mr-1" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
                 </svg>
-                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 mr-0.5 sm:mr-1" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1V9a1 1 0 10-2 0v3.586l-4.293-4.293a1 1 0 00-1.414 0L8 10.586 3.707 6.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 10.586 14.586 14H12z" clip-rule="evenodd" />
                 </svg>
-                {{ Math.abs(profitGrowth).toFixed(1) }}%
+                <span class="truncate">{{ Math.abs(profitGrowth).toFixed(1) }}%</span>
               </span>
-              <span class="text-gray-500 text-xs ml-1">vs last month</span>
+              <span class="text-gray-500 text-[8px] sm:text-[9px] md:text-xs ml-0.5 sm:ml-1 truncate hidden sm:inline">vs last month</span>
             </div>
           </div>
-          <div class="p-2 bg-blue-100 rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-6 sm:w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div class="p-1.5 sm:p-2 md:p-2.5 bg-blue-100 rounded-lg flex-shrink-0 ml-1 sm:ml-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 lg:h-6 lg:w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
           </div>
@@ -103,29 +103,29 @@
       </div>
 
       <!-- Savings Rate Card -->
-      <div class="bg-white rounded-lg shadow-sm p-3 sm:p-4 border-l-4 border-purple-500">
+      <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-2.5 sm:p-3 md:p-4 border-l-4 border-purple-500">
         <div class="flex justify-between items-start">
-          <div>
-            <p class="text-xs sm:text-sm font-medium text-gray-500">Savings Rate</p>
-            <h3 class="text-lg sm:text-2xl font-bold text-gray-800 mt-1">{{ savingsRate.toFixed(1) }}%</h3>
-            <div class="flex items-center mt-1">
+          <div class="flex-1 min-w-0">
+            <p class="text-[10px] sm:text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wide truncate">Savings Rate</p>
+            <h3 class="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-800 mt-0.5 sm:mt-1 truncate">{{ savingsRate.toFixed(1) }}%</h3>
+            <div class="flex items-center mt-0.5 sm:mt-1">
               <span :class="[
                 savingsRateGrowth >= 0 ? 'text-green-600' : 'text-red-600',
-                'text-xs sm:text-sm font-medium flex items-center'
+                'text-[9px] sm:text-xs md:text-sm font-medium flex items-center'
               ]">
-                <svg v-if="savingsRateGrowth >= 0" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                <svg v-if="savingsRateGrowth >= 0" xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 mr-0.5 sm:mr-1" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd" />
                 </svg>
-                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4 mr-0.5 sm:mr-1" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1V9a1 1 0 10-2 0v3.586l-4.293-4.293a1 1 0 00-1.414 0L8 10.586 3.707 6.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 10.586 14.586 14H12z" clip-rule="evenodd" />
                 </svg>
-                {{ Math.abs(savingsRateGrowth).toFixed(1) }}%
+                <span class="truncate">{{ Math.abs(savingsRateGrowth).toFixed(1) }}%</span>
               </span>
-              <span class="text-gray-500 text-xs ml-1">vs last month</span>
+              <span class="text-gray-500 text-[8px] sm:text-[9px] md:text-xs ml-0.5 sm:ml-1 truncate hidden sm:inline">vs last month</span>
             </div>
           </div>
-          <div class="p-2 bg-purple-100 rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-6 sm:w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div class="p-1.5 sm:p-2 md:p-2.5 bg-purple-100 rounded-lg flex-shrink-0 ml-1 sm:ml-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 lg:h-6 lg:w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
           </div>
@@ -134,117 +134,130 @@
     </div>
 
     <!-- Main Content Tabs -->
-    <div class="bg-white rounded-lg shadow-sm mb-4 sm:mb-6">
-      <div class="border-b">
-        <nav class="flex -mb-px overflow-x-auto">
+    <div class="bg-white rounded-lg shadow-md mb-3 sm:mb-4 md:mb-6 overflow-hidden">
+      <div class="border-b border-gray-200">
+        <nav class="flex -mb-px overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
           <button 
             @click="currentAnalyticsTab = 'overview'" 
             :class="[
-              'py-3 sm:py-4 px-4 sm:px-6 font-medium text-xs sm:text-sm border-b-2 focus:outline-none whitespace-nowrap',
+              'py-2 sm:py-3 md:py-4 px-3 sm:px-4 md:px-6 font-medium text-[10px] sm:text-xs md:text-sm border-b-2 focus:outline-none whitespace-nowrap transition-colors duration-200',
               currentAnalyticsTab === 'overview' 
-                ? 'border-emerald-500 text-emerald-600' 
+                ? 'border-emerald-500 text-emerald-600 bg-emerald-50' 
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             ]"
           >
-            Overview
+            <span class="flex items-center gap-1 sm:gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              Overview
+            </span>
           </button>
           <button 
             @click="currentAnalyticsTab = 'budget'" 
             :class="[
-              'py-3 sm:py-4 px-4 sm:px-6 font-medium text-xs sm:text-sm border-b-2 focus:outline-none whitespace-nowrap',
+              'py-2 sm:py-3 md:py-4 px-3 sm:px-4 md:px-6 font-medium text-[10px] sm:text-xs md:text-sm border-b-2 focus:outline-none whitespace-nowrap transition-colors duration-200',
               currentAnalyticsTab === 'budget' 
-                ? 'border-emerald-500 text-emerald-600' 
+                ? 'border-emerald-500 text-emerald-600 bg-emerald-50' 
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             ]"
           >
-            Budget Tracking
+            <span class="flex items-center gap-1 sm:gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+              Budget
+            </span>
           </button>
           <button 
             @click="currentAnalyticsTab = 'forecast'" 
             :class="[
-              'py-3 sm:py-4 px-4 sm:px-6 font-medium text-xs sm:text-sm border-b-2 focus:outline-none whitespace-nowrap',
+              'py-2 sm:py-3 md:py-4 px-3 sm:px-4 md:px-6 font-medium text-[10px] sm:text-xs md:text-sm border-b-2 focus:outline-none whitespace-nowrap transition-colors duration-200',
               currentAnalyticsTab === 'forecast' 
-                ? 'border-emerald-500 text-emerald-600' 
+                ? 'border-emerald-500 text-emerald-600 bg-emerald-50' 
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             ]"
           >
-            Forecasting
+            <span class="flex items-center gap-1 sm:gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+              Forecast
+            </span>
           </button>
         </nav>
       </div>
 
       <!-- Tab Content -->
-      <div class="p-3 sm:p-6">
+      <div class="p-2.5 sm:p-4 md:p-6">
         <!-- Overview Tab -->
         <div v-if="currentAnalyticsTab === 'overview'">
           <!-- Date Range Selector -->
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
-            <div class="flex flex-wrap items-center gap-2">
+          <div class="flex flex-col gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 md:mb-6">
+            <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
               <button 
                 v-for="range in dateRanges" 
                 :key="range.id"
                 @click="setDateRange(range.id)"
                 :class="[
-                  'px-2 sm:px-3 py-1 text-xs sm:text-sm rounded-md whitespace-nowrap',
+                  'px-2 sm:px-2.5 md:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs md:text-sm rounded-md whitespace-nowrap font-medium transition-all duration-200',
                   selectedDateRange === range.id 
-                    ? 'bg-emerald-100 text-emerald-700 font-medium' 
+                    ? 'bg-emerald-500 text-white shadow-md' 
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 ]"
               >
                 {{ range.name }}
               </button>
             </div>
-            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-              <div v-if="selectedDateRange === 'custom'" class="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 flex-wrap">
+              <div v-if="selectedDateRange === 'custom'" class="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
                 <input 
                   type="date" 
                   v-model="customStartDate" 
                   @change="fetchFilteredTransactions"
-                  class="px-2 sm:px-3 py-1 text-xs sm:text-sm border border-gray-300 rounded-md w-full sm:w-auto"
+                  class="px-2 sm:px-2.5 md:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs md:text-sm border border-gray-300 rounded-md w-full sm:w-auto focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                 >
-                <span class="text-gray-500 text-xs sm:text-sm">to</span>
+                <span class="text-gray-500 text-[10px] sm:text-xs md:text-sm hidden sm:inline">to</span>
                 <input 
                   type="date" 
                   v-model="customEndDate" 
                   @change="fetchFilteredTransactions"
-                  class="px-2 sm:px-3 py-1 text-xs sm:text-sm border border-gray-300 rounded-md w-full sm:w-auto"
+                  class="px-2 sm:px-2.5 md:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs md:text-sm border border-gray-300 rounded-md w-full sm:w-auto focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                 >
                 <button 
                   @click="applyCustomDateRange" 
-                  class="px-2 sm:px-3 py-1 text-xs sm:text-sm bg-emerald-100 text-emerald-700 rounded-md hover:bg-emerald-200 w-full sm:w-auto"
+                  class="px-2 sm:px-2.5 md:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs md:text-sm bg-emerald-500 text-white rounded-md hover:bg-emerald-600 w-full sm:w-auto font-medium transition-colors duration-200"
                 >
                   Apply
                 </button>
               </div>
-              <div class="flex flex-wrap gap-2">
+              <div class="flex flex-wrap gap-1.5 sm:gap-2 ml-auto">
                 <button 
                   @click="toggleChartType" 
-                  class="px-2 sm:px-3 py-1 text-xs sm:text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                  class="px-2 sm:px-2.5 md:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs md:text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200"
                 >
-                  <span class="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <span class="flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path v-if="chartType === 'line'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                       <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
                     </svg>
-                    <span class="hidden sm:inline">{{ chartType === 'line' ? 'Bar Chart' : 'Line Chart' }}</span>
-                    <span class="sm:hidden">{{ chartType === 'line' ? 'Bar' : 'Line' }}</span>
+                    <span class="hidden sm:inline">{{ chartType === 'line' ? 'Bar' : 'Line' }}</span>
                   </span>
                 </button>
                 <button 
                   @click="toggleCumulativeMode" 
                   :class="[
-                    'px-2 sm:px-3 py-1 text-xs sm:text-sm rounded-md',
+                    'px-2 sm:px-2.5 md:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs md:text-sm rounded-md transition-colors duration-200',
                     cumulativeMode 
-                      ? 'bg-emerald-100 text-emerald-700' 
+                      ? 'bg-emerald-500 text-white' 
                       : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
                   ]"
                 >
-                  <span class="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <span class="flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11l7-7 7 7M5 19l7-7 7 7" />
                     </svg>
                     <span class="hidden sm:inline">Cumulative</span>
-                    <span class="sm:hidden">Cum.</span>
                   </span>
                 </button>
               </div>
@@ -252,76 +265,74 @@
           </div>
 
           <!-- Main Chart -->
-          <div class="bg-white rounded-lg border p-3 sm:p-4 mb-4 sm:mb-6">
-            <h3 class="text-base sm:text-lg font-medium text-gray-800 mb-3 sm:mb-4">Financial Overview</h3>
-            <div class="h-64 sm:h-80 relative overflow-x-auto">
-              <div v-if="chartLoading" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
-                <svg class="animate-spin h-6 w-6 sm:h-8 sm:w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <div class="bg-white rounded-lg border border-gray-200 p-2.5 sm:p-3 md:p-4 mb-3 sm:mb-4 md:mb-6 shadow-sm">
+            <h3 class="text-sm sm:text-base md:text-lg font-semibold text-gray-800 mb-2 sm:mb-3 md:mb-4">Financial Overview</h3>
+            <div class="h-48 sm:h-64 md:h-72 lg:h-80 relative">
+              <div v-if="chartLoading" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10 rounded-lg">
+                <svg class="animate-spin h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
               </div>
-              <canvas ref="trendChartCanvas" class="min-w-full"></canvas>
+              <canvas ref="trendChartCanvas" class="w-full h-full"></canvas>
             </div>
           </div>
 
           <!-- Distribution Charts -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6 mb-3 sm:mb-4 md:mb-6">
             <!-- Income Distribution -->
-            <div class="bg-white rounded-lg border p-3 sm:p-4">
-              <div class="flex justify-between items-center mb-3 sm:mb-4">
-                <h3 class="text-base sm:text-lg font-medium text-gray-800">Income Distribution</h3>
+            <div class="bg-white rounded-lg border border-gray-200 p-2.5 sm:p-3 md:p-4 shadow-sm">
+              <div class="flex justify-between items-center mb-2 sm:mb-3 md:mb-4">
+                <h3 class="text-sm sm:text-base md:text-lg font-semibold text-gray-800">Income Distribution</h3>
                 <button 
                   @click="toggleIncomeChartType" 
-                  class="px-2 sm:px-3 py-1 text-xs sm:text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                  class="px-2 sm:px-2.5 md:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs md:text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200"
                 >
-                  <span class="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <span class="flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path v-if="incomeChartType === 'pie'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                       <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
                     </svg>
-                    <span class="hidden sm:inline">{{ incomeChartType === 'pie' ? 'Bar Chart' : 'Pie Chart' }}</span>
-                    <span class="sm:hidden">{{ incomeChartType === 'pie' ? 'Bar' : 'Pie' }}</span>
+                    <span class="hidden sm:inline">{{ incomeChartType === 'pie' ? 'Bar' : 'Pie' }}</span>
                   </span>
                 </button>
               </div>
-              <div class="h-48 sm:h-64 relative overflow-x-auto">
-                <div v-if="incomeChartLoading" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
-                  <svg class="animate-spin h-6 w-6 sm:h-8 sm:w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <div class="h-40 sm:h-48 md:h-56 lg:h-64 relative">
+                <div v-if="incomeChartLoading" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10 rounded-lg">
+                  <svg class="animate-spin h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
                 </div>
-                <canvas ref="incomeDistributionCanvas" class="min-w-full"></canvas>
+                <canvas ref="incomeDistributionCanvas" class="w-full h-full"></canvas>
               </div>
             </div>
 
             <!-- Expense Distribution -->
-            <div class="bg-white rounded-lg border p-3 sm:p-4">
-              <div class="flex justify-between items-center mb-3 sm:mb-4">
-                <h3 class="text-base sm:text-lg font-medium text-gray-800">Expense Distribution</h3>
+            <div class="bg-white rounded-lg border border-gray-200 p-2.5 sm:p-3 md:p-4 shadow-sm">
+              <div class="flex justify-between items-center mb-2 sm:mb-3 md:mb-4">
+                <h3 class="text-sm sm:text-base md:text-lg font-semibold text-gray-800">Expense Distribution</h3>
                 <button 
                   @click="toggleExpenseChartType" 
-                  class="px-2 sm:px-3 py-1 text-xs sm:text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                  class="px-2 sm:px-2.5 md:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs md:text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200"
                 >
-                  <span class="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <span class="flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path v-if="expenseChartType === 'pie'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                       <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
                     </svg>
-                    <span class="hidden sm:inline">{{ expenseChartType === 'pie' ? 'Bar Chart' : 'Pie Chart' }}</span>
-                    <span class="sm:hidden">{{ expenseChartType === 'pie' ? 'Bar' : 'Pie' }}</span>
+                    <span class="hidden sm:inline">{{ expenseChartType === 'pie' ? 'Bar' : 'Pie' }}</span>
                   </span>
                 </button>
               </div>
-              <div class="h-48 sm:h-64 relative overflow-x-auto">
-                <div v-if="expenseChartLoading" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
-                  <svg class="animate-spin h-6 w-6 sm:h-8 sm:w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <div class="h-40 sm:h-48 md:h-56 lg:h-64 relative">
+                <div v-if="expenseChartLoading" class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10 rounded-lg">
+                  <svg class="animate-spin h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
                 </div>
-                <canvas ref="expenseDistributionCanvas" class="min-w-full"></canvas>
+                <canvas ref="expenseDistributionCanvas" class="w-full h-full"></canvas>
               </div>
             </div>
           </div>
@@ -590,74 +601,74 @@
     </div>
 
     <!-- Transaction Form -->
-    <div class="bg-white rounded-lg shadow-sm p-3 sm:p-6 mb-4 sm:mb-6">
-      <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Add New Transaction</h2>
+    <div class="bg-white rounded-lg shadow-md p-2.5 sm:p-4 md:p-6 mb-3 sm:mb-4 md:mb-6">
+      <h2 class="text-base sm:text-lg md:text-xl font-bold text-gray-800 mb-2 sm:mb-3 md:mb-4">Add New Transaction</h2>
       <form @submit.prevent="addTransaction()">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-3 sm:mb-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 mb-2 sm:mb-3 md:mb-4">
           <div>
-            <label for="amount" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Amount (₱)</label>
+            <label for="amount" class="block text-[10px] sm:text-xs md:text-sm font-medium text-gray-700 mb-1">Amount (₱)</label>
             <input 
               type="number" 
               id="amount" 
               v-model="amount" 
-              class="block w-full px-2 sm:px-3 py-1 sm:py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 text-xs sm:text-sm"
+              class="block w-full px-2 sm:px-2.5 md:px-3 py-1.5 sm:py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-[11px] sm:text-xs md:text-sm"
               placeholder="0.00"
               step="0.01"
               min="0"
               required
             >
-            <p v-if="formErrors.amount" class="mt-1 text-xs sm:text-sm text-red-600">{{ formErrors.amount }}</p>
+            <p v-if="formErrors.amount" class="mt-0.5 sm:mt-1 text-[9px] sm:text-xs text-red-600">{{ formErrors.amount }}</p>
           </div>
           <div>
-            <label for="type" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Type</label>
+            <label for="type" class="block text-[10px] sm:text-xs md:text-sm font-medium text-gray-700 mb-1">Type</label>
             <select 
               id="type" 
               v-model="type"
-              class="block w-full px-2 sm:px-3 py-1 sm:py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 text-xs sm:text-sm"
+              class="block w-full px-2 sm:px-2.5 md:px-3 py-1.5 sm:py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-[11px] sm:text-xs md:text-sm"
             >
               <option value="income">Income</option>
               <option value="expense">Expense</option>
             </select>
           </div>
           <div>
-            <label for="category" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Category</label>
+            <label for="category" class="block text-[10px] sm:text-xs md:text-sm font-medium text-gray-700 mb-1">Category</label>
             <select 
               id="category" 
               v-model="category"
-              class="block w-full px-2 sm:px-3 py-1 sm:py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 text-xs sm:text-sm"
+              class="block w-full px-2 sm:px-2.5 md:px-3 py-1.5 sm:py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-[11px] sm:text-xs md:text-sm"
             >
               <option v-for="(cat, index) in categories" :key="index" :value="cat">{{ cat }}</option>
             </select>
           </div>
           <div>
-            <label for="date" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Date</label>
+            <label for="date" class="block text-[10px] sm:text-xs md:text-sm font-medium text-gray-700 mb-1">Date</label>
             <input 
               type="date" 
               id="date" 
               v-model="transactionDate" 
-              class="block w-full px-2 sm:px-3 py-1 sm:py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 text-xs sm:text-sm"
+              class="block w-full px-2 sm:px-2.5 md:px-3 py-1.5 sm:py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-[11px] sm:text-xs md:text-sm"
               required
             >
           </div>
         </div>
-        <div class="mb-3 sm:mb-4">
-          <label for="notes" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Notes (Optional)</label>
+        <div class="mb-2 sm:mb-3 md:mb-4">
+          <label for="notes" class="block text-[10px] sm:text-xs md:text-sm font-medium text-gray-700 mb-1">Notes (Optional)</label>
           <textarea 
             id="notes" 
             v-model="notes" 
             rows="2"
-            class="block w-full px-2 sm:px-3 py-1 sm:py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 text-xs sm:text-sm"
+            class="block w-full px-2 sm:px-2.5 md:px-3 py-1.5 sm:py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-[11px] sm:text-xs md:text-sm resize-none"
             placeholder="Add any additional details here..."
           ></textarea>
         </div>
         <div class="flex justify-end">
           <button 
             type="submit"
-            class="px-3 sm:px-4 py-2 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+            class="px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2.5 border border-transparent rounded-md shadow-sm text-[11px] sm:text-xs md:text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             :disabled="loading"
           >
-            <span v-if="loading" class="flex items-center">
-              <svg class="animate-spin -ml-1 mr-2 h-3 w-3 sm:h-4 sm:w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <span v-if="loading" class="flex items-center gap-1 sm:gap-2">
+              <svg class="animate-spin h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
@@ -670,33 +681,32 @@
     </div>
 
     <!-- Transaction List -->
-    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 sm:p-4 border-b gap-3">
-        <h2 class="text-lg sm:text-xl font-bold text-gray-800">Transaction History</h2>
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-2.5 sm:p-3 md:p-4 border-b gap-2 sm:gap-3">
+        <h2 class="text-base sm:text-lg md:text-xl font-bold text-gray-800">Transaction History</h2>
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
-          <div class="relative">
+          <div class="relative flex-1 sm:flex-initial">
             <input 
               type="text" 
               v-model="searchQuery" 
-              placeholder="Search transactions..." 
-              class="pl-8 sm:pl-9 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 text-xs sm:text-sm w-full"
+              placeholder="Search..." 
+              class="pl-7 sm:pl-8 md:pl-9 pr-2 sm:pr-3 py-1.5 sm:py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-[11px] sm:text-xs md:text-sm w-full"
             >
-            <div class="absolute inset-y-0 left-0 pl-2 sm:pl-3 flex items-center pointer-events-none">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="absolute inset-y-0 left-0 pl-2 sm:pl-2.5 md:pl-3 flex items-center pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
           </div>
           <button 
             @click="showTransactionExportModal = true" 
-            class="px-3 py-2 border border-gray-300 rounded-md shadow-sm text-xs sm:text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+            class="px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 border border-gray-300 rounded-md shadow-sm text-[11px] sm:text-xs md:text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors duration-200"
           >
-            <span class="flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <span class="flex items-center justify-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
               </svg>
-              <span class="hidden sm:inline">Export Report</span>
-              <span class="sm:hidden">Export</span>
+              <span class="hidden sm:inline">Export</span>
             </span>
           </button>
         </div>
@@ -709,111 +719,112 @@
             <tr>
               <th 
                 scope="col" 
-                class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                class="px-2 sm:px-3 md:px-4 lg:px-6 py-2 sm:py-2.5 md:py-3 text-left text-[9px] sm:text-[10px] md:text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                 @click="sortBy('date')"
               >
-                <div class="flex items-center">
+                <div class="flex items-center gap-0.5 sm:gap-1">
                   Date
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4 ml-1" :class="getSortIcon('date')" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4" :class="getSortIcon('date')" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
                   </svg>
                 </div>
               </th>
               <th 
                 scope="col" 
-                class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                class="px-2 sm:px-3 md:px-4 lg:px-6 py-2 sm:py-2.5 md:py-3 text-left text-[9px] sm:text-[10px] md:text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                 @click="sortBy('type')"
               >
-                <div class="flex items-center">
+                <div class="flex items-center gap-0.5 sm:gap-1">
                   Type
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4 ml-1" :class="getSortIcon('type')" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4" :class="getSortIcon('type')" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
                   </svg>
                 </div>
               </th>
               <th 
                 scope="col" 
-                class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                class="px-2 sm:px-3 md:px-4 lg:px-6 py-2 sm:py-2.5 md:py-3 text-left text-[9px] sm:text-[10px] md:text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                 @click="sortBy('category')"
               >
-                <div class="flex items-center">
+                <div class="flex items-center gap-0.5 sm:gap-1">
                   Category
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4 ml-1" :class="getSortIcon('category')" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4" :class="getSortIcon('category')" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
                   </svg>
                 </div>
               </th>
               <th 
                 scope="col" 
-                class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                class="px-2 sm:px-3 md:px-4 lg:px-6 py-2 sm:py-2.5 md:py-3 text-left text-[9px] sm:text-[10px] md:text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                 @click="sortBy('amount')"
               >
-                <div class="flex items-center">
+                <div class="flex items-center gap-0.5 sm:gap-1">
                   Amount
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-4 sm:w-4 ml-1" :class="getSortIcon('amount')" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4" :class="getSortIcon('amount')" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
                   </svg>
                 </div>
               </th>
-              <th scope="col" class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th scope="col" class="px-2 sm:px-3 md:px-4 lg:px-6 py-2 sm:py-2.5 md:py-3 text-left text-[9px] sm:text-[10px] md:text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
                 Notes
               </th>
-              <th scope="col" class="px-3 sm:px-6 py-2 sm:py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th scope="col" class="px-2 sm:px-3 md:px-4 lg:px-6 py-2 sm:py-2.5 md:py-3 text-right text-[9px] sm:text-[10px] md:text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
             <tr v-if="paginatedTransactions.length === 0">
-              <td colspan="6" class="px-3 sm:px-6 py-4 text-center text-xs sm:text-sm text-gray-500">
+              <td colspan="6" class="px-2 sm:px-3 md:px-4 lg:px-6 py-3 sm:py-4 text-center text-[10px] sm:text-xs md:text-sm text-gray-500">
                 No transactions found. Add your first transaction above.
               </td>
             </tr>
-            <tr v-for="transaction in paginatedTransactions" :key="transaction.id" class="hover:bg-gray-50">
-              <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500">
-                {{ formatDate(transaction.date) }}
+            <tr v-for="transaction in paginatedTransactions" :key="transaction.id" class="hover:bg-gray-50 transition-colors duration-150">
+              <td class="px-2 sm:px-3 md:px-4 lg:px-6 py-2 sm:py-3 md:py-4 whitespace-nowrap text-[10px] sm:text-xs md:text-sm text-gray-500">
+                <span class="hidden sm:inline">{{ formatDate(transaction.date) }}</span>
+                <span class="sm:hidden">{{ new Date(transaction.date.seconds * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) }}</span>
               </td>
-              <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+              <td class="px-2 sm:px-3 md:px-4 lg:px-6 py-2 sm:py-3 md:py-4 whitespace-nowrap">
                 <span :class="[
-                  'px-2 py-1 text-xs font-medium rounded-full',
+                  'px-1.5 sm:px-2 py-0.5 sm:py-1 text-[9px] sm:text-[10px] md:text-xs font-medium rounded-full',
                   transaction.type === 'income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                 ]">
                   {{ transaction.type === 'income' ? 'Income' : 'Expense' }}
                 </span>
               </td>
-              <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500">
-                <div class="flex items-center">
-                  <i :class="getCategoryIcon(transaction.category)" class="mr-2"></i>
-                  {{ transaction.category }}
+              <td class="px-2 sm:px-3 md:px-4 lg:px-6 py-2 sm:py-3 md:py-4 whitespace-nowrap text-[10px] sm:text-xs md:text-sm text-gray-500">
+                <div class="flex items-center gap-1 sm:gap-2">
+                  <i :class="getCategoryIcon(transaction.category)" class="text-[10px] sm:text-xs hidden sm:inline"></i>
+                  <span class="truncate max-w-[80px] sm:max-w-none">{{ transaction.category }}</span>
                 </div>
               </td>
-              <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium" :class="transaction.type === 'income' ? 'text-green-600' : 'text-red-600'">
+              <td class="px-2 sm:px-3 md:px-4 lg:px-6 py-2 sm:py-3 md:py-4 whitespace-nowrap text-[10px] sm:text-xs md:text-sm font-semibold" :class="transaction.type === 'income' ? 'text-green-600' : 'text-red-600'">
                 {{ transaction.type === 'income' ? '+' : '-' }}₱{{ safeToLocaleString(transaction.amount) }}
               </td>
-              <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-500 max-w-xs truncate">
+              <td class="px-2 sm:px-3 md:px-4 lg:px-6 py-2 sm:py-3 md:py-4 text-[10px] sm:text-xs md:text-sm text-gray-500 max-w-xs truncate hidden md:table-cell">
                 {{ transaction.notes || '-' }}
               </td>
-              <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-right text-xs sm:text-sm font-medium">
-                <div class="flex justify-end space-x-2">
+              <td class="px-2 sm:px-3 md:px-4 lg:px-6 py-2 sm:py-3 md:py-4 whitespace-nowrap text-right text-[10px] sm:text-xs md:text-sm font-medium">
+                <div class="flex justify-end gap-1 sm:gap-2">
                   <button 
                     @click="openEditModal(transaction)" 
-                    class="text-emerald-600 hover:text-emerald-900"
+                    class="text-emerald-600 hover:text-emerald-900 p-1 hover:bg-emerald-50 rounded transition-colors duration-150"
                     title="Edit"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                   </button>
                   <button 
                     @click="confirmDelete(transaction)" 
-                    class="text-red-600 hover:text-red-900"
+                    class="text-red-600 hover:text-red-900 p-1 hover:bg-red-50 rounded transition-colors duration-150"
                     :disabled="transaction.deleting"
                     title="Delete"
                   >
-                    <svg v-if="!transaction.deleting" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg v-if="!transaction.deleting" xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
-                    <svg v-else class="animate-spin h-4 w-4 sm:h-5 sm:w-5 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <svg v-else class="animate-spin h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
@@ -826,14 +837,14 @@
       </div>
       
       <!-- Pagination -->
-      <div class="px-3 sm:px-6 py-3 flex items-center justify-between border-t border-gray-200">
+      <div class="px-2 sm:px-3 md:px-4 lg:px-6 py-2 sm:py-3 flex items-center justify-between border-t border-gray-200 bg-gray-50">
         <div class="flex-1 flex justify-between sm:hidden">
           <button 
             @click="prevPage" 
             :disabled="currentPage === 1"
             :class="[
-              'relative inline-flex items-center px-3 sm:px-4 py-2 border border-gray-300 text-xs sm:text-sm font-medium rounded-md text-gray-700 bg-white',
-              currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'
+              'relative inline-flex items-center px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 border border-gray-300 text-[10px] sm:text-xs md:text-sm font-medium rounded-md text-gray-700 bg-white transition-colors duration-200',
+              currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50 active:bg-gray-100'
             ]"
           >
             Previous
@@ -842,8 +853,8 @@
             @click="nextPage" 
             :disabled="currentPage === totalPages"
             :class="[
-              'ml-3 relative inline-flex items-center px-3 sm:px-4 py-2 border border-gray-300 text-xs sm:text-sm font-medium rounded-md text-gray-700 bg-white',
-              currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'
+              'ml-2 relative inline-flex items-center px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 border border-gray-300 text-[10px] sm:text-xs md:text-sm font-medium rounded-md text-gray-700 bg-white transition-colors duration-200',
+              currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50 active:bg-gray-100'
             ]"
           >
             Next
@@ -851,7 +862,7 @@
         </div>
         <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
           <div>
-            <p class="text-xs sm:text-sm text-gray-700">
+            <p class="text-[10px] sm:text-xs md:text-sm text-gray-700">
               Showing
               <span class="font-medium">{{ ((currentPage - 1) * itemsPerPage) + 1 }}</span>
               to
@@ -867,12 +878,12 @@
                 @click="prevPage" 
                 :disabled="currentPage === 1"
                 :class="[
-                  'relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-xs sm:text-sm font-medium text-gray-500',
+                  'relative inline-flex items-center px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-l-md border border-gray-300 bg-white text-[10px] sm:text-xs md:text-sm font-medium text-gray-500 transition-colors duration-200',
                   currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'
                 ]"
               >
                 <span class="sr-only">Previous</span>
-                <svg class="h-4 w-4 sm:h-5 sm:w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <svg class="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
                 </svg>
               </button>
@@ -881,7 +892,7 @@
                 :key="page"
                 @click="currentPage = page"
                 :class="[
-                  'relative inline-flex items-center px-3 sm:px-4 py-2 border text-xs sm:text-sm font-medium',
+                  'relative inline-flex items-center px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 border text-[10px] sm:text-xs md:text-sm font-medium transition-colors duration-200',
                   currentPage === page 
                     ? 'z-10 bg-emerald-50 border-emerald-500 text-emerald-600' 
                     : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
@@ -893,12 +904,12 @@
                 @click="nextPage" 
                 :disabled="currentPage === totalPages"
                 :class="[
-                  'relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-xs sm:text-sm font-medium text-gray-500',
+                  'relative inline-flex items-center px-1.5 sm:px-2 py-1.5 sm:py-2 rounded-r-md border border-gray-300 bg-white text-[10px] sm:text-xs md:text-sm font-medium text-gray-500 transition-colors duration-200',
                   currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'
                 ]"
               >
                 <span class="sr-only">Next</span>
-                <svg class="h-4 w-4 sm:h-5 sm:w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <svg class="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
                 </svg>
               </button>
@@ -3287,70 +3298,270 @@ if (user) {
 <style>
 @import "tailwindcss";
 
-@media (max-width: 640px) {
-.overflow-x-auto::-webkit-scrollbar {
-  height: 4px;
+/* Custom Scrollbar Styles */
+.scrollbar-thin::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
 }
 
-.overflow-x-auto::-webkit-scrollbar-track {
+.scrollbar-thin::-webkit-scrollbar-track {
   background: #f1f5f9;
+  border-radius: 3px;
 }
 
-.overflow-x-auto::-webkit-scrollbar-thumb {
+.scrollbar-thin::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
-/* Remove fixed min-width on canvas for better mobile responsiveness */
-canvas {
-  min-width: auto;
-  width: 100% !important;
-  height: auto !important;
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
-.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-4 {
-  grid-template-columns: 1fr;
+.scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
+  background: #d1d5db;
 }
 
-.text-xs.sm\:text-sm {
-  font-size: 0.75rem;
+.scrollbar-track-gray-100::-webkit-scrollbar-track {
+  background: #f3f4f6;
 }
 
-.px-2.sm\:px-3 {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+/* Mobile-specific optimizations */
+@media (max-width: 640px) {
+  /* Ensure proper scrolling on mobile */
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .overflow-x-auto::-webkit-scrollbar {
+    height: 3px;
+  }
+
+  .overflow-x-auto::-webkit-scrollbar-track {
+    background: #f1f5f9;
+  }
+
+  .overflow-x-auto::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 2px;
+  }
+
+  /* Compact table cells on mobile */
+  table {
+    font-size: 10px;
+  }
+
+  /* Remove canvas minimum width for better mobile responsiveness */
+  canvas {
+    min-width: auto !important;
+    max-width: 100% !important;
+  }
+
+  /* Tighter spacing for cards on mobile */
+  .grid-cols-1 {
+    gap: 0.5rem;
+  }
+
+  /* Smaller buttons on mobile */
+  button {
+    font-size: 10px;
+    padding: 0.375rem 0.5rem;
+  }
+
+  /* Compact inputs on mobile */
+  input, select, textarea {
+    font-size: 11px;
+    padding: 0.375rem 0.5rem;
+  }
+
+  /* Reduce padding in cards */
+  .p-2\.5 {
+    padding: 0.5rem;
+  }
+
+  /* Smaller text globally on mobile */
+  body {
+    font-size: 13px;
+  }
 }
 
-.py-1.sm\:py-2 {
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
-}
+/* Tablet optimizations */
+@media (min-width: 641px) and (max-width: 1024px) {
+  /* Adjust spacing for tablets */
+  .sm\:gap-3 {
+    gap: 0.625rem;
+  }
+
+  .sm\:p-3 {
+    padding: 0.75rem;
+  }
+
+  /* Better button sizing on tablets */
+  button {
+    font-size: 12px;
+  }
 }
 
-.bg-pattern {
-background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+/* Enhanced animations and transitions */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-@media (prefers-reduced-motion: reduce) {
-.animate-spin {
-  animation: none !important;
-}
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
 }
 
+/* Smooth hover effects */
+.hover\:shadow-lg {
+  transition: box-shadow 0.3s ease;
+}
+
+.hover\:bg-gray-50 {
+  transition: background-color 0.2s ease;
+}
+
+/* Focus visible states for accessibility */
 button:focus-visible,
-a:focus-visible {
-outline: 2px solid #10b981;
-outline-offset: 2px;
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
 }
 
+/* Modal animations */
 .modal-enter-active,
 .modal-leave-active {
-transition: all 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .modal-enter-from,
 .modal-leave-to {
-opacity: 0;
-transform: scale(0.95);
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+/* Gradient backgrounds */
+.bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+}
+
+/* Pattern overlay for visual interest */
+.bg-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .animate-spin {
+    animation: none !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print,
+  button,
+  nav {
+    display: none !important;
+  }
+  
+  table {
+    page-break-inside: avoid;
+  }
+}
+
+/* Dark text for better readability */
+.text-gray-800 {
+  color: #1f2937;
+}
+
+.text-gray-700 {
+  color: #374151;
+}
+
+/* Enhanced shadow utilities */
+.shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Touch-friendly tap targets on mobile */
+@media (max-width: 640px) {
+  button,
+  a,
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Adjust for inline elements */
+  span button,
+  div button {
+    min-height: 36px;
+    min-width: 36px;
+  }
+}
+
+/* Better visual hierarchy */
+h1, h2, h3, h4 {
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Loading states */
+.loading-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s ease-in-out infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Improve touch interaction feedback */
+@media (hover: none) {
+  button:active,
+  a:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
 }
 </style>
