@@ -3295,7 +3295,7 @@ if (user) {
 });
 </script>
 
-<style>
+<style scoped>
 @import "tailwindcss";
 
 /* Custom Scrollbar Styles */

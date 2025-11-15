@@ -1,5 +1,5 @@
 <template>
-  <section class="backdrop-blur-md bg-white/10 border border-white/20 shadow-lg rounded-2xl p-6 sm:p-8 flex flex-col items-center max-w-4xl w-full mx-auto space-y-6">
+  <section class="backdrop-blur-md bg-white/10 border border-white/20 shadow-lg rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 flex flex-col items-center max-w-5xl w-full mx-auto" :class="currentStep === 0 ? 'space-y-3 sm:space-y-4' : 'space-y-4 sm:space-y-6'">
 
     <!-- Compatibility Warning -->
     <transition name="slide-down">
@@ -27,25 +27,25 @@
     </transition>
 
     <!-- Header -->
-    <header class="text-center space-y-2 mb-2">
+    <header class="text-center space-y-2 mb-2 w-full">
       <div class="relative inline-block">
-        <img src="/aerotech-rbg-index.png" alt="AeroTech Logo" class="w-20 h-20 mb-3 mx-auto rounded-full object-cover shadow-lg ring-4 ring-white/20" />
+        <img src="/aerotech-rbg-index.png" alt="AeroTech Logo" class="w-16 h-16 sm:w-20 sm:h-20 mb-2 sm:mb-3 mx-auto rounded-full object-cover shadow-lg ring-2 sm:ring-4 ring-white/20" />
         <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-green-400/20 to-blue-400/20 animate-pulse"></div>
       </div>
-      <h1 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">Create Account</h1>
-      <p class="text-sm text-white/70">Join us and start your journey today</p>
+      <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-white tracking-tight">Create Account</h1>
+      <p class="text-xs sm:text-sm text-white/70 px-4">Join us and start your journey today</p>
     </header>
 
-    <!-- Progress Steps -->
-    <div class="w-full">
-      <div class="flex items-center justify-between mb-8">
+    <!-- Progress Steps (hide on step 0) -->
+    <div v-if="currentStep > 0" class="w-full px-2 sm:px-0">
+      <div class="flex items-center justify-between mb-4 sm:mb-6 lg:mb-8">
         <!-- Step 1 -->
         <div class="flex flex-col items-center flex-1">
           <div :class="[
-            'w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all duration-300',
+            'w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-semibold text-xs sm:text-sm transition-all duration-300',
             currentStep >= 1 ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white/50'
           ]">
-            <svg v-if="currentStep > 1" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+            <svg v-if="currentStep > 1" class="w-4 h-4 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
             </svg>
             <span v-else>1</span>
@@ -61,26 +61,26 @@
         <!-- Step 2 -->
         <div class="flex flex-col items-center flex-1">
           <div :class="[
-            'w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all duration-300',
+            'w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-semibold text-xs sm:text-sm transition-all duration-300',
             currentStep >= 2 ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white/50'
           ]">
-            <svg v-if="currentStep > 2" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+            <svg v-if="currentStep > 2" class="w-4 h-4 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
             </svg>
             <span v-else>2</span>
           </div>
-          <span class="text-xs mt-2 text-white/70 hidden sm:block">Security</span>
+          <span class="text-xs mt-2 text-white/70 hidden sm:block">{{ signUpMethod === 'google' ? 'Complete Profile' : 'Security' }}</span>
         </div>
 
-        <!-- Line 2 -->
-        <div class="flex-1 h-1 mx-2 rounded-full bg-white/20 overflow-hidden">
+        <!-- Line 2 (only show for email method) -->
+        <div v-if="signUpMethod === 'email'" class="flex-1 h-1 mx-2 rounded-full bg-white/20 overflow-hidden">
           <div :class="['h-full bg-green-500 transition-all duration-500', currentStep >= 3 ? 'w-full' : 'w-0']"></div>
         </div>
 
-        <!-- Step 3 -->
-        <div class="flex flex-col items-center flex-1">
+        <!-- Step 3 (only show for email method) -->
+        <div v-if="signUpMethod === 'email'" class="flex flex-col items-center flex-1">
           <div :class="[
-            'w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all duration-300',
+            'w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-semibold text-xs sm:text-sm transition-all duration-300',
             currentStep >= 3 ? 'bg-green-500 text-white shadow-lg' : 'bg-white/20 text-white/50'
           ]">
             3
@@ -91,13 +91,13 @@
     </div>
 
     <!-- Step Content -->
-    <div class="w-full min-h-[400px]">
+    <div class="w-full" :class="currentStep === 0 ? 'min-h-0' : 'min-h-[350px] sm:min-h-[400px] lg:min-h-[450px]'">
       <!-- Step 1: Personal Information & Profile -->
       <transition name="slide-fade" mode="out-in">
         <div v-if="currentStep === 1" key="step1" class="space-y-6">
           <!-- Profile Image Upload -->
-          <div class="w-full bg-white/5 rounded-xl p-6 space-y-3 border border-white/10">
-            <h3 class="text-sm font-semibold text-white/90 mb-3 flex items-center gap-2">
+          <div class="w-full bg-white/5 rounded-lg sm:rounded-xl p-4 sm:p-6 space-y-3 border border-white/10">
+            <h3 class="text-xs sm:text-sm font-semibold text-white/90 mb-3 flex items-center justify-center sm:justify-start gap-2">
               <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
               </svg>
@@ -105,7 +105,7 @@
             </h3>
             <div class="flex flex-col items-center gap-3">
               <div class="relative group">
-                <div class="relative w-24 h-24 rounded-full border-4 border-green-400/40 overflow-hidden bg-gradient-to-br from-gray-700 to-gray-800 shadow-xl group-hover:border-green-400/60 transition-all duration-300">
+                <div class="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 sm:border-4 border-green-400/40 overflow-hidden bg-gradient-to-br from-gray-700 to-gray-800 shadow-xl group-hover:border-green-400/60 transition-all duration-300">
                   <img
                     v-if="profileImagePreview"
                     :src="profileImagePreview"
@@ -127,15 +127,15 @@
                 </div>
               </div>
               
-              <div class="flex items-center gap-3">
+              <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto">
                 <input id="profile-upload" type="file" accept="image/*" @change="handleProfileImageChange" class="hidden" />
-                <label for="profile-upload" class="px-4 py-2 bg-green-600/80 hover:bg-green-600 text-white text-sm font-medium rounded-lg cursor-pointer transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg active:scale-95">
+                <label for="profile-upload" class="w-full sm:w-auto px-4 py-2.5 bg-green-600/80 hover:bg-green-600 text-white text-xs sm:text-sm font-medium rounded-lg cursor-pointer transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg active:scale-95 touch-manipulation">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                   </svg>
                   Upload
                 </label>
-                <button v-if="profileImagePreview" @click="clearProfileImage" class="px-4 py-2 bg-red-500/80 hover:bg-red-500 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg active:scale-95">
+                <button v-if="profileImagePreview" @click="clearProfileImage" class="w-full sm:w-auto px-4 py-2.5 bg-red-500/80 hover:bg-red-500 text-white text-xs sm:text-sm font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 touch-manipulation">
                   Remove
                 </button>
               </div>
@@ -152,10 +152,10 @@
           </div>
 
           <!-- Personal Information Fields -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <!-- Username -->
-            <div class="space-y-1">
-              <label class="text-xs text-white/70 font-medium">Username *</label>
+            <div class="space-y-1.5">
+              <label class="text-xs sm:text-sm text-white/70 font-medium">Username *</label>
               <div class="relative">
                 <input
                   v-model="registerForm.username"
@@ -163,7 +163,7 @@
                   placeholder="Enter username"
                   @blur="validateUsername"
                   :class="[
-                    'w-full rounded-lg px-4 py-3 pr-10 transition-all focus:outline-none focus:ring-2',
+                    'w-full rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 pr-10 transition-all focus:outline-none focus:ring-2 text-sm sm:text-base touch-manipulation',
                     registerErrors.username
                       ? 'border-2 border-red-400 bg-red-500/10 text-white'
                       : registerForm.username && registerForm.username.length >= 3
@@ -186,14 +186,14 @@
             </div>
 
             <!-- Full Name -->
-            <div class="space-y-1">
-              <label class="text-xs text-white/70 font-medium">Full Name *</label>
+            <div class="space-y-1.5">
+              <label class="text-xs sm:text-sm text-white/70 font-medium">Full Name *</label>
               <input
                 v-model="registerForm.completeName"
                 type="text"
                 placeholder="Enter full name"
                 :class="[
-                  'w-full rounded-lg px-4 py-3 transition-all focus:outline-none focus:ring-2',
+                  'w-full rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 transition-all focus:outline-none focus:ring-2 text-sm sm:text-base touch-manipulation',
                   registerForm.completeName && registerForm.completeName.length >= 3
                     ? 'border-2 border-green-400 bg-green-500/10 text-white'
                     : 'bg-white/20 border-2 border-white/30 text-white placeholder-white/50 focus:border-green-400/50'
@@ -204,14 +204,14 @@
             </div>
 
             <!-- Birthday -->
-            <div class="space-y-1">
-              <label for="birthday" class="text-xs text-white/70 font-medium">Birthday *</label>
+            <div class="space-y-1.5">
+              <label for="birthday" class="text-xs sm:text-sm text-white/70 font-medium">Birthday *</label>
               <input
                 id="birthday"
                 v-model="registerForm.birthday"
                 type="date"
                 :class="[
-                  'w-full rounded-lg px-4 py-3 transition-all focus:outline-none focus:ring-2',
+                  'w-full rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 transition-all focus:outline-none focus:ring-2 text-sm sm:text-base touch-manipulation',
                   registerForm.birthday
                     ? 'border-2 border-green-400 bg-green-500/10 text-white'
                     : 'bg-white/20 border-2 border-white/30 text-white placeholder-white/50 focus:border-green-400/50'
@@ -222,14 +222,14 @@
             </div>
 
             <!-- Phone -->
-            <div class="space-y-1">
-              <label class="text-xs text-white/70 font-medium">Phone Number *</label>
+            <div class="space-y-1.5">
+              <label class="text-xs sm:text-sm text-white/70 font-medium">Phone Number *</label>
               <input
                 v-model="registerForm.cellphone"
                 type="tel"
                 placeholder="09XXXXXXXXX"
                 :class="[
-                  'w-full rounded-lg px-4 py-3 transition-all focus:outline-none focus:ring-2',
+                  'w-full rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 transition-all focus:outline-none focus:ring-2 text-sm sm:text-base touch-manipulation',
                   registerErrors.cellphone
                     ? 'border-2 border-red-400 bg-red-500/10 text-white'
                     : registerForm.cellphone.length === 11
@@ -247,12 +247,12 @@
             </div>
 
             <!-- Gender -->
-            <div class="space-y-1">
-              <label class="text-xs text-white/70 font-medium">Gender *</label>
+            <div class="space-y-1.5">
+              <label class="text-xs sm:text-sm text-white/70 font-medium">Gender *</label>
               <select
                 v-model="registerForm.gender"
                 :class="[
-                  'w-full rounded-lg px-4 py-3 transition-all focus:outline-none focus:ring-2 appearance-none',
+                  'w-full rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 transition-all focus:outline-none focus:ring-2 appearance-none text-sm sm:text-base touch-manipulation',
                   registerForm.gender
                     ? 'border-2 border-green-400 bg-green-500/10 text-white'
                     : 'bg-white/20 border-2 border-white/30 text-white focus:border-green-400/50'
@@ -268,14 +268,14 @@
             </div>
 
             <!-- Address -->
-            <div class="space-y-1 sm:col-span-2">
-              <label class="text-xs text-white/70 font-medium">Address *</label>
+            <div class="space-y-1.5 sm:col-span-2">
+              <label class="text-xs sm:text-sm text-white/70 font-medium">Address *</label>
               <input
                 v-model="registerForm.address"
                 type="text"
                 placeholder="Enter your address"
                 :class="[
-                  'w-full rounded-lg px-4 py-3 transition-all focus:outline-none focus:ring-2',
+                  'w-full rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 transition-all focus:outline-none focus:ring-2 text-sm sm:text-base touch-manipulation',
                   registerForm.address && registerForm.address.length >= 5
                     ? 'border-2 border-green-400 bg-green-500/10 text-white'
                     : 'bg-white/20 border-2 border-white/30 text-white placeholder-white/50 focus:border-green-400/50'
@@ -288,9 +288,53 @@
         </div>
       </transition>
 
-      <!-- Step 2: Account Security -->
+      <!-- Step 2: Account Security / Google Profile Completion -->
       <transition name="slide-fade" mode="out-in">
-        <div v-if="currentStep === 2" key="step2" class="space-y-6">
+        <div v-if="currentStep === 2 && signUpMethod === 'google'" key="step2-google" class="space-y-6">
+          <div class="text-center mb-6">
+            <h3 class="text-lg font-semibold text-white flex items-center justify-center gap-2">
+              <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+              Complete Your Profile
+            </h3>
+            <p class="text-sm text-white/60 mt-1">Just a few more details to get started</p>
+          </div>
+
+          <!-- Progress Indicator -->
+          <div class="mb-6 bg-white/5 rounded-lg p-4 border border-white/10">
+            <div class="flex items-center justify-between text-xs text-white/70 mb-2">
+              <span>Profile completion</span>
+              <span class="font-semibold text-white">{{ completionPercentage }}%</span>
+            </div>
+            <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+              <div 
+                :style="{ width: completionPercentage + '%' }"
+                class="h-full bg-gradient-to-r from-blue-500 to-green-500 transition-all duration-500 ease-out"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Already filled info -->
+          <div class="bg-green-500/10 border border-green-400/20 rounded-lg p-4 space-y-2">
+            <p class="text-sm font-medium text-green-300 flex items-center gap-2">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              Connected with Google
+            </p>
+            <div class="grid grid-cols-2 gap-2 text-xs text-white/70">
+              <div>
+                <span class="font-medium">Email:</span> {{ registerForm.email }}
+              </div>
+              <div>
+                <span class="font-medium">Name:</span> {{ registerForm.completeName }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div v-else-if="currentStep === 2 && signUpMethod === 'email'" key="step2-email" class="space-y-6">
           <div class="text-center mb-6">
             <h3 class="text-lg font-semibold text-white flex items-center justify-center gap-2">
               <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -302,15 +346,15 @@
           </div>
 
           <!-- Email -->
-          <div class="space-y-1">
-            <label class="text-xs text-white/70 font-medium">Email Address *</label>
+          <div class="space-y-1.5">
+            <label class="text-xs sm:text-sm text-white/70 font-medium">Email Address *</label>
             <div class="relative">
               <input
                 v-model="registerForm.email"
                 type="email"
                 placeholder="your@email.com"
                 :class=" [
-                  'w-full rounded-lg px-4 py-3 pr-10 transition-all focus:outline-none focus:ring-2',
+                  'w-full rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 pr-10 transition-all focus:outline-none focus:ring-2 text-sm sm:text-base touch-manipulation',
                   registerErrors.email
                     ? 'border-2 border-red-400 bg-red-500/10 text-white'
                     : registerForm.email.includes('@')
@@ -329,8 +373,8 @@
           </div>
 
           <!-- Password -->
-          <div class="space-y-1">
-            <label class="text-xs text-white/70 font-medium">Password *</label>
+          <div class="space-y-1.5">
+            <label class="text-xs sm:text-sm text-white/70 font-medium">Password *</label>
             <div class="relative">
               <input
                 :type="showPassword ? 'text' : 'password'"
@@ -338,13 +382,13 @@
                 @input="validatePassword"
                 @focus="showPasswordRequirements = true"
                 placeholder="Enter password"
-                class="w-full rounded-lg px-4 py-3 pr-12 transition-all focus:outline-none focus:ring-2 bg-white/20 border-2 border-white/30 text-white placeholder-white/50 focus:border-green-400/50"
+                class="w-full rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 pr-12 transition-all focus:outline-none focus:ring-2 bg-white/20 border-2 border-white/30 text-white placeholder-white/50 focus:border-green-400/50 text-sm sm:text-base touch-manipulation"
                 required
               />
               <button
                 type="button"
                 @click="togglePassword"
-                class="absolute top-1/2 right-3 -translate-y-1/2 w-8 h-8 bg-white/10 rounded-full hover:bg-white/20 transition flex items-center justify-center"
+                class="absolute top-1/2 right-3 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 bg-white/10 rounded-full hover:bg-white/20 transition flex items-center justify-center touch-manipulation"
               >
                 <svg v-if="!showPassword" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -361,8 +405,8 @@
           </div>
 
           <!-- Confirm Password -->
-          <div class="space-y-1">
-            <label class="text-xs text-white/70 font-medium">Confirm Password *</label>
+          <div class="space-y-1.5">
+            <label class="text-xs sm:text-sm text-white/70 font-medium">Confirm Password *</label>
             <div class="relative">
               <input
                 :type="showConfirmPassword ? 'text' : 'password'"
@@ -370,7 +414,7 @@
                 @input="validateConfirmPassword"
                 placeholder="Confirm password"
                 :class=" [
-                  'w-full rounded-lg px-4 py-3 pr-12 transition-all focus:outline-none focus:ring-2',
+                  'w-full rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 pr-12 transition-all focus:outline-none focus:ring-2 text-sm sm:text-base touch-manipulation',
                   registerErrors.confirmPassword
                     ? 'border-2 border-red-400 bg-red-500/10 text-white'
                     : registerForm.confirmPassword && registerForm.confirmPassword === registerForm.password
@@ -383,7 +427,7 @@
               <button
                 type="button"
                 @click="toggleConfirmPassword"
-                class="absolute top-1/2 right-3 -translate-y-1/2 w-8 h-8 bg-white/10 rounded-full hover:bg-white/20 transition flex items-center justify-center"
+                class="absolute top-1/2 right-3 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 bg-white/10 rounded-full hover:bg-white/20 transition flex items-center justify-center touch-manipulation"
               >
                 <svg v-if="!showConfirmPassword" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -404,8 +448,8 @@
           <div class="bg-white/5 rounded-lg p-4 space-y-3 border border-white/10">
             <transition name="fade">
               <div v-if="showPasswordRequirements" class="space-y-2">
-                <p class="text-xs text-white/80 font-medium">Password Requirements:</p>
-                <ul class="space-y-1 text-xs">
+                <p class="text-xs sm:text-sm text-white/80 font-medium">Password Requirements:</p>
+                <ul class="space-y-1 text-xs sm:text-sm">
                   <li :class="registerForm.password.length >= 8 ? 'text-green-300' : 'text-white/60'" class="flex items-center gap-2">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                       <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
@@ -435,7 +479,7 @@
             </transition>
 
             <div class="space-y-2">
-              <p class="text-xs font-medium" :class="{
+              <p class="text-xs sm:text-sm font-medium" :class="{
                 'text-red-300': passwordStrength.score < 2,
                 'text-yellow-300': passwordStrength.score === 2,
                 'text-green-300': passwordStrength.score >= 3
@@ -564,13 +608,13 @@
     </div>
 
     <!-- Navigation Buttons -->
-    <div class="flex items-center justify-between w-full gap-4 pt-4 border-t border-white/10">
+    <div class="flex items-center justify-between w-full gap-2 sm:gap-4 pt-4 border-t border-white/10">
       <!-- Back Button -->
       <button
-        v-if="currentStep > 1"
+        v-if="currentStep > 0"
         @click="previousStep"
         :disabled="loading"
-        class="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-lg font-medium transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+        class="px-4 sm:px-6 py-2.5 sm:py-3 bg-white/10 hover:bg-white/20 text-white rounded-lg font-medium transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 sm:gap-2 text-sm sm:text-base touch-manipulation"
       >
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -582,10 +626,10 @@
 
       <!-- Next/Submit Button -->
       <button
-        v-if="currentStep < 3"
+        v-if="shouldShowNextButton"
         @click="nextStep"
         :disabled="loading || !canProceedToNextStep"
-        class="ml-auto px-6 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-lg font-medium transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+        class="ml-auto px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-lg font-medium transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 sm:gap-2 text-sm sm:text-base touch-manipulation"
       >
         Next
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -594,16 +638,16 @@
       </button>
 
       <button
-        v-else
-        @click="handleRegister"
-        :disabled="loading || !registerForm.agreeToTerms"
-        class="ml-auto px-8 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-lg font-bold transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+        v-else-if="shouldShowSubmitButton"
+        @click="signUpMethod === 'google' ? completeGoogleSignUp() : handleRegister()"
+        :disabled="loading || (signUpMethod === 'email' && !registerForm.agreeToTerms) || (signUpMethod === 'google' && completionPercentage < 100)"
+        class="ml-auto px-4 sm:px-8 py-2.5 sm:py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-lg font-bold transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 sm:gap-2 text-sm sm:text-base touch-manipulation"
       >
         <span v-if="!loading" class="flex items-center gap-2">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
           </svg>
-          Create Account
+          {{ signUpMethod === 'google' ? 'Complete Sign-Up' : 'Create Account' }}
         </span>
         <span v-else class="flex items-center gap-2">
           <EcoSpinner size="18px" color="#fff" :centered="false" />
@@ -612,28 +656,80 @@
       </button>
     </div>
 
-    <!-- Divider (only show on step 1) -->
-    <div v-if="currentStep === 1" class="flex items-center w-full gap-4 my-2">
-      <div class="flex-1 h-px bg-white/20"></div>
-      <span class="text-xs text-white/60 font-medium">OR</span>
-      <div class="flex-1 h-px bg-white/20"></div>
-    </div>
+    <!-- Google Sign-Up Card (replaces step 1 content when selected) -->
+    <transition name="slide-fade" mode="out-in">
+      <div v-if="currentStep === 0" key="step0" class="space-y-4 sm:space-y-5">
+        <div class="text-center mb-3 sm:mb-4">
+          <h3 class="text-base sm:text-lg font-semibold text-white">Choose Sign-Up Method</h3>
+          <p class="text-xs sm:text-sm text-white/60 mt-1">Select how you'd like to create your account</p>
+        </div>
 
-    <!-- Google Sign-Up (only show on step 1) -->
-    <button
-      v-if="currentStep === 1"
-      type="button"
-      @click="handleGoogleSignUp"
-      class="w-full bg-white text-gray-800 font-semibold px-6 py-3 rounded-lg hover:bg-gray-50 hover:shadow-xl transition-all active:scale-[0.98] flex items-center justify-center gap-3 shadow-lg"
-      :disabled="loading"
-    >
-      <img src="/google-icon.png" alt="Google" class="w-5 h-5" />
-      <span v-if="!loading">Sign Up with Google</span>
-      <span v-else class="flex items-center gap-2">
-        <EcoSpinner size="16px" color="#444" :centered="false" />
-        Signing up...
-      </span>
-    </button>
+        <!-- Sign-up method cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          <!-- Email/Password Card -->
+          <button
+            @click="selectSignUpMethod('email')"
+            class="group relative bg-white/5 hover:bg-white/10 active:bg-white/15 border-2 border-white/20 hover:border-green-400/50 rounded-lg sm:rounded-xl p-4 sm:p-6 transition-all duration-300 hover:shadow-xl sm:hover:scale-105 active:scale-[0.98] touch-manipulation"
+          >
+            <div class="flex flex-col items-center text-center space-y-2 sm:space-y-3">
+              <div class="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center shadow-lg group-hover:shadow-green-500/50 transition-shadow">
+                <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+              </div>
+              <div>
+                <h4 class="text-white font-semibold text-base sm:text-lg">Email & Password</h4>
+                <p class="text-white/60 text-xs sm:text-sm mt-1 px-2 sm:px-0">Traditional registration with email verification</p>
+              </div>
+              <div class="flex items-center gap-1 text-green-400 text-xs sm:text-sm font-medium">
+                <span>Continue</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </div>
+            </div>
+          </button>
+
+          <!-- Google Sign-Up Card -->
+          <button
+            @click="selectSignUpMethod('google')"
+            :disabled="loading"
+            class="group relative bg-white/5 hover:bg-white/10 active:bg-white/15 border-2 border-white/20 hover:border-blue-400/50 rounded-lg sm:rounded-xl p-4 sm:p-6 transition-all duration-300 hover:shadow-xl sm:hover:scale-105 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
+          >
+            <div class="flex flex-col items-center text-center space-y-2 sm:space-y-3">
+              <div class="w-12 h-12 sm:w-16 sm:h-16 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:shadow-blue-500/50 transition-shadow">
+                <img src="/google-icon.png" alt="Google" class="w-8 h-8 sm:w-10 sm:h-10" />
+              </div>
+              <div>
+                <h4 class="text-white font-semibold text-base sm:text-lg">Google Account</h4>
+                <p class="text-white/60 text-xs sm:text-sm mt-1 px-2 sm:px-0">Quick sign-up with your Google account</p>
+              </div>
+              <div class="flex items-center gap-1 text-blue-400 text-xs sm:text-sm font-medium">
+                <span v-if="!loading">Continue</span>
+                <span v-else class="flex items-center gap-2">
+                  <EcoSpinner size="14px" color="#60a5fa" :centered="false" />
+                  Processing...
+                </span>
+                <svg v-if="!loading" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              </div>
+            </div>
+          </button>
+        </div>
+
+        <!-- Info Note -->
+        <div class="bg-blue-500/10 border border-blue-400/20 rounded-lg p-4 flex items-start gap-3">
+          <svg class="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+          </svg>
+          <div class="text-sm text-blue-200">
+            <p class="font-medium mb-1">Both methods are secure</p>
+            <p class="text-blue-300/80 text-xs">Choose the method that's most convenient for you. You can always link additional sign-in methods later in your account settings.</p>
+          </div>
+        </div>
+      </div>
+    </transition>
 
     <!-- Login Link -->
     <transition name="fade">
@@ -645,289 +741,69 @@
       </p>
     </transition>
 
-    <!-- Google Terms Confirmation Dialog -->
+    <!-- Cancel Google Sign-Up Confirmation Dialog -->
     <transition name="fade">
-      <div v-if="showGoogleTermsDialog" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4" @click.self="showGoogleTermsDialog = false">
-        <div class="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-8 w-full max-w-md shadow-2xl transform transition-all" @click.stop>
-          <!-- Header with Icon -->
+      <div v-if="showCancelConfirmation" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4" @click.self="continueCancelGoogleSignup">
+        <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 sm:p-8 w-full max-w-md shadow-2xl transform transition-all border border-white/10" @click.stop>
+          <!-- Warning Icon -->
           <div class="flex flex-col items-center mb-6">
-            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
-              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            <div class="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mb-4 border-2 border-red-500/50">
+              <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
               </svg>
             </div>
-            <h3 class="text-2xl font-bold text-gray-800 text-center">Terms & Conditions</h3>
-            <p class="text-sm text-gray-500 mt-2 text-center">Please review before continuing</p>
+            <h3 class="text-xl font-bold text-white text-center">Cancel Google Sign-Up?</h3>
+            <p class="text-sm text-white/60 mt-2 text-center">Are you sure you want to go back?</p>
           </div>
 
-          <!-- Content -->
-          <div class="bg-blue-50 rounded-xl p-4 mb-6 border border-blue-100">
-            <p class="text-sm text-gray-700 leading-relaxed">
-              By signing up with Google, you agree to our
-              <button @click="$emit('showTerms')" class="text-blue-600 hover:text-blue-700 underline font-semibold transition-colors">Terms of Service</button>
-              and
-              <button @click="$emit('showPrivacy')" class="text-blue-600 hover:text-blue-700 underline font-semibold transition-colors">Privacy Policy</button>.
+          <!-- Warning Message -->
+          <div class="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">
+            <p class="text-sm text-red-200 leading-relaxed">
+              You've already connected with your Google account. If you go back, you'll be signed out and will need to start over.
             </p>
           </div>
 
           <!-- Info Note -->
-          <div class="flex items-start gap-3 mb-6 bg-gray-50 rounded-lg p-3">
-            <svg class="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+          <div class="flex items-start gap-3 mb-6 bg-white/5 rounded-lg p-3 border border-white/10">
+            <svg class="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
             </svg>
-            <p class="text-xs text-gray-600">You'll need to complete additional information after connecting with Google.</p>
+            <p class="text-xs text-white/70">Complete your profile to finish registration. It only takes a moment!</p>
           </div>
 
           <!-- Action Buttons -->
-          <div class="flex items-center gap-3">
+          <div class="flex flex-col sm:flex-row items-center gap-3">
             <button 
-              @click="showGoogleTermsDialog = false" 
-              class="flex-1 px-5 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-medium transition-all duration-200 active:scale-95 border border-gray-200"
+              @click="continueCancelGoogleSignup" 
+              class="w-full sm:flex-1 px-5 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-xl font-semibold transition-all duration-200 active:scale-95 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
             >
-              Cancel
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              Continue Registration
             </button>
             <button 
-              @click="confirmGoogleSignUp" 
-              class="flex-1 px-5 py-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white rounded-xl font-semibold transition-all duration-200 active:scale-95 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
-            >
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-              </svg>
-              I Agree
-            </button>
-          </div>
-        </div>
-      </div>
-    </transition>
-
-    <!-- Google Profile Completion Dialog -->
-    <transition name="fade">
-      <div v-if="showGoogleCompletionDialog" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
-        <div class="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 sm:p-8 w-full max-w-2xl shadow-2xl transform transition-all my-8">
-          <!-- Header -->
-          <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
-            <div>
-              <h3 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                <svg class="w-7 h-7 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                </svg>
-                Complete Your Profile
-              </h3>
-              <p class="text-sm text-gray-500 mt-1">Just a few more details to get started</p>
-            </div>
-            <button @click="cancelGoogleSignUp" class="w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center transition-colors">
-              <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-              </svg>
-            </button>
-          </div>
-
-          <!-- Progress Indicator -->
-          <div class="mb-6">
-            <div class="flex items-center justify-between text-xs text-gray-500 mb-2">
-              <span>Profile completion</span>
-              <span class="font-semibold">{{ completionPercentage }}%</span>
-            </div>
-            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-              <div 
-                :style="{ width: completionPercentage + '%' }"
-                class="h-full bg-gradient-to-r from-blue-500 to-green-500 transition-all duration-500 ease-out"
-              ></div>
-            </div>
-          </div>
-
-          <!-- Form Fields -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-            <!-- Username -->
-            <div class="space-y-1.5">
-              <label class="text-sm font-medium text-gray-700 flex items-center gap-1">
-                Username *
-                <svg v-if="registerForm.username && registerForm.username.length >= 3 && !registerErrors.username" class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                </svg>
-              </label>
-              <input 
-                v-model="registerForm.username" 
-                type="text" 
-                placeholder="Enter username"
-                @blur="validateUsername"
-                :class=" [
-                  'w-full border-2 rounded-xl px-4 py-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/50',
-                  registerErrors.username 
-                    ? 'border-red-300 bg-red-50' 
-                    : registerForm.username && registerForm.username.length >= 3
-                    ? 'border-green-300 bg-green-50'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
-                ]"
-              />
-              <transition name="fade">
-                <p v-if="registerErrors.username" class="text-xs text-red-600 flex items-center gap-1">
-                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                </svg>
-                  {{ registerErrors.username }}
-                </p>
-              </transition>
-            </div>
-
-            <!-- Full Name -->
-            <div class="space-y-1.5">
-              <label class="text-sm font-medium text-gray-700 flex items-center gap-1">
-                Full Name *
-                <svg v-if="registerForm.completeName && registerForm.completeName.length >= 3" class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                </svg>
-              </label>
-              <input 
-                v-model="registerForm.completeName" 
-                type="text" 
-                placeholder="Enter full name"
-                :class=" [
-                  'w-full border-2 rounded-xl px-4 py-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/50',
-                  registerForm.completeName && registerForm.completeName.length >= 3
-                    ? 'border-green-300 bg-green-50'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
-                ]"
-              />
-            </div>
-
-            <!-- Birthday -->
-            <div class="space-y-1.5">
-              <label class="text-sm font-medium text-gray-700 flex items-center gap-1">
-                Birthday *
-                <svg v-if="registerForm.birthday" class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                </svg>
-              </label>
-              <input 
-                v-model="registerForm.birthday" 
-                type="date" 
-                :class=" [
-                  'w-full border-2 rounded-xl px-4 py-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/50',
-                  registerForm.birthday
-                    ? 'border-green-300 bg-green-50'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
-                ]"
-              />
-            </div>
-
-            <!-- Phone -->
-            <div class="space-y-1.5">
-              <label class="text-sm font-medium text-gray-700 flex items-center gap-1">
-                Phone Number *
-                <svg v-if="registerForm.cellphone.length === 11 && !registerErrors.cellphone" class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                </svg>
-              </label>
-              <input 
-                v-model="registerForm.cellphone" 
-                type="tel" 
-                placeholder="09XXXXXXXXX"
-                maxlength="11"
-                @input="onCellphoneInput"
-                :class=" [
-                  'w-full border-2 rounded-xl px-4 py-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/50',
-                  registerErrors.cellphone
-                    ? 'border-red-300 bg-red-50'
-                    : registerForm.cellphone.length === 11
-                    ? 'border-green-300 bg-green-50'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
-                ]"
-              />
-              <transition name="fade">
-                <p v-if="registerErrors.cellphone" class="text-xs text-red-600 flex items-center gap-1">
-                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                </svg>
-                  {{ registerErrors.cellphone }}
-                </p>
-              </transition>
-            </div>
-
-            <!-- Gender -->
-            <div class="space-y-1.5">
-              <label class="text-sm font-medium text-gray-700 flex items-center gap-1">
-                Gender *
-                <svg v-if="registerForm.gender" class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                </svg>
-              </label>
-              <select 
-                v-model="registerForm.gender" 
-                :class=" [
-                  'w-full border-2 rounded-xl px-4 py-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none cursor-pointer',
-                  registerForm.gender
-                    ? 'border-green-300 bg-green-50'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
-                ]"
-              >
-                <option value="" disabled>Select Gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-
-            <!-- Address -->
-            <div class="sm:col-span-2 space-y-1.5">
-              <label class="text-sm font-medium text-gray-700 flex items-center gap-1">
-                Address *
-                <svg v-if="registerForm.address && registerForm.address.length >= 5" class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                </svg>
-              </label>
-              <input 
-                v-model="registerForm.address" 
-                type="text" 
-                placeholder="Enter your complete address"
-                :class=" [
-                  'w-full border-2 rounded-xl px-4 py-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/50',
-                  registerForm.address && registerForm.address.length >= 5
-                    ? 'border-green-300 bg-green-50'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
-                ]"
-              />
-            </div>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="flex items-center gap-3 pt-4 border-t border-gray-200">
-            <button 
-              @click="cancelGoogleSignUp" 
-              class="flex-1 px-5 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-medium transition-all duration-200 active:scale-95 border border-gray-200 flex items-center justify-center gap-2"
+              @click="confirmCancelGoogleSignup" 
+              class="w-full sm:flex-1 px-5 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-all duration-200 active:scale-95 border border-white/20 flex items-center justify-center gap-2"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
               </svg>
-              Cancel
-            </button>
-            <button 
-              @click="completeGoogleSignUp"
-              :disabled="completionPercentage < 100 || loading"
-              class="flex-1 px-5 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-xl font-semibold transition-all duration-200 active:scale-95 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              <span v-if="!loading" class="flex items-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                </svg>
-                Finish Setup
-              </span>
-              <span v-else class="flex items-center gap-2">
-                <EcoSpinner size="18px" color="#fff" :centered="false" />
-                Processing...
-              </span>
+              Cancel & Sign Out
             </button>
           </div>
         </div>
       </div>
     </transition>
+
+
   </section>
 </template>
 
 <script setup>
 import { reactive, ref, computed, onMounted} from "vue";
 import { useRouter } from "vue-router";
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification, signOut } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase"; // Adjust path as needed
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
@@ -984,9 +860,8 @@ const uploadingImage = ref(false);
 
 const isDeviceCompatible = ref(true);
 const showPasswordRequirements = ref(false);
-const showGoogleTermsDialog = ref(false); // Define ref for terms confirmation dialog
-const showGoogleCompletionDialog = ref(false); // Define ref for profile completion dialog
 const googleUserData = ref(null); // Define ref for storing Google user data
+const showCancelConfirmation = ref(false); // Confirmation dialog for canceling Google signup
 
 const validatePassword = () => {
   const pw = registerForm.password;
@@ -1138,94 +1013,6 @@ function togglePassword() {
 function toggleConfirmPassword() {
   showConfirmPassword.value = !showConfirmPassword.value
 }
-const handleGoogleSignUp = async () => {
-  loading.value = true;
-  globalAlert.show = false;
-
-  try {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    googleUserData.value = result.user; // Store Google user data temporarily
-
-    // Check if the user already exists in Firestore
-    const userRef = doc(db, "users", googleUserData.value.uid);
-    const userSnapshot = await getDoc(userRef); // Use getDoc to fetch the document
-
-    if (userSnapshot.exists() && userSnapshot.data().completeName && userSnapshot.data().email) {
-      // User already exists with complete information
-      toast.info("This Gmail is already registered. Redirecting to login...");
-      setTimeout(() => {
-        emit('toggleView'); // Redirect to login
-      }, 2000);
-      return;
-    }
-
-    // Pre-fill the form with Google user data
-    registerForm.username = googleUserData.value.displayName || "GoogleUser";
-    registerForm.email = googleUserData.value.email;
-    registerForm.completeName = googleUserData.value.displayName || "";
-    registerForm.profileImageUrl = googleUserData.value.photoURL || "";
-
-    showGoogleTermsDialog.value = true; // Show terms confirmation dialog
-  } catch (err) {
-    if (err.code === "auth/popup-closed-by-user") {
-      console.warn("Google Sign-Up popup closed by user.");
-      return;
-    }
-    toast.error(err.message || "Google Sign-Up failed.");
-    globalAlert.message = err.message || "Google Sign-In failed.";
-    globalAlert.type = "error";
-    globalAlert.show = true;
-  } finally {
-    loading.value = false;
-  }
-};
-
-const confirmGoogleSignUp = async () => {
-  showGoogleTermsDialog.value = false; // Close terms dialog
-  loading.value = true;
-  globalAlert.show = false;
-  toast.info("🔓 Signing up with Google...", { timeout: 1500 });
-
-  try {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    googleUserData.value = result.user; // Store Google user data temporarily
-
-    // Check if the user already exists in Firestore
-    const userRef = doc(db, "users", googleUserData.value.uid);
-    const userSnapshot = await getDoc(userRef); // Use getDoc to fetch the document
-
-    if (userSnapshot.exists() && userSnapshot.data().completeName && userSnapshot.data().email) {
-      // User already exists with complete information
-      toast.info("This Gmail is already registered. Redirecting to login...");
-      setTimeout(() => {
-        emit('toggleView'); // Redirect to login
-      }, 2000);
-      return;
-    }
-
-    // Pre-fill the form with Google user data
-    registerForm.username = googleUserData.value.displayName || "GoogleUser";
-    registerForm.email = googleUserData.value.email;
-    registerForm.completeName = googleUserData.value.displayName || "";
-    registerForm.profileImageUrl = googleUserData.value.photoURL || "";
-
-    showGoogleCompletionDialog.value = true; // Show profile completion dialog
-  } catch (err) {
-    if (err.code === "auth/popup-closed-by-user") {
-      console.warn("Google Sign-Up popup closed by user.");
-      return;
-    }
-    toast.error(err.message || "Google Sign-Up failed.");
-    globalAlert.message = err.message || "Google Sign-In failed.";
-    globalAlert.type = "error";
-    globalAlert.show = true;
-  } finally {
-    loading.value = false;
-  }
-};
-
 const completeGoogleSignUp = async () => {
   validateUsername();
   validateCellphone();
@@ -1239,7 +1026,7 @@ const completeGoogleSignUp = async () => {
     !registerForm.gender ||
     !registerForm.address
   ) {
-    toast.warning("Please fill in all required fields correctly.");
+    toast.warning('Please fill in all required fields correctly.');
     return;
   }
 
@@ -1247,55 +1034,47 @@ const completeGoogleSignUp = async () => {
   globalAlert.show = false;
 
   try {
-    const userRef = doc(db, "users", googleUserData.value.uid);
+    const userRef = doc(db, 'users', googleUserData.value.uid);
     await setDoc(userRef, {
       username: registerForm.username,
       email: registerForm.email,
-      profileImageUrl: registerForm.profileImageUrl || "",
+      profileImageUrl: registerForm.profileImageUrl || '',
       completeName: registerForm.completeName,
       birthday: registerForm.birthday,
       cellphone: registerForm.cellphone,
       gender: registerForm.gender,
       address: registerForm.address,
-      role: "user",
-      status: "active",
+      role: 'user',
+      status: 'active',
       createdAt: new Date().toISOString(),
       emailVerified: googleUserData.value.emailVerified,
-      authProvider: "google",
+      authProvider: 'google',
       loginCount: 1,
     });
 
-    toast.success("✅ Signed up with Google!");
-    globalAlert.message = "Signed up with Google successfully!";
-    globalAlert.type = "success";
+    toast.success('✅ Signed up with Google!');
+    globalAlert.message = 'Signed up with Google successfully!';
+    globalAlert.type = 'success';
     globalAlert.show = true;
 
     await logAuthEvent({
-      type: "register",
-      status: "success",
+      type: 'register',
+      status: 'success',
       email: googleUserData.value.email,
       uid: googleUserData.value.uid,
-      method: "google",
+      method: 'google',
     });
 
-    router.push("/user/dashboard");
+    router.push('/user/dashboard');
   } catch (err) {
-    toast.error(err.message || "Google Sign-Up failed.");
-    globalAlert.message = err.message || "Google Sign-In failed.";
-    globalAlert.type = "error";
+    toast.error(err.message || 'Google Sign-Up failed.');
+    globalAlert.message = err.message || 'Google Sign-In failed.';
+    globalAlert.type = 'error';
     globalAlert.show = true;
   } finally {
     loading.value = false;
-    showGoogleCompletionDialog.value = false;
     googleUserData.value = null; // Clear temporary data
   }
-};
-
-const cancelGoogleSignUp = () => {
-  showGoogleCompletionDialog.value = false;
-  googleUserData.value = null; // Clear temporary data
-  resetForm(); // Reset the form
-  toast.info("Google Sign-Up canceled.");
 };
 
 const passwordStrength = computed(() => {
@@ -1355,7 +1134,8 @@ const validateCellphone = () => {
   }
 };
 
-const currentStep = ref(1);
+const currentStep = ref(0);
+const signUpMethod = ref(''); // 'email' or 'google'
 
 const canProceedToNextStep = computed(() => {
   if (currentStep.value === 1) {
@@ -1370,7 +1150,7 @@ const canProceedToNextStep = computed(() => {
       !registerErrors.cellphone
     );
   }
-  if (currentStep.value === 2) {
+  if (currentStep.value === 2 && signUpMethod.value === 'email') {
     return (
       registerForm.email.includes('@') &&
       registerForm.password.length >= 8 &&
@@ -1379,7 +1159,23 @@ const canProceedToNextStep = computed(() => {
       !registerErrors.confirmPassword
     );
   }
+  if (currentStep.value === 2 && signUpMethod.value === 'google') {
+    return completionPercentage.value === 100;
+  }
   return true;
+});
+
+const shouldShowNextButton = computed(() => {
+  if (currentStep.value === 0) return false;
+  if (signUpMethod.value === 'email') return currentStep.value < 3;
+  if (signUpMethod.value === 'google') return currentStep.value < 2;
+  return false;
+});
+
+const shouldShowSubmitButton = computed(() => {
+  if (signUpMethod.value === 'email') return currentStep.value === 3;
+  if (signUpMethod.value === 'google') return currentStep.value === 2;
+  return false;
 });
 
 const nextStep = () => {
@@ -1431,8 +1227,110 @@ const nextStep = () => {
 };
 
 const previousStep = () => {
-  if (currentStep.value > 1) {
-    currentStep.value--;
+  if (currentStep.value > 0) {
+    if (currentStep.value === 1 && signUpMethod.value === 'google' && googleUserData.value) {
+      // Show confirmation dialog before canceling Google sign-up
+      showCancelConfirmation.value = true;
+    } else if (currentStep.value === 1 && signUpMethod.value) {
+      // Going back to method selection for email registration
+      signUpMethod.value = '';
+      googleUserData.value = null;
+      resetForm();
+      currentStep.value--;
+    } else {
+      currentStep.value--;
+    }
+  }
+};
+
+const confirmCancelGoogleSignup = async () => {
+  showCancelConfirmation.value = false;
+  
+  // Sign out the user to prevent zombie account state
+  try {
+    await signOut(auth);
+    toast.info('Google sign-up canceled. You have been signed out.');
+    console.log('User signed out after canceling Google registration');
+    
+    await logAuthEvent({
+      type: 'register',
+      status: 'canceled',
+      email: googleUserData.value?.email || '',
+      uid: googleUserData.value?.uid || '',
+      method: 'google',
+      reason: 'User canceled during profile completion'
+    });
+  } catch (error) {
+    console.error('Error signing out:', error);
+  }
+  
+  // Reset the method and form
+  signUpMethod.value = '';
+  googleUserData.value = null;
+  resetForm();
+  currentStep.value = 0;
+};
+
+const continueCancelGoogleSignup = () => {
+  showCancelConfirmation.value = false;
+  // User decided to continue with registration
+};
+
+const selectSignUpMethod = async (method) => {
+  signUpMethod.value = method;
+  if (method === 'email') {
+    currentStep.value = 1;
+  } else if (method === 'google') {
+    await initiateGoogleSignUp();
+  }
+};
+
+const initiateGoogleSignUp = async () => {
+  loading.value = true;
+  globalAlert.show = false;
+  toast.info('🔓 Signing up with Google...', { timeout: 1500 });
+
+  try {
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    googleUserData.value = result.user;
+
+    // Check if the user already exists in Firestore
+    const userRef = doc(db, 'users', googleUserData.value.uid);
+    const userSnapshot = await getDoc(userRef);
+
+    if (userSnapshot.exists() && userSnapshot.data().completeName && userSnapshot.data().email) {
+      // User already exists with complete information
+      toast.info('This Gmail is already registered. Redirecting to login...');
+      setTimeout(() => {
+        emit('toggleView');
+      }, 2000);
+      return;
+    }
+
+    // Pre-fill the form with Google user data
+    registerForm.username = googleUserData.value.displayName || 'GoogleUser';
+    registerForm.email = googleUserData.value.email;
+    registerForm.completeName = googleUserData.value.displayName || '';
+    registerForm.profileImageUrl = googleUserData.value.photoURL || '';
+    profileImagePreview.value = googleUserData.value.photoURL || null;
+
+    // Move to step 1 (personal info) for Google sign-up
+    currentStep.value = 1;
+    toast.success('✅ Connected with Google! Please complete your profile.');
+  } catch (err) {
+    if (err.code === 'auth/popup-closed-by-user') {
+      console.warn('Google Sign-Up popup closed by user.');
+      signUpMethod.value = ''; // Reset method selection
+      return;
+    }
+    toast.error(err.message || 'Google Sign-Up failed.');
+    globalAlert.message = err.message || 'Google Sign-In failed.';
+    globalAlert.type = 'error';
+    globalAlert.show = true;
+    signUpMethod.value = ''; // Reset method selection
+  } finally {
+    loading.value = false;
   }
 };
 </script>
