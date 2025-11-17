@@ -24,7 +24,16 @@ export default defineConfig({
         main: './index.html',
         sw: './public/firebase-messaging-sw.js', // Service worker support
       },
+      output: {
+        manualChunks: {
+          pdf: ['jspdf', 'jspdf-autotable', 'html2canvas'],
+          xlsx: ['xlsx'],
+          charts: ['chart.js', 'vue-chartjs'],
+          firebase: ['firebase/app','firebase/auth','firebase/firestore','firebase/messaging']
+        }
+      }
     },
+    chunkSizeWarningLimit: 1500
   },
   base: '/',
 })

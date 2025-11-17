@@ -15,7 +15,7 @@
 import { ref } from 'vue';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import { saveAs } from 'file-saver';
-import * as XLSX from 'xlsx';
+import { getXLSX } from '../../utils/lazyLibs';
 import Papa from 'papaparse';
 
 const selectedFormat = ref('json');
@@ -57,8 +57,9 @@ const exportUserData = async () => {
       });
       const blob = new Blob([csv], { type: 'text/csv' });
       saveAs(blob, 'user_data.csv');
-    } else if (selectedFormat.value === 'excel') {
-      const worksheet = XLSX.utils.json_to_sheet(unifiedUsers);
+      } else if (selectedFormat.value === 'excel') {
+        const XLSX = await getXLSX();
+        const worksheet = XLSX.utils.json_to_sheet(unifiedUsers);
 
       // Add a logo placeholder and header
       XLSX.utils.sheet_add_aoa(worksheet, [

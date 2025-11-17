@@ -1277,8 +1277,7 @@
 
 <script setup>
 import { onSnapshot, query, where, orderBy, deleteDoc, doc, getDocs } from 'firebase/firestore';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import { getPDFLibs } from '../../utils/lazyLibs';
 import { onAuthStateChanged } from 'firebase/auth';
 import { ref as vueRef,onMounted, watch, ref, nextTick,computed } from 'vue';
 import { Chart, registerables } from 'chart.js';
@@ -1982,6 +1981,7 @@ const exportHistoryToCSV = () => {
 };
 
 const exportInsightsToPDF = async () => {
+  const { jsPDF, html2canvas } = await getPDFLibs();
   const pdf = new jsPDF('p', 'mm', 'a4');
   let y = 10;
 
@@ -2336,6 +2336,7 @@ const exportComparisonToCSV = () => {
 };
 
 const exportComparisonToPDF = async () => {
+  const { jsPDF } = await getPDFLibs();
   const pdf = new jsPDF('p', 'mm', 'a4');
   let y = 10;
 

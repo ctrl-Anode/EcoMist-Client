@@ -208,10 +208,8 @@ import { getAuth } from 'firebase/auth';
 import EcoMyDevice from './EcoMyDevice.vue';
 //import EcoDeviceData from './EcoDeviceData.vue';
 //import EcoDeviceWifi from './EcoDeviceWifi.vue';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import { getPDFLibs, getXLSX } from '../../utils/lazyLibs';
 import { saveAs } from 'file-saver';
-import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
 
 export default {
@@ -540,6 +538,7 @@ export default {
       this.showExportSummary('CSV', filename, data.exportSummary);
     },
     async exportToPDF(data) {
+      const { jsPDF } = await getPDFLibs();
       const doc = new jsPDF();
       const filename = `device_${this.selectedDevice.id}_export_${new Date().toISOString().split('T')[0]}.pdf`;
 
@@ -668,7 +667,8 @@ export default {
       doc.save(filename);
       this.showExportSummary('PDF', filename, data.exportSummary);
     },
-    exportToExcel(data) {
+    async exportToExcel(data) {
+      const XLSX = await getXLSX();
       const workbook = XLSX.utils.book_new();
       const filename = `device_${this.selectedDevice.id}_export_${new Date().toISOString().split('T')[0]}.xlsx`;
 

@@ -122,7 +122,7 @@ const navigationSections = computed(() => [
     title: 'GENERAL',
     routes: [
       { path: '/user/dashboard', name: 'Dashboard', meta: { requiresAuth: true } },
-      { path: '/user/messenger', name: 'Messenger', meta: { requiresAuth: true } }
+      { path: '/user/messenger', name: 'Community Chat', meta: { requiresAuth: true } }
     ]
   },
   {

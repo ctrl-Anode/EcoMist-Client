@@ -458,8 +458,6 @@
 import { ref, onMounted, nextTick, computed, watch } from 'vue';
 import { collection, getDocs, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../../firebase';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import { Chart, registerables } from 'chart.js';
 
 Chart.register(...registerables);
