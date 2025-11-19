@@ -9,7 +9,7 @@ import EcoUserParent from './views/EcoUserParent.vue';
 import EcoAdminParent from './views/EcoAdminParent.vue';
 
 import EcoTry from "./components/EcoTry.vue"
-
+import DemoPage from './components/LandingPage/DemoPage.vue';
 
 ///User
 import EcoUser_ProfilePage from './components/EcoUserChild/EcoUser_ProfilePage.vue';
@@ -43,6 +43,7 @@ const routes = [
   { path: '/', name: 'LandingPage', component: LandingPage },
   { path: '/auth', name: 'UserAuth', component: UserAuth },
   { path: '/try', name: 'EcoTry', component: EcoTry },
+  { path: '/demo', name: 'DemoPage', component: DemoPage },
   { path: '/unauthorized', name: 'EcoUnAuth', component: EcoUnAuth },
 
   {  // 🔹Tryyyyy EcoUserLayout for User Profile Display

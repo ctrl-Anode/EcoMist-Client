@@ -3655,6 +3655,8 @@ const addCustomCategory = async () => {
     return;
   }
   
+  const trimmedName = newCategoryName.value.trim();
+  
   const user = auth.currentUser;
   if (!user) {
     showError('Please sign in to add categories');
