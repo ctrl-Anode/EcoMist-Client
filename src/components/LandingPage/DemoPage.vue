@@ -312,7 +312,6 @@
 												<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
 												Play Video
 											</button>
-											<p class="text-xs text-white/70">Add /public/demo/login.mp4</p>
 										</div>
 									</div>
 								</div>
@@ -374,7 +373,6 @@
 												<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
 												Play Video
 											</button>
-											<p class="text-xs text-white/70">Add /public/demo/register.mp4</p>
 										</div>
 									</div>
 								</div>
@@ -436,7 +434,6 @@
 												<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
 												Play Video
 											</button>
-											<p class="text-xs text-white/70">Add /public/demo/dashboard.mp4</p>
 										</div>
 									</div>
 								</div>
@@ -498,7 +495,6 @@
 												<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
 												Play Video
 											</button>
-											<p class="text-xs text-white/70">Add /public/demo/chat.mp4</p>
 										</div>
 									</div>
 								</div>
@@ -552,7 +548,7 @@
 										@canplay="videoReady.financial = true"
 										@error="videoError('financial')"
 									>
-										<source src="/demo/financial.mp4" type="video/mp4" />
+										<!-- <source src="/demo/financial.mp4" type="video/mp4" /> -->
 									</video>
 									<div v-if="!videoReady.financial" class="absolute inset-0 grid place-items-center p-6 bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-sm">
 										<div class="text-center space-y-3">
@@ -560,7 +556,6 @@
 												<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
 												Play Video
 											</button>
-											<p class="text-xs text-white/70">Add /public/demo/financial.mp4</p>
 										</div>
 									</div>
 								</div>
@@ -622,7 +617,6 @@
 												<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
 												Play Video
 											</button>
-											<p class="text-xs text-white/70">Add /public/demo/cropanalysis.mp4</p>
 										</div>
 									</div>
 								</div>
@@ -676,7 +670,7 @@
 										@canplay="videoReady.sensordata = true"
 										@error="videoError('sensordata')"
 									>
-										<source src="/demo/sensordata.mp4" type="video/mp4" />
+										<!-- <source src="/demo/sensordata.mp4" type="video/mp4" /> -->
 									</video>
 									<div v-if="!videoReady.sensordata" class="absolute inset-0 grid place-items-center p-6 bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-sm">
 										<div class="text-center space-y-3">
@@ -684,7 +678,6 @@
 												<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
 												Play Video
 											</button>
-											<p class="text-xs text-white/70">Add /public/demo/sensordata.mp4</p>
 										</div>
 									</div>
 								</div>
@@ -746,7 +739,6 @@
 												<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
 												Play Video
 											</button>
-											<p class="text-xs text-white/70">Add /public/demo/settings.mp4</p>
 										</div>
 									</div>
 								</div>

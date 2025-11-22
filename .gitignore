@@ -49,3 +49,4 @@ firebase-debug.log
 .firebaserc
 .firebase/
 node_modules
+public/demo/*.mp4
