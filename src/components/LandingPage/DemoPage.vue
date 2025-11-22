@@ -238,6 +238,7 @@
 								</div>
 								<div class="relative rounded-2xl overflow-hidden border-2 border-emerald-100 bg-slate-50 shadow-md hover:shadow-lg transition-all duration-300">
 									<video
+										v-if="videoURLs.landingpage"
 										:ref="el => (videoEls.landingpage = el)"
 										class="w-full aspect-video bg-black"
 										controls
@@ -245,13 +246,10 @@
 										@canplay="videoReady.landingpage = true"
 										@error="videoError('landingpage')"
 									>
-										<source src="/demo/landingpage.mp4" type="video/mp4" />
+										<source :src="videoURLs.landingpage" type="video/mp4" />
 									</video>
-									<div v-if="!videoReady.landingpage" class="absolute inset-0 grid place-items-center p-6 bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-sm">
-										<button @click="play('landingpage')" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-slate-800 hover:bg-emerald-50 hover:text-emerald-700 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 font-medium">
-											<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-											Play Video
-										</button>
+									<div v-else class="absolute inset-0 grid place-items-center p-6 bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-sm">
+										<p class="text-white">Loading video...</p>
 									</div>
 								</div>
 							</div>
@@ -304,7 +302,7 @@
 										@canplay="videoReady.login = true"
 										@error="videoError('login')"
 									>
-										<source src="/demo/login.mp4" type="video/mp4" />
+										<source v-if="videoURLs.login" :src="videoURLs.login" type="video/mp4" />
 									</video>
 									<div v-if="!videoReady.login" class="absolute inset-0 grid place-items-center p-6 bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-sm">
 										<div class="text-center space-y-3">
@@ -365,7 +363,7 @@
 										@canplay="videoReady.register = true"
 										@error="videoError('register')"
 									>
-										<source src="/demo/register.mp4" type="video/mp4" />
+										<source v-if="videoURLs.register" :src="videoURLs.register" type="video/mp4" />
 									</video>
 									<div v-if="!videoReady.register" class="absolute inset-0 grid place-items-center p-6 bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-sm">
 										<div class="text-center space-y-3">
@@ -426,7 +424,7 @@
 										@canplay="videoReady.dashboard = true"
 										@error="videoError('dashboard')"
 									>
-										<source src="/demo/dashboard.mp4" type="video/mp4" />
+										<source v-if="videoURLs.dashboard" :src="videoURLs.dashboard" type="video/mp4" />
 									</video>
 									<div v-if="!videoReady.dashboard" class="absolute inset-0 grid place-items-center p-6 bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-sm">
 										<div class="text-center space-y-3">
@@ -487,7 +485,7 @@
 										@canplay="videoReady.chat = true"
 										@error="videoError('chat')"
 									>
-										<source src="/demo/chat.mp4" type="video/mp4" />
+										<source v-if="videoURLs.chat" :src="videoURLs.chat" type="video/mp4" />
 									</video>
 									<div v-if="!videoReady.chat" class="absolute inset-0 grid place-items-center p-6 bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-sm">
 										<div class="text-center space-y-3">
@@ -548,7 +546,7 @@
 										@canplay="videoReady.financial = true"
 										@error="videoError('financial')"
 									>
-										<!-- <source src="/demo/financial.mp4" type="video/mp4" /> -->
+										<source v-if="videoURLs.financial" :src="videoURLs.financial" type="video/mp4" />
 									</video>
 									<div v-if="!videoReady.financial" class="absolute inset-0 grid place-items-center p-6 bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-sm">
 										<div class="text-center space-y-3">
@@ -609,7 +607,7 @@
 										@canplay="videoReady.cropanalysis = true"
 										@error="videoError('cropanalysis')"
 									>
-										<source src="/demo/cropanalysis.mp4" type="video/mp4" />
+										<source v-if="videoURLs.cropanalysis" :src="videoURLs.cropanalysis" type="video/mp4" />
 									</video>
 									<div v-if="!videoReady.cropanalysis" class="absolute inset-0 grid place-items-center p-6 bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-sm">
 										<div class="text-center space-y-3">
@@ -670,7 +668,7 @@
 										@canplay="videoReady.sensordata = true"
 										@error="videoError('sensordata')"
 									>
-										<!-- <source src="/demo/sensordata.mp4" type="video/mp4" /> -->
+										<source v-if="videoURLs.sensordata" :src="videoURLs.sensordata" type="video/mp4" />
 									</video>
 									<div v-if="!videoReady.sensordata" class="absolute inset-0 grid place-items-center p-6 bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-sm">
 										<div class="text-center space-y-3">
@@ -731,7 +729,7 @@
 										@canplay="videoReady.settings = true"
 										@error="videoError('settings')"
 									>
-										<source src="/demo/settings.mp4" type="video/mp4" />
+										<source v-if="videoURLs.settings" :src="videoURLs.settings" type="video/mp4" />
 									</video>
 									<div v-if="!videoReady.settings" class="absolute inset-0 grid place-items-center p-6 bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-sm">
 										<div class="text-center space-y-3">
@@ -784,6 +782,10 @@
 		</button>
 	</transition>
 
+	
+
+	
+
 	<!-- Toast -->
 	<transition name="slide-up">
 		<div v-if="toast.show" role="status" aria-live="polite" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gradient-to-r from-slate-900 to-slate-800 text-white text-sm px-6 py-3 rounded-xl shadow-2xl backdrop-blur-sm border border-slate-700 flex items-center gap-3">
@@ -796,6 +798,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { getStorage, ref as storageRef, getDownloadURL } from 'firebase/storage'
 
 const sections = [
 	{ id: 'landingpage', title: 'Landing Page' },
@@ -817,6 +820,7 @@ const videoReady = ref({ landingpage: false, login: false, register: false, dash
 const showAdmin = ref(false)
 const toast = ref({ show: false, msg: '' })
 const sidebarOpen = ref(false)
+const videoURLs = ref({}); // Ensure videoURLs is initialized as an empty object
 const instructions = {
 	landingpage: [
 		'Agree on required permissions (cookies, notifications)',
@@ -977,6 +981,29 @@ onMounted(() => {
 function backToTop() {
 	window.scrollTo({ top: 0, behavior: 'smooth' })
 }
+
+async function fetchVideoURL(key, path) {
+  try {
+    const storage = getStorage();
+    const videoRef = storageRef(storage, path);
+    const url = await getDownloadURL(videoRef);
+    videoURLs.value[key] = url;
+  } catch (error) {
+    console.error(`Failed to fetch video URL for ${key}:`, error);
+  }
+}
+
+onMounted(() => {
+  fetchVideoURL('landingpage', 'videos/landingpage.mp4');
+  fetchVideoURL('login', 'videos/login.mp4');
+  fetchVideoURL('register', 'videos/register.mp4');
+  fetchVideoURL('dashboard', 'videos/dashboard.mp4');
+  fetchVideoURL('chat', 'videos/chat.mp4');
+  fetchVideoURL('financial', 'videos/financial.mp4');
+  fetchVideoURL('cropanalysis', 'videos/cropanalysis.mp4');
+  fetchVideoURL('sensordata', 'videos/sensordata.mp4');
+  fetchVideoURL('settings', 'videos/settings.mp4');
+});
 </script>
 
 <style scoped>
