@@ -30,6 +30,7 @@
     "lucide-vue-next": "^0.476.0",
     "marked": "^15.0.7",
     "papaparse": "^5.5.3",
+    "pdf-lib": "^1.17.1",
     "tailwind-scrollbar-hide": "^4.0.0",
     "tailwindcss": "^4.0.14",
     "uuid": "^11.0.5",

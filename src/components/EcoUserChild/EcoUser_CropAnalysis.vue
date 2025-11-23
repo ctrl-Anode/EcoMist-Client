@@ -863,26 +863,27 @@
   <!-- Export Buttons -->
       <div class="flex gap-3 justify-end mt-6">
         <button
-          @click="exportHistoryToCSV"
-          class="inline-flex items-center px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+          @click="exportHistoryToExcel"
+          class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
         >
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <!-- <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          Export CSV
+          </svg> -->
+          📊 Export Excel
         </button>
 
         <button
-          @click="exportInsightsToPDF"
-          class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+          @click="exportAnalysisHistoryToPDF"
+          class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
         >
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <!-- <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          Export PDF
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg> -->
+          📄 Export PDF
         </button>
+
       </div>
 </div>
 
@@ -984,25 +985,25 @@
   <!-- Export Buttons -->
       <div class="flex gap-3 justify-end mt-6">
         <button
-          @click="exportComparisonToCSV"
-          class="inline-flex items-center px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+          @click="exportComparisonToExcel"
+          class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
         >
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <!-- <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          Export CSV
+          </svg> -->
+          📊 Export Excel
         </button>
 
         <button
-          @click="exportComparisonToPDF"
-          class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+          @click="exportComparisonHistoryToPDF"
+          class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
         >
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <!-- <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          Export PDF
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg> -->
+          📄 Export PDF
         </button>
       </div>
 </div>
@@ -1277,8 +1278,9 @@
 
 <script setup>
 import { onSnapshot, query, where, orderBy, deleteDoc, doc, getDocs } from 'firebase/firestore';
-import { getPDFLibs } from '../../utils/lazyLibs';
+import { getPDFLibs, getPDFLib } from '../../utils/lazyLibs';
 import { onAuthStateChanged } from 'firebase/auth';
+import * as XLSX from 'xlsx';
 import { ref as vueRef,onMounted, watch, ref, nextTick,computed } from 'vue';
 import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
@@ -1287,6 +1289,20 @@ import {
   db,
   storage
 } from '../../firebase'; // your firebase.js
+import {
+  loadPDFTemplate,
+  createCoverPage,
+  createExecutiveSummary,
+  calculateSummaryStats,
+  chartToImage,
+  savePDF
+} from '../../utils/pdfGenerator';
+import {
+  createOverviewPage,
+  createAnalysisDetailsPage,
+  createChartPage,
+  createDiseaseInsightsPage
+} from '../../utils/pdfTemplates';
 import {
   addDoc,
   collection,
@@ -1933,136 +1949,337 @@ let pieChart = null;
 let lineChart = null;
 let barChart = null;
 
-const exportHistoryToCSV = () => {
-  if (!history.value.length) return;
+const exportHistoryToExcel = () => {
+  if (!history.value.length) {
+    showToast('No data to export', 'bg-yellow-500');
+    return;
+  }
 
-  const headers = [
-  'Prediction',
-  'Confidence',
-  'Created At',
-  'Image URL',
-  'Recommendations',
-  'Class Probabilities',
-  'User ID',
-  'Model Used',
-  'Model Version'
-];
+  try {
+    // Create a new workbook
+    const workbook = XLSX.utils.book_new();
 
+    // Prepare data with formatted values
+    const data = history.value.map((item, index) => ({
+      'No.': index + 1,
+      'Prediction': item.prediction || 'N/A',
+      'Confidence (%)': parseFloat((item.confidence * 100).toFixed(2)),
+      'Date & Time': item.createdAt?.toDate().toLocaleString() || 'N/A',
+      'Model Used': (item.modelUsed || 'v2').toUpperCase(),
+      'Model Version': item.modelVersion || '1.0.0',
+      'Image URL': item.imageUrl || '',
+      'User ID': item.userId || '',
+      'Recommendations': Array.isArray(item.recommendations) 
+        ? item.recommendations.join('; ') 
+        : JSON.stringify(item.recommendations || 'None'),
+      'Class Probabilities': JSON.stringify(item.classProbabilities || {})
+    }));
 
-  const rows = history.value.map(item => [
-  item.prediction,
-  (item.confidence * 100).toFixed(2) + '%',
-  item.createdAt?.toDate().toLocaleString() || '',
-  item.imageUrl || '',
-  JSON.stringify(item.recommendations || []),
-  JSON.stringify(item.classProbabilities || {}),
-  item.userId || '',
-  item.modelUsed || 'v2',
-  item.modelVersion || '1.0.0'
-]);
+    // Convert data to worksheet
+    const worksheet = XLSX.utils.json_to_sheet(data);
 
+    // Set column widths
+    const columnWidths = [
+      { wch: 5 },   // No.
+      { wch: 20 },  // Prediction
+      { wch: 15 },  // Confidence
+      { wch: 20 },  // Date & Time
+      { wch: 15 },  // Model Used
+      { wch: 15 },  // Model Version
+      { wch: 50 },  // Image URL
+      { wch: 30 },  // User ID
+      { wch: 60 },  // Recommendations
+      { wch: 40 }   // Class Probabilities
+    ];
+    worksheet['!cols'] = columnWidths;
 
-  const csvContent = [
-    headers.join(','),
-    ...rows.map(row =>
-      row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
-    )
-  ].join('\n');
+    // Apply cell styles (for headers)
+    const range = XLSX.utils.decode_range(worksheet['!ref']);
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      const address = XLSX.utils.encode_col(C) + '1';
+      if (!worksheet[address]) continue;
+      worksheet[address].s = {
+        font: { bold: true, color: { rgb: 'FFFFFF' } },
+        fill: { fgColor: { rgb: '10B981' } },
+        alignment: { horizontal: 'center', vertical: 'center' }
+      };
+    }
 
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
+    // Add worksheet to workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Analysis History');
 
-  const link = document.createElement('a');
-  link.href = url;
-  link.setAttribute('download', 'AeroTech-Detection-Report.csv');
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+    // Create a summary sheet
+    const summaryData = [
+      { 'Metric': 'Total Analyses', 'Value': history.value.length },
+      { 'Metric': 'Healthy', 'Value': history.value.filter(h => h.prediction === 'Healthy').length },
+      { 'Metric': 'Bacterial', 'Value': history.value.filter(h => h.prediction === 'Bacterial').length },
+      { 'Metric': 'Fungal', 'Value': history.value.filter(h => h.prediction === 'Fungal').length },
+      { 'Metric': 'Mosaic Virus', 'Value': history.value.filter(h => h.prediction === 'Mosaic Virus').length },
+      { 'Metric': 'Nutrient Deficiency', 'Value': history.value.filter(h => h.prediction === 'Nutrient Deficiency').length },
+      { 'Metric': 'Export Date', 'Value': new Date().toLocaleString() }
+    ];
+
+    const summarySheet = XLSX.utils.json_to_sheet(summaryData);
+    summarySheet['!cols'] = [{ wch: 25 }, { wch: 20 }];
+    XLSX.utils.book_append_sheet(workbook, summarySheet, 'Summary');
+
+    // Generate Excel file and download
+    const timestamp = new Date().toISOString().split('T')[0];
+    XLSX.writeFile(workbook, `AeroTech-Detection-Report-${timestamp}.xlsx`);
+    
+    showToast('Excel report generated successfully!', 'bg-green-500');
+  } catch (error) {
+    console.error('Excel export error:', error);
+    showToast('Failed to export Excel file', 'bg-red-500');
+  }
 };
 
-const exportInsightsToPDF = async () => {
-  const { jsPDF, html2canvas } = await getPDFLibs();
-  const pdf = new jsPDF('p', 'mm', 'a4');
-  let y = 10;
+/**
+ * Export Analysis History to Professional PDF with Template
+ */
+const exportAnalysisHistoryToPDF = async () => {
+  try {
+    loading.value = true;
+    showToast('Generating comprehensive PDF report...', 'bg-blue-500');
 
-  pdf.setFontSize(18);
-  pdf.text("Crop Disease Insights Report", 14, y);
-  y += 10;
+    // Load PDF template
+    const pdfDoc = await loadPDFTemplate('/format/AeroTech-Template.pdf');
 
-  pdf.setFontSize(12);
-  pdf.text(`Total Analyses: ${insights.value.total}`, 14, y += 10);
-  pdf.text(`Healthy: ${insights.value.Healthy}`, 14, y += 7);
-  pdf.text(`Bacterial: ${insights.value.Bacterial}`, 14, y += 7);
-  pdf.text(`Fungal: ${insights.value.Fungal}`, 14, y += 7);
+    // Prepare report data
+    const reportData = {
+      reportType: 'Crop Disease Analysis Report',
+      analysisMode: 'Single Image Analysis',
+      modelUsed: selectedModel.value === 'v3' ? 'LettuceModel V3' : 'LettuceModel V2',
+      dateRange: history.value.length > 0 
+        ? `${new Date(history.value[history.value.length - 1].createdAt?.toDate?.() || new Date()).toLocaleDateString()} - ${new Date(history.value[0].createdAt?.toDate?.() || new Date()).toLocaleDateString()}`
+        : 'No Data',
+      totalRecords: history.value.length,
+      dataSource: 'Firebase Firestore',
+      modelInfo: modelInfo.value,
+      scope: 'This report contains a comprehensive analysis of crop disease detection results from historical data. It includes detailed predictions, confidence levels, class probabilities, and actionable recommendations for each analysis performed.'
+    };
 
-  const addCanvasToPDF = async (canvasEl, label) => {
-    if (!canvasEl) return;
+    // Calculate statistics
+    const analysisData = history.value.map(item => ({
+      prediction: item.prediction,
+      confidence: item.confidence,
+      createdAt: item.createdAt?.toDate?.() || new Date()
+    }));
 
-    const canvas = await html2canvas(canvasEl, {
-      scale: 2,
-      useCORS: true
+    const stats = calculateSummaryStats(analysisData);
+
+    // Prepare insights for executive summary
+    const criticalInsights = [];
+    
+    if (stats.avgConfidence < 60) {
+      criticalInsights.push('[!] Low average confidence detected. Consider improving image quality.');
+    }
+    
+    if (stats.bacterial > stats.total * 0.3) {
+      criticalInsights.push('[B] High bacterial disease detection rate. Immediate attention recommended.');
+    }
+
+    if (stats.fungal > stats.total * 0.3) {
+      criticalInsights.push('[F] High fungal disease detection rate. Review environmental conditions.');
+    }
+
+    if (stats.notLettuce > stats.total * 0.1) {
+      criticalInsights.push('[!] Significant non-lettuce images detected. Verify sample quality.');
+    }
+
+    // Create pages
+    let pageCount = 1;
+
+    // Page 1: Cover Page
+    await createCoverPage(pdfDoc, {
+      title: 'AeroTech Analytics',
+      subtitle: 'Crop Disease Analysis Report',
+      reportType: 'Analysis History Export',
+      reportId: `AH-${Date.now()}`,
+      generatedDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      period: reportData.dateRange,
+      totalRecords: reportData.totalRecords,
+      modelVersion: reportData.modelUsed
     });
 
-    const imgData = canvas.toDataURL('image/png');
+    pageCount++;
 
-    if (y > 200) {
-      pdf.addPage();
-      y = 10;
+    // Page 2: Executive Summary
+    await createExecutiveSummary(pdfDoc, stats, criticalInsights);
+    pageCount++;
+
+    // Page 3: Overview
+    const totalPages = 3 + Math.min(history.value.length, 10) + 3 + 1; // Overview + Details + Charts + Insights
+    await createOverviewPage(pdfDoc, reportData, pageCount, totalPages);
+    pageCount++;
+
+    // Pages 4+: Analysis Details (limit to first 10 to avoid huge PDFs)
+    const itemsToInclude = history.value.slice(0, 10);
+    for (let i = 0; i < itemsToInclude.length; i++) {
+      await createAnalysisDetailsPage(pdfDoc, itemsToInclude[i], i, pageCount, totalPages);
+      pageCount++;
     }
 
-    pdf.setFontSize(14);
-    pdf.text(label, 14, y += 10);
-    pdf.addImage(imgData, 'PNG', 14, y += 5, 180, 90);
- 
-    y += 95;
-  };
+    // Add charts
+    await nextTick();
 
-  await nextTick(); // ensure charts are rendered
-
-  await addCanvasToPDF(chartPie.value, 'Disease Distribution');
-  await addCanvasToPDF(chartLine.value, 'Confidence Trend');
-  await addCanvasToPDF(chartBar.value, 'Average Confidence by Type');
-
-  // ✅ Add Disease-Specific Insights
-  pdf.addPage();
-  let dy = 10;
-
-  pdf.setFontSize(16);
-  pdf.text("Disease-Specific Insights", 14, dy);
-  dy += 10;
-  pdf.setFontSize(11);
-
-  Object.entries(diseaseInsights.value).forEach(([label, info]) => {
-    if (dy > 270) {
-      pdf.addPage();
-      dy = 10;
+    if (chartPie.value) {
+      const pieChartImage = await chartToImage(chartPie.value);
+      if (pieChartImage) {
+        await createChartPage(pdfDoc, 'Disease Distribution Analysis', pieChartImage, pageCount, totalPages);
+        pageCount++;
+      }
     }
 
-    pdf.setFont(undefined, 'bold');
-    pdf.text(`${label}`, 14, dy);
-    pdf.setFont(undefined, 'normal');
-
-    dy += 6;
-    pdf.text(`Occurrences: ${info.count}`, 18, dy += 6);
-    pdf.text(`Avg Confidence: ${info.avgConfidence.toFixed(2)}%`, 18, dy += 6);
-    pdf.text(`Last Detected: ${info.latest}`, 18, dy += 6);
-
-    if (info.recommendations.length) {
-      pdf.text(`Recommendations:`, 18, dy += 6);
-      info.recommendations.slice(0, 3).forEach((rec) => {
-        dy += 6;
-        if (dy > 270) {
-          pdf.addPage();
-          dy = 10;
-        }
-        pdf.text(`- ${rec}`, 22, dy);
-      });
+    if (chartLine.value) {
+      const lineChartImage = await chartToImage(chartLine.value);
+      if (lineChartImage) {
+        await createChartPage(pdfDoc, 'Confidence Trend Over Time', lineChartImage, pageCount, totalPages);
+        pageCount++;
+      }
     }
 
-    dy += 10;
-  });
+    if (chartBar.value) {
+      const barChartImage = await chartToImage(chartBar.value);
+      if (barChartImage) {
+        await createChartPage(pdfDoc, 'Average Confidence by Disease Type', barChartImage, pageCount, totalPages);
+        pageCount++;
+      }
+    }
 
-  pdf.save('AeroTech-Analytics-&-Insights-Report.pdf');
+    // Disease Insights Page
+    if (Object.keys(diseaseInsights.value).length > 0) {
+      await createDiseaseInsightsPage(pdfDoc, diseaseInsights.value, pageCount, totalPages);
+      pageCount++;
+    }
+
+    // Save PDF
+    await savePDF(pdfDoc, `AeroTech-Analysis-Report-${Date.now()}.pdf`);
+
+    showToast('✅ PDF report generated successfully!', 'bg-green-500');
+    loading.value = false;
+
+  } catch (error) {
+    console.error('❌ Error generating PDF:', error);
+    showToast('Failed to generate PDF report. Please try again.', 'bg-red-500');
+    loading.value = false;
+  }
+};
+
+/**
+ * Enhanced Export Insights to PDF with Template (Quick Export)
+ * Lightweight version for quick chart-based reports
+ */
+const exportInsightsToPDF = async () => {
+  try {
+    loading.value = true;
+    showToast('Generating insights PDF...', 'bg-blue-500');
+
+    // Load PDF template
+    const pdfDoc = await loadPDFTemplate('/format/AeroTech-Template.pdf');
+
+    // Prepare report data
+    const reportData = {
+      reportType: 'Quick Insights Report',
+      analysisMode: 'Analytics & Charts',
+      modelUsed: selectedModel.value === 'v3' ? 'LettuceModel V3' : 'LettuceModel V2',
+      dateRange: 'Recent Analysis',
+      totalRecords: insights.value.total,
+      dataSource: 'Real-time Analytics',
+      scope: 'Quick overview of crop disease analytics with visualization charts and disease-specific insights.'
+    };
+
+    // Calculate statistics from insights
+    const stats = {
+      total: insights.value.total,
+      healthy: insights.value.Healthy || 0,
+      bacterial: insights.value.Bacterial || 0,
+      fungal: insights.value.Fungal || 0,
+      mosaicVirus: insights.value['Mosaic Virus'] || 0,
+      nutrientDeficiency: insights.value['Nutrient Deficiency'] || 0,
+      notLettuce: insights.value['Not Lettuce'] || 0,
+      cannotClassify: insights.value['Cannot Classify'] || 0,
+      avgConfidence: insights.value.avgConfidence || 0,
+      highConfidence: 0,
+      mediumConfidence: 0,
+      lowConfidence: 0
+    };
+
+    // Create quick insights
+    const criticalInsights = [];
+    
+    if (stats.bacterial > stats.total * 0.2) {
+      criticalInsights.push('[B] Bacterial diseases detected. Review treatment protocols.');
+    }
+    
+    if (stats.fungal > stats.total * 0.2) {
+      criticalInsights.push('[F] Fungal diseases present. Check environmental conditions.');
+    }
+
+    if (stats.healthy > stats.total * 0.7) {
+      criticalInsights.push('[OK] High percentage of healthy crops detected.');
+    }
+
+    // Create pages
+    let pageCount = 1;
+    const totalPages = 5; // Cover + Summary + 3 Charts
+
+    // Page 1: Cover Page
+    await createCoverPage(pdfDoc, {
+      title: 'AeroTech Analytics',
+      subtitle: 'Quick Insights Report',
+      reportType: 'Analytics & Visualization',
+      reportId: `QI-${Date.now()}`,
+      generatedDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      period: reportData.dateRange,
+      totalRecords: reportData.totalRecords,
+      modelVersion: reportData.modelUsed
+    });
+
+    pageCount++;
+
+    // Page 2: Executive Summary
+    await createExecutiveSummary(pdfDoc, stats, criticalInsights);
+    pageCount++;
+
+    // Add charts
+    await nextTick();
+
+    if (chartPie.value) {
+      const pieChartImage = await chartToImage(chartPie.value);
+      if (pieChartImage) {
+        await createChartPage(pdfDoc, 'Disease Distribution', pieChartImage, pageCount, totalPages);
+        pageCount++;
+      }
+    }
+
+    if (chartLine.value) {
+      const lineChartImage = await chartToImage(chartLine.value);
+      if (lineChartImage) {
+        await createChartPage(pdfDoc, 'Confidence Trend', lineChartImage, pageCount, totalPages);
+        pageCount++;
+      }
+    }
+
+    if (chartBar.value) {
+      const barChartImage = await chartToImage(chartBar.value);
+      if (barChartImage) {
+        await createChartPage(pdfDoc, 'Average Confidence', barChartImage, pageCount, totalPages);
+        pageCount++;
+      }
+    }
+
+    // Save PDF
+    await savePDF(pdfDoc, `AeroTech-Quick-Insights-${Date.now()}.pdf`);
+
+    showToast('✅ Quick insights PDF generated!', 'bg-green-500');
+    loading.value = false;
+
+  } catch (error) {
+    console.error('❌ Error generating insights PDF:', error);
+    showToast('Failed to generate PDF. Please try again.', 'bg-red-500');
+    loading.value = false;
+  }
 };
 
 
@@ -2293,46 +2510,216 @@ const loadComparisonHistory = () => {
 
 };
 
-const exportComparisonToCSV = () => {
-  if (!comparisonHistory.value.length) return;
+const exportComparisonToExcel = () => {
+  if (!comparisonHistory.value.length) {
+    showToast('No comparison data to export', 'bg-yellow-500');
+    return;
+  }
 
- const headers = [
-  'Prediction 1', 'Confidence 1', 'Prediction 2', 'Confidence 2',
-  'Progression Detected', 'Created At', 'Image URL 1', 'Image URL 2',
-  'Model Used', 'Model Version'
-];
+  try {
+    // Create a new workbook
+    const workbook = XLSX.utils.book_new();
 
+    // Prepare comparison data with formatted values
+    const data = comparisonHistory.value.map((item, index) => ({
+      'No.': index + 1,
+      'Prediction 1': item.prediction1 || 'N/A',
+      'Confidence 1 (%)': parseFloat((item.confidence1 * 100).toFixed(2)),
+      'Prediction 2': item.prediction2 || 'N/A',
+      'Confidence 2 (%)': parseFloat((item.confidence2 * 100).toFixed(2)),
+      'Confidence Change (%)': parseFloat(((item.confidence2 - item.confidence1) * 100).toFixed(2)),
+      'Progression Detected': item.progressionDetected ? 'Yes' : 'No',
+      'Date & Time': item.createdAt?.toDate().toLocaleString() || 'N/A',
+      'Model Used': (item.modelUsed || 'v2').toUpperCase(),
+      'Model Version': item.modelVersion || '1.0.0',
+      'Image URL 1': item.imageUrl1 || '',
+      'Image URL 2': item.imageUrl2 || ''
+    }));
 
-  const rows = comparisonHistory.value.map(item => [
-  item.prediction1,
-  (item.confidence1 * 100).toFixed(2) + '%',
-  item.prediction2,
-  (item.confidence2 * 100).toFixed(2) + '%',
-  item.progressionDetected ? 'Yes' : 'No',
-  item.createdAt?.toDate().toLocaleString() || '',
-  item.imageUrl1,
-  item.imageUrl2,
-  item.modelUsed || 'v2',
-  item.modelVersion || '1.0.0'
-]);
+    // Convert data to worksheet
+    const worksheet = XLSX.utils.json_to_sheet(data);
 
+    // Set column widths
+    const columnWidths = [
+      { wch: 5 },   // No.
+      { wch: 20 },  // Prediction 1
+      { wch: 15 },  // Confidence 1
+      { wch: 20 },  // Prediction 2
+      { wch: 15 },  // Confidence 2
+      { wch: 18 },  // Confidence Change
+      { wch: 18 },  // Progression Detected
+      { wch: 20 },  // Date & Time
+      { wch: 15 },  // Model Used
+      { wch: 15 },  // Model Version
+      { wch: 50 },  // Image URL 1
+      { wch: 50 }   // Image URL 2
+    ];
+    worksheet['!cols'] = columnWidths;
 
-  const csvContent = [
-    headers.join(','),
-    ...rows.map(row =>
-      row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
-    )
-  ].join('\n');
+    // Apply cell styles for headers
+    const range = XLSX.utils.decode_range(worksheet['!ref']);
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      const address = XLSX.utils.encode_col(C) + '1';
+      if (!worksheet[address]) continue;
+      worksheet[address].s = {
+        font: { bold: true, color: { rgb: 'FFFFFF' } },
+        fill: { fgColor: { rgb: '6366F1' } },
+        alignment: { horizontal: 'center', vertical: 'center' }
+      };
+    }
 
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
+    // Conditional formatting for progression detection (highlight in yellow/red)
+    for (let R = range.s.r + 1; R <= range.e.r; ++R) {
+      const progressionCell = worksheet[XLSX.utils.encode_cell({ r: R, c: 6 })];
+      if (progressionCell && progressionCell.v === 'Yes') {
+        progressionCell.s = {
+          fill: { fgColor: { rgb: 'FEF3C7' } },
+          font: { bold: true, color: { rgb: 'D97706' } }
+        };
+      }
+    }
 
-  const link = document.createElement('a');
-  link.href = url;
-  link.setAttribute('download', 'AeroTech-Comparison-History.csv');
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+    // Add worksheet to workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Comparison History');
+
+    // Create a summary sheet
+    const progressionCount = comparisonHistory.value.filter(c => c.progressionDetected).length;
+    const summaryData = [
+      { 'Metric': 'Total Comparisons', 'Value': comparisonHistory.value.length },
+      { 'Metric': 'Progressions Detected', 'Value': progressionCount },
+      { 'Metric': 'No Change', 'Value': comparisonHistory.value.length - progressionCount },
+      { 'Metric': 'Average Confidence 1', 'Value': (comparisonHistory.value.reduce((sum, c) => sum + c.confidence1, 0) / comparisonHistory.value.length * 100).toFixed(2) + '%' },
+      { 'Metric': 'Average Confidence 2', 'Value': (comparisonHistory.value.reduce((sum, c) => sum + c.confidence2, 0) / comparisonHistory.value.length * 100).toFixed(2) + '%' },
+      { 'Metric': 'Export Date', 'Value': new Date().toLocaleString() }
+    ];
+
+    const summarySheet = XLSX.utils.json_to_sheet(summaryData);
+    summarySheet['!cols'] = [{ wch: 30 }, { wch: 25 }];
+    XLSX.utils.book_append_sheet(workbook, summarySheet, 'Summary');
+
+    // Add detailed class probabilities sheet
+    const detailedData = comparisonHistory.value.map((item, index) => ({
+      'Comparison No.': index + 1,
+      'Date': item.createdAt?.toDate().toLocaleString() || 'N/A',
+      'Class Probabilities 1': JSON.stringify(item.classProbabilities1 || {}),
+      'Class Probabilities 2': JSON.stringify(item.classProbabilities2 || {})
+    }));
+
+    const detailedSheet = XLSX.utils.json_to_sheet(detailedData);
+    detailedSheet['!cols'] = [{ wch: 15 }, { wch: 20 }, { wch: 50 }, { wch: 50 }];
+    XLSX.utils.book_append_sheet(workbook, detailedSheet, 'Detailed Probabilities');
+
+    // Generate Excel file and download
+    const timestamp = new Date().toISOString().split('T')[0];
+    XLSX.writeFile(workbook, `AeroTech-Comparison-Report-${timestamp}.xlsx`);
+    
+    showToast('Excel comparison report generated successfully!', 'bg-green-500');
+  } catch (error) {
+    console.error('Excel export error:', error);
+    showToast('Failed to export Excel file', 'bg-red-500');
+  }
+};
+
+/**
+ * Export Comparison History to Professional PDF with Template
+ */
+const exportComparisonHistoryToPDF = async () => {
+  try {
+    loading.value = true;
+    showToast('Generating comprehensive comparison PDF...', 'bg-blue-500');
+
+    // Load PDF template
+    const pdfDoc = await loadPDFTemplate('/format/AeroTech-Template.pdf');
+
+    // Prepare report data
+    const reportData = {
+      reportType: 'Crop Disease Comparison Report',
+      analysisMode: 'Before & After Comparison',
+      modelUsed: selectedModel.value === 'v3' ? 'LettuceModel V3' : 'LettuceModel V2',
+      dateRange: comparisonHistory.value.length > 0 
+        ? `${new Date(comparisonHistory.value[comparisonHistory.value.length - 1].createdAt?.toDate?.() || new Date()).toLocaleDateString()} - ${new Date(comparisonHistory.value[0].createdAt?.toDate?.() || new Date()).toLocaleDateString()}`
+        : 'No Data',
+      totalRecords: comparisonHistory.value.length,
+      dataSource: 'Firebase Firestore',
+      modelInfo: modelInfo.value,
+      scope: 'This report contains before and after comparison analysis of crop disease detection. It tracks disease progression, confidence changes, and provides insights into treatment effectiveness.'
+    };
+
+    // Calculate statistics
+    const comparisonData = comparisonHistory.value.map(item => ({
+      prediction: item.prediction1,
+      confidence: item.confidence1,
+      createdAt: item.createdAt?.toDate?.() || new Date()
+    }));
+
+    const stats = calculateSummaryStats(comparisonData);
+    stats.totalComparisons = comparisonHistory.value.length;
+    stats.progressionDetected = comparisonHistory.value.filter(item => item.progressionDetected).length;
+    stats.avgConfidenceChange = comparisonHistory.value.reduce((sum, item) => 
+      sum + ((item.confidence2 - item.confidence1) * 100), 0) / (comparisonHistory.value.length || 1);
+
+    // Prepare insights
+    const criticalInsights = [];
+    
+    if (stats.progressionDetected > stats.totalComparisons * 0.3) {
+      criticalInsights.push('[!] High rate of disease progression detected. Immediate intervention recommended.');
+    }
+    
+    if (stats.avgConfidenceChange > 10) {
+      criticalInsights.push('[UP] Average confidence increased significantly. Positive treatment response.');
+    } else if (stats.avgConfidenceChange < -10) {
+      criticalInsights.push('[DOWN] Average confidence decreased. Review treatment protocols.');
+    }
+
+    if (comparisonHistory.value.length < 5) {
+      criticalInsights.push('[i] Limited comparison data available. More samples recommended for accurate trends.');
+    }
+
+    // Create pages
+    let pageCount = 1;
+    const totalPages = 3 + Math.min(comparisonHistory.value.length, 10) + 1; // Cover + Summary + Overview + Comparisons + Charts
+
+    // Page 1: Cover Page
+    await createCoverPage(pdfDoc, {
+      title: 'AeroTech Analytics',
+      subtitle: 'Comparison Analysis Report',
+      reportType: 'Before & After Disease Tracking',
+      reportId: `CH-${Date.now()}`,
+      generatedDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      period: reportData.dateRange,
+      totalRecords: reportData.totalRecords,
+      modelVersion: reportData.modelUsed
+    });
+
+    pageCount++;
+
+    // Page 2: Executive Summary
+    await createExecutiveSummary(pdfDoc, stats, criticalInsights);
+    pageCount++;
+
+    // Page 3: Overview
+    await createOverviewPage(pdfDoc, reportData, pageCount, totalPages);
+    pageCount++;
+
+    // Pages 4+: Comparison Details (limit to first 10)
+    const itemsToInclude = comparisonHistory.value.slice(0, 10);
+    for (let i = 0; i < itemsToInclude.length; i++) {
+      const { createComparisonDetailsPage } = await import('../../utils/pdfTemplates');
+      await createComparisonDetailsPage(pdfDoc, itemsToInclude[i], i, pageCount, totalPages);
+      pageCount++;
+    }
+
+    // Save PDF
+    await savePDF(pdfDoc, `AeroTech-Comparison-Report-${Date.now()}.pdf`);
+
+    showToast('✅ Comparison PDF report generated successfully!', 'bg-green-500');
+    loading.value = false;
+
+  } catch (error) {
+    console.error('❌ Error generating comparison PDF:', error);
+    showToast('Failed to generate comparison PDF. Please try again.', 'bg-red-500');
+    loading.value = false;
+  }
 };
 
 const exportComparisonToPDF = async () => {

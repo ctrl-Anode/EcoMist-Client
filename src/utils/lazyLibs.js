@@ -10,6 +10,16 @@ export async function getPDFLibs() {
   return { jsPDF, autoTable: autoTableMod, html2canvas };
 }
 
+export async function getPDFLib() {
+  const mod = await import('pdf-lib');
+  return {
+    PDFDocument: mod.PDFDocument,
+    rgb: mod.rgb,
+    StandardFonts: mod.StandardFonts,
+    degrees: mod.degrees
+  };
+}
+
 export async function getXLSX() {
   const mod = await import('xlsx');
   return mod;
