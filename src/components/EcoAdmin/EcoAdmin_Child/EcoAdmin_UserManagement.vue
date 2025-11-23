@@ -1,32 +1,32 @@
 <template>
   <div class="min-h-screen bg-gray-50 flex flex-col">
       <!-- Main Content -->
-      <main class="flex-1 overflow-y-auto bg-gray-50 p-4 md:p-6">
+      <main class="flex-1 overflow-y-auto bg-gray-50 p-3 sm:p-4 md:p-6">
         <!-- Page Header -->
-        <div class="mb-6">
-          <h1 class="text-2xl font-bold text-gray-800">User Management</h1>
-          <p class="text-gray-600">Manage system users and their permissions</p>
+        <div class="mb-4 sm:mb-5 md:mb-6">
+          <h1 class="text-xl sm:text-2xl font-bold text-gray-800">User Management</h1>
+          <p class="text-sm sm:text-base text-gray-600">Manage system users and their permissions</p>
         </div>
 
         <!-- User Management Content -->
-        <div class="bg-white rounded-lg shadow-lg p-6">
-          <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+        <div class="bg-white rounded-lg shadow-lg p-3 sm:p-4 md:p-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 sm:mb-5 md:mb-6 gap-3 sm:gap-4">
             <!-- Search and Filter -->
-            <div class="flex flex-col md:flex-row gap-3 w-full">
+            <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full">
               <div class="relative flex-grow">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 <input 
                   type="text" 
                   v-model="searchQuery" 
                   placeholder="Search users..."
-                  class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent w-full"
+                  class="pl-8 sm:pl-10 pr-3 sm:pr-4 py-1.5 sm:py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent w-full"
                 >
               </div>
               <select 
                 v-model="statusFilter" 
-                class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                class="px-2 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
               >
                 <option value="all">All Status</option>
                 <option value="active">Active</option>
@@ -34,7 +34,7 @@
               </select>
               <select 
                 v-model="roleFilter" 
-                class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                class="px-2 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
               >
                 <option value="all">All Roles</option>
                 <option value="user">Users</option>
@@ -76,120 +76,125 @@
               <table class="w-full">
                 <thead>
                   <tr class="bg-gray-50">
-                    <th class="px-4 py-3 text-left">
-                      <div class="flex items-center gap-2 cursor-pointer" @click="sortUsers('username')">
-                        <span class="text-gray-700 font-medium">User</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <th class="px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 text-left">
+                      <div class="flex items-center gap-1 sm:gap-2 cursor-pointer" @click="sortUsers('username')">
+                        <span class="text-xs sm:text-sm md:text-base text-gray-700 font-medium">User</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
                         </svg>
                       </div>
                     </th>
-                    <th class="px-4 py-3 text-left">
-                      <div class="flex items-center gap-2 cursor-pointer" @click="sortUsers('email')">
-                        <span class="text-gray-700 font-medium">Email</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <th class="px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 text-left hidden md:table-cell">
+                      <div class="flex items-center gap-1 sm:gap-2 cursor-pointer" @click="sortUsers('email')">
+                        <span class="text-xs sm:text-sm md:text-base text-gray-700 font-medium">Email</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
                         </svg>
                       </div>
                     </th>
-                    <th class="px-4 py-3 text-left">
-                      <div class="flex items-center gap-2 cursor-pointer" @click="sortUsers('role')">
-                        <span class="text-gray-700 font-medium">Role</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <th class="px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 text-left">
+                      <div class="flex items-center gap-1 sm:gap-2 cursor-pointer" @click="sortUsers('role')">
+                        <span class="text-xs sm:text-sm md:text-base text-gray-700 font-medium">Role</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
                         </svg>
                       </div>
                     </th>
-                    <th class="px-4 py-3 text-left">
-                      <div class="flex items-center gap-2 cursor-pointer" @click="sortUsers('status')">
-                        <span class="text-gray-700 font-medium">Status</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <th class="px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 text-left">
+                      <div class="flex items-center gap-1 sm:gap-2 cursor-pointer" @click="sortUsers('status')">
+                        <span class="text-xs sm:text-sm md:text-base text-gray-700 font-medium">Status</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
                         </svg>
                       </div>
                     </th>
-                    <th class="px-4 py-3 text-left">
-                      <div class="flex items-center gap-2 cursor-pointer" @click="sortUsers('lastActive')">
-                        <span class="text-gray-700 font-medium">Last Active</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <th class="px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 text-left hidden lg:table-cell">
+                      <div class="flex items-center gap-1 sm:gap-2 cursor-pointer" @click="sortUsers('lastActive')">
+                        <span class="text-xs sm:text-sm md:text-base text-gray-700 font-medium">Last Active</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
                         </svg>
                       </div>
                     </th>
-                    <th class="px-4 py-3 text-left">
-                      <span class="text-gray-700 font-medium">Actions</span>
+                    <th class="px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 text-left">
+                      <span class="text-xs sm:text-sm md:text-base text-gray-700 font-medium">Actions</span>
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="user in paginatedUsers" :key="user.id" :class="{ 'opacity-60': user.status === 'deactivated' }" class="border-t border-gray-200 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3">
-                      <div class="flex items-center gap-3">
-                        <img :src="user.profileImage || defaultAvatar" :alt="user.username" class="w-8 h-8 rounded-full object-cover">
-                        <span class="text-gray-800 font-medium">{{ user.username || "Unknown" }}</span>
+                    <td class="px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3">
+                      <div class="flex items-center gap-2 sm:gap-3">
+                        <img :src="user.profileImage || defaultAvatar" :alt="user.username" class="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-full object-cover flex-shrink-0">
+                        <div class="flex flex-col min-w-0">
+                          <span class="text-xs sm:text-sm md:text-base text-gray-800 font-medium truncate">{{ user.username || "Unknown" }}</span>
+                          <span class="text-[10px] sm:text-xs text-gray-500 truncate md:hidden">{{ user.email }}</span>
+                        </div>
                       </div>
                     </td>
-                    <td class="px-4 py-3 text-gray-600">{{ user.email }}</td>
-                    <td class="px-4 py-3">
+                    <td class="px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 text-xs sm:text-sm text-gray-600 hidden md:table-cell">
+                      <span class="truncate block">{{ user.email }}</span>
+                    </td>
+                    <td class="px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3">
                       <select 
                         v-model="user.role" 
                         @change="updateUserRole(user)"
                         :disabled="user.status === 'deactivated'"
-                        class="px-2 py-1 rounded-full text-xs font-medium"
+                        class="px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium"
                         :class="user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'"
                       >
                         <option value="user">User</option>
                         <option value="admin">Admin</option>
                       </select>
                     </td>
-                    <td class="px-4 py-3">
-                      <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium" 
+                    <td class="px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3">
+                      <span class="inline-flex items-center gap-0.5 sm:gap-1 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium" 
                         :class="user.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'">
-                        <svg v-if="user.status === 'active'" xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg v-if="user.status === 'active'" xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-3.5 md:w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                         </svg>
-                        <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-3.5 md:w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
-                        {{ user.status === 'deactivated' ? 'Deactivated' : 'Active' }}
+                        <span class="hidden sm:inline">{{ user.status === 'deactivated' ? 'Deactivated' : 'Active' }}</span>
                       </span>
                     </td>
-                    <td class="px-4 py-3">
-                      <span class="inline-flex items-center gap-1 text-gray-500 text-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <td class="px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 hidden lg:table-cell">
+                      <span class="inline-flex items-center gap-1 text-gray-500 text-xs sm:text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-3.5 sm:w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         {{ formatLastActive(user.lastActive) }}
                       </span>
                     </td>
-                    <td class="px-4 py-3">
-                      <div class="flex items-center gap-2">
+                    <td class="px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3">
+                      <div class="flex items-center gap-1 sm:gap-2">
                         <button 
                           v-if="user.status === 'active'" 
                           @click="confirmDeactivation(user)" 
-                          class="p-1.5 rounded-lg bg-yellow-50 text-yellow-600 hover:bg-yellow-100 transition-colors"
+                          class="p-1 sm:p-1.5 rounded-lg bg-yellow-50 text-yellow-600 hover:bg-yellow-100 transition-colors"
                           title="Deactivate User"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
                           </svg>
                         </button>
                         <button 
                           v-else 
                           @click="confirmReactivation(user)" 
-                          class="p-1.5 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 transition-colors"
+                          class="p-1 sm:p-1.5 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 transition-colors"
                           title="Reactivate User"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                         </button>
                         <button 
                           @click="confirmDeletion(user)" 
-                          class="p-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
+                          class="p-1 sm:p-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
                           title="Delete User"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
                         </button>
@@ -201,26 +206,26 @@
             </div>
 
             <!-- Pagination -->
-            <div class="flex items-center justify-between px-4 py-3 bg-gray-50 border-t border-gray-200">
-              <div class="text-sm text-gray-600">
-                Showing {{ paginationStart + 1 }}-{{ Math.min(paginationStart + itemsPerPage, filteredUsers.length) }} of {{ filteredUsers.length }}
+            <div class="flex items-center justify-between px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 bg-gray-50 border-t border-gray-200">
+              <div class="text-xs sm:text-sm text-gray-600">
+                <span class="hidden sm:inline">Showing </span>{{ paginationStart + 1 }}-{{ Math.min(paginationStart + itemsPerPage, filteredUsers.length) }} <span class="hidden sm:inline">of</span><span class="sm:hidden">/</span> {{ filteredUsers.length }}
               </div>
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-1 sm:gap-2">
                 <button 
                   @click="prevPage" 
                   :disabled="currentPage === 1"
-                  class="p-1.5 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="p-1 sm:p-1.5 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
                 <button 
                   @click="nextPage" 
                   :disabled="currentPage === totalPages"
-                  class="p-1.5 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="p-1 sm:p-1.5 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                   </svg>
                 </button>
@@ -240,12 +245,12 @@
       </main>
 
     <!-- Confirmation Modal -->
-    <div v-if="showModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div v-if="showModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50">
       <div class="bg-white rounded-lg shadow-xl max-w-md w-full" @click.stop>
-        <div class="p-6">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xl font-bold flex items-center gap-2" :class="getModalHeaderClass()">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" :class="getModalIconClass()" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="p-4 sm:p-5 md:p-6">
+          <div class="flex items-center justify-between mb-3 sm:mb-4">
+            <h3 class="text-lg sm:text-xl font-bold flex items-center gap-1.5 sm:gap-2" :class="getModalHeaderClass()">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" :class="getModalIconClass()" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path v-if="modalType === 'deactivate'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
                 <path v-else-if="modalType === 'reactivate'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -253,27 +258,27 @@
               {{ modalTitle }}
             </h3>
             <button @click="closeModal" class="text-gray-500 hover:text-gray-700">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
-          <div class="mb-6">
-            <p class="text-gray-600 mb-4">{{ modalMessage }}</p>
-            <div v-if="modalType === 'deactivate'" class="flex items-start gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-700 text-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div class="mb-4 sm:mb-5 md:mb-6">
+            <p class="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">{{ modalMessage }}</p>
+            <div v-if="modalType === 'deactivate'" class="flex items-start gap-1.5 sm:gap-2 p-2 sm:p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-700 text-xs sm:text-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
               <span>This will prevent the user from accessing their account</span>
             </div>
           </div>
-          <div class="flex justify-end gap-3">
-            <button @click="closeModal" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+          <div class="flex justify-end gap-2 sm:gap-3">
+            <button @click="closeModal" class="px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
               Cancel
             </button>
             <button 
               @click="handleModalConfirm" 
-              class="px-4 py-2 rounded-lg text-white transition-colors"
+              class="px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base rounded-lg text-white transition-colors"
               :class="getModalButtonClass()"
             >
               {{ modalConfirmText }}
@@ -285,35 +290,35 @@
 
     <!-- Toast Notification -->
     <div v-if="toast.show" 
-         class="fixed bottom-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2"
+         class="fixed bottom-3 right-3 sm:bottom-4 sm:right-4 px-3 sm:px-4 py-2 sm:py-3 rounded-lg shadow-lg z-50 flex items-center gap-1.5 sm:gap-2 max-w-[calc(100vw-1.5rem)] sm:max-w-md"
          :class="toast.type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'">
-      <svg v-if="toast.type === 'success'" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg v-if="toast.type === 'success'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
       </svg>
-      <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
-      {{ toast.message }}
+      <span class="text-sm sm:text-base">{{ toast.message }}</span>
     </div>
 
     <!-- Logout Confirmation Modal -->
-    <div v-if="showLogoutModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div v-if="showLogoutModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50">
       <div class="bg-white rounded-lg shadow-xl max-w-md w-full" @click.stop>
-        <div class="p-6">
-          <h3 class="text-xl font-bold text-green-700 mb-4">Confirm Logout</h3>
-          <p class="text-gray-600 mb-6">Are you sure you want to log out?</p>
-          <div class="flex justify-end gap-4">
+        <div class="p-4 sm:p-5 md:p-6">
+          <h3 class="text-lg sm:text-xl font-bold text-green-700 mb-3 sm:mb-4">Confirm Logout</h3>
+          <p class="text-sm sm:text-base text-gray-600 mb-4 sm:mb-5 md:mb-6">Are you sure you want to log out?</p>
+          <div class="flex justify-end gap-2 sm:gap-3 md:gap-4">
             <button 
               @click="showLogoutModal = false"
-              class="px-4 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
+              class="px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>
             <button 
               @click="logout"
-              class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors flex items-center gap-2"
+              class="px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors flex items-center gap-1.5 sm:gap-2"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
               Logout
             </button>
           </div>

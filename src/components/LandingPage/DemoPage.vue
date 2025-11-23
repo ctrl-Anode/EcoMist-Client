@@ -765,7 +765,7 @@
 							<p class="text-slate-600">Join AeroTech today and experience the future of smart agriculture.</p>
 						</div>
 						<router-link to="/auth" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:from-emerald-700 hover:to-teal-700 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 font-semibold text-base">
-							Start Using EcoMist
+							Start Using AeroTech
 							<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
 						</router-link>
 					</div>
