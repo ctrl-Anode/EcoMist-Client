@@ -1,395 +1,1135 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 px-4 py-8">
-    <div class="max-w-5xl mx-auto">
+  <div class="eco-admin-super-admin">
+    <div class="header-section">
+      <h1>🎮 Sensor Simulation Control</h1>
+      <p class="subtitle">Manage individual sensor simulations with precision controls</p>
+      <p class="info-text">
+        💡 When simulation is OFF: Real sensor data is pushed to Firebase. When ON: Simulated data replaces real data.
+      </p>
+    </div>
 
-      <!-- Header -->
-      <div class="mb-8">
-        <div class="flex items-center gap-3 mb-2">
-          <div class="p-2 bg-emerald-600 rounded-lg">
-            <Monitor class="w-6 h-6 text-white" />
+    <div class="control-panel">
+      <div class="device-selector">
+        <label for="device-select">Select Device:</label>
+        <select id="device-select" v-model="selectedDeviceId" @change="onDeviceChange" class="device-input">
+          <option value="">-- Choose a device --</option>
+          <option v-for="device in devices" :key="device.id" :value="device.id">
+            {{ device.name }} ({{ device.id }})
+          </option>
+        </select>
+      </div>
+      <button v-if="selectedDeviceId" @click="loadDeviceStatus" class="refresh-btn">🔄 Refresh Status</button>
+    </div>
+
+    <div v-if="selectedDeviceId" class="sensors-grid">
+      <div v-for="sensor in sensors" :key="sensor.id" :class="['sensor-card', { active: sensor.simulationEnabled }]">
+        <div class="sensor-header">
+          <div class="sensor-title">
+            <span class="sensor-icon">{{ getSensorIcon(sensor.id) }}</span>
+            <div class="title-info">
+              <h2>{{ sensor.name }}</h2>
+              <span class="sensor-type">{{ sensor.type }}</span>
+            </div>
           </div>
-          <h1 class="text-3xl font-bold text-gray-900">Device Management</h1>
+          <label class="toggle-switch">
+            <input 
+              type="checkbox" 
+              v-model="sensor.simulationEnabled" 
+              @change="toggleSimulation(sensor)"
+            />
+            <span class="slider"></span>
+          </label>
         </div>
-        <p class="text-gray-600 ml-14">Monitor, manage, and simulate connected devices</p>
-      </div>
 
-      <!-- Loading -->
-      <div v-if="loading" class="flex flex-col items-center justify-center py-16">
-        <Loader2 class="w-12 h-12 text-emerald-600 animate-spin mb-4" />
-        <p class="text-gray-500 text-lg">Loading devices...</p>
-      </div>
-
-      <!-- Empty -->
-      <div v-else-if="Object.keys(devices).length === 0" class="text-center py-16">
-        <div class="inline-flex p-4 bg-gray-100 rounded-full mb-4">
-          <MonitorOff class="w-12 h-12 text-gray-400" />
-        </div>
-        <h3 class="text-xl font-semibold text-gray-700 mb-2">No devices found</h3>
-        <p class="text-gray-500">Connect a device to get started</p>
-      </div>
-
-      <!-- Device Grid -->
-      <div v-else class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div
-          v-for="(device, id) in devices"
-          :key="id"
-          class="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200 overflow-hidden"
-        >
-          <!-- Status Bar -->
-          <div
-            class="h-1.5"
-            :class="device.status === 'online' ? 'bg-emerald-500' : 'bg-gray-300'"
-          />
-
-          <div class="p-6 space-y-4">
-            <!-- Device Header -->
-            <div class="flex items-start justify-between">
-              <div class="flex items-center gap-3">
-                <div
-                  class="p-2.5 rounded-lg"
-                  :class="device.status === 'online' ? 'bg-emerald-100' : 'bg-gray-100'"
-                >
-                  <Smartphone
-                    class="w-5 h-5"
-                    :class="device.status === 'online' ? 'text-emerald-600' : 'text-gray-400'"
-                  />
-                </div>
-                <div>
-                  <h3 class="text-lg font-semibold text-gray-900">
-                    {{ device.devicename || `Device-${id}` }}
-                  </h3>
-                  <p class="text-sm text-gray-500 font-mono">{{ id }}</p>
-                </div>
-              </div>
-
-              <!-- Status Badge -->
-              <span
-                class="px-3 py-1 rounded-full text-xs font-medium"
-                :class="device.status === 'online'
-                  ? 'bg-emerald-100 text-emerald-700'
-                  : 'bg-gray-100 text-gray-600'"
-              >
-                {{ device.status }}
-              </span>
+        <transition name="expand">
+          <div v-if="sensor.simulationEnabled" class="sensor-controls">
+            <!-- Current Value Display -->
+            <div class="current-value">
+              <span>Current Value:</span>
+              <span class="value-display">{{ sensor.currentValue }} {{ sensor.unit }}</span>
             </div>
 
-            <!-- Simulation Mode -->
-            <div class="flex items-center gap-2">
-              <Monitor
-                class="w-4 h-4"
-                :class="device.simulation_mode ? 'text-orange-500' : 'text-gray-400'"
+            <!-- Noise Control -->
+            <div class="control-group">
+              <label for="noise-{{ sensor.id }}" class="control-label">
+                <span class="label-text">Noise Level</span>
+                <span class="label-value">{{ sensor.noise.toFixed(2) }}</span>
+              </label>
+              <input
+                :id="`noise-${sensor.id}`"
+                type="range"
+                :min="sensor.noiseRange.min"
+                :max="sensor.noiseRange.max"
+                step="0.01"
+                v-model="sensor.noise"
+                @change="updateNoise(sensor)"
+                class="slider-input"
               />
-              <span class="text-gray-600">Simulation Mode:</span>
-              <span
-                class="font-medium"
-                :class="device.simulation_mode ? 'text-orange-600' : 'text-gray-700'"
-              >
-                {{ device.simulation_mode ? 'Active' : 'Disabled' }}
-              </span>
-            </div>
-
-            <!-- Sensor Selection -->
-            <div class="pt-2">
-              <p class="text-sm font-medium text-gray-700 mb-1">Select Sensors to Simulate:</p>
-              <div class="grid grid-cols-2 gap-2">
-                <div
-                  v-for="sensor in sensorList"
-                  :key="sensor.key"
-                  class="flex flex-col gap-2 border p-2 rounded"
-                >
-                  <div class="flex items-center gap-2">
-                    <span class="text-gray-600 text-sm">{{ sensor.label }}</span>
-                  </div>
-                  <!-- Show min/max thresholds -->
-                  <div v-if="device.thresholds && device.thresholds[sensor.key]" class="text-xs text-gray-500">
-                    Min: {{ device.thresholds[sensor.key].min }} | Max: {{ device.thresholds[sensor.key].max }}
-                  </div>
-                  <!-- Normal Simulation Toggle -->
-                  <button
-                    class="px-2 py-1 rounded text-white text-xs transition"
-                    :class="device.simulation[sensor.key]?.normal ? 'bg-gray-400 hover:bg-gray-500' : 'bg-blue-500 hover:bg-blue-600'"
-                    @click="toggleSensorSimulation(device.id, sensor.key, 'normal')"
-                  >
-                    {{ device.simulation[sensor.key]?.normal ? 'Disable' : 'Enable' }} Normal Simulation
-                  </button>
-                  <!-- Breached Simulation Toggle -->
-                  <div class="flex items-center gap-2">
-                    <select
-                      :value="device.simulation[sensor.key]?.breachType || 'max'"
-                      class="border border-gray-300 rounded px-2 py-1 text-xs"
-                      @change="updateBreachType(device.id, sensor.key, $event.target.value)"
-                    >
-                      <option value="min">Breach Min</option>
-                      <option value="max">Breach Max</option>
-                    </select>
-                    <button
-                      class="px-2 py-1 rounded text-white text-xs transition"
-                      :class="device.simulation[sensor.key]?.breached ? 'bg-gray-400 hover:bg-gray-500' : 'bg-orange-500 hover:bg-orange-600'"
-                      @click="toggleSensorSimulation(device.id, sensor.key, 'breached')"
-                    >
-                      {{ device.simulation[sensor.key]?.breached ? 'Disable' : 'Enable' }} Breached Simulation
-                    </button>
-                  </div>
-                </div>
+              <div class="range-labels">
+                <span>{{ sensor.noiseRange.min }}</span>
+                <span>{{ sensor.noiseRange.max }}</span>
               </div>
             </div>
 
-            <!-- Simulation Buttons -->
-            <div class="flex items-center gap-3 pt-3">
-              <button
-                class="px-3 py-1 rounded bg-emerald-500 text-white text-sm hover:bg-emerald-600 transition"
-                @click="simulateDevice(device.id, 'normal')"
-              >
-                Normal Simulation
-              </button>
-              <div class="flex items-center gap-2">
-                <select
-                  v-model="device.breachType"
-                  class="border border-gray-300 rounded px-2 py-1 text-sm"
+            <!-- Drift Speed Control -->
+            <div class="control-group">
+              <label for="drift-{{ sensor.id }}" class="control-label">
+                <span class="label-text">Drift Speed</span>
+                <span class="label-value">{{ sensor.driftSpeed.toFixed(3) }}</span>
+              </label>
+              <input
+                :id="`drift-${sensor.id}`"
+                type="range"
+                :min="sensor.driftRange.min"
+                :max="sensor.driftRange.max"
+                step="0.001"
+                v-model="sensor.driftSpeed"
+                @change="updateDriftSpeed(sensor)"
+                class="slider-input"
+              />
+              <div class="range-labels">
+                <span>{{ sensor.driftRange.min }}</span>
+                <span>{{ sensor.driftRange.max }}</span>
+              </div>
+            </div>
+
+            <!-- Simulation Modes -->
+            <div class="simulation-modes">
+              <p class="modes-title">Simulation Scenarios</p>
+              <div class="modes-buttons">
+                <button 
+                  @click="simulateMode(sensor, 'safe')" 
+                  class="mode-button safe"
+                  :title="sensor.id === 'distance' ? 'Safe water level: distance ≤ minimum threshold (good water)' : 'Simulate within safe minimum to maximum threshold range'"
                 >
-                  <option value="min">Breach Min</option>
-                  <option value="max">Breach Max</option>
-                </select>
-                <button
-                  class="px-3 py-1 rounded bg-orange-500 text-white text-sm hover:bg-orange-600 transition"
-                  @click="simulateDevice(device.id, 'breached')"
+                  ✓ Safe Range
+                </button>
+                <button 
+                  @click="simulateMode(sensor, 'above')" 
+                  v-if="sensor.hasAboveBelow"
+                  class="mode-button above"
+                  title="Simulate above maximum threshold"
                 >
-                  Breached Simulation
+                  ⬆ Above Threshold
+                </button>
+                <button 
+                  @click="simulateMode(sensor, 'below')" 
+                  class="mode-button below"
+                  :title="sensor.id === 'distance' ? 'Simulate low water level (distance > threshold)' : 'Simulate below minimum threshold'"
+                >
+                  {{ sensor.id === 'distance' ? '⬆ Low Water' : '⬇ Below Threshold' }}
                 </button>
               </div>
-              <button
-                class="px-3 py-1 rounded text-white text-sm transition"
-                :class="device.simulation_mode ? 'bg-gray-400 hover:bg-gray-500' : 'bg-blue-500 hover:bg-blue-600'"
-                @click="toggleDeviceSimulation(device.id)"
-              >
-                {{ device.simulation_mode ? 'Disable' : 'Enable' }} Simulation
-              </button>
             </div>
 
+            <!-- Status Indicator -->
+            <div class="status-indicator">
+              <span v-if="sensor.lastUpdated" class="last-updated">
+                Last updated: {{ sensor.lastUpdated }}
+              </span>
+              <span v-if="sensor.isUpdating" class="updating">
+                ⏳ Updating...
+              </span>
+              <span v-if="sensor.updateError" class="error">
+                ❌ Error: {{ sensor.updateError }}
+              </span>
+            </div>
           </div>
-        </div>
+        </transition>
       </div>
+    </div>
 
+    <div v-if="!selectedDeviceId" class="no-device-selected">
+      <p>Please select a device to manage its simulation settings.</p>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue'
-import { getDatabase, ref as dbRef, onValue, set } from 'firebase/database'
-import { Monitor, Smartphone, Loader2, MonitorOff } from 'lucide-vue-next'
+<script>
+import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
+import { getDatabase, ref as dbRef, onValue, set, get, child } from 'firebase/database';
 
-const devices = ref({})
-const loading = ref(true)
-const db = getDatabase()
-const devicesRef = dbRef(db, 'devices')
+export default {
+  name: "EcoAdminSuperAdmin",
+  setup() {
+    const selectedDeviceId = ref('');
+    const devices = ref([]);
+    const database = getDatabase();
+    const unsubscribers = ref([]);
 
-// List of sensors
-const sensorList = [
-  { key: 'humidity', label: 'Humidity' },
-  { key: 'airTemp', label: 'Air Temperature' },
-  { key: 'waterTemp', label: 'Water Temperature' },
-  { key: 'ph', label: 'pH' },
-  { key: 'tds', label: 'TDS' },
-  { key: 'distance', label: 'Water Level' }
-]
+    const sensors = reactive([
+      {
+        id: 'humidity',
+        name: 'DHT22 - Humidity',
+        type: 'Humidity Sensor',
+        simulationEnabled: false,
+        noise: 0.5,
+        driftSpeed: 0.02,
+        currentValue: '-- ',
+        unit: '%',
+        hasAboveBelow: true,
+        noiseRange: { min: 0, max: 5 },
+        driftRange: { min: 0, max: 0.5 },
+        lastUpdated: '',
+        isUpdating: false,
+        updateError: '',
+      },
+      {
+        id: 'airTemp',
+        name: 'DHT22 - Air Temperature',
+        type: 'Temperature Sensor',
+        simulationEnabled: false,
+        noise: 0.5,
+        driftSpeed: 0.02,
+        currentValue: '-- ',
+        unit: '°C',
+        hasAboveBelow: true,
+        noiseRange: { min: 0, max: 5 },
+        driftRange: { min: 0, max: 0.5 },
+        lastUpdated: '',
+        isUpdating: false,
+        updateError: '',
+      },
+      {
+        id: 'waterTemp',
+        name: 'DS18B20 - Water Temperature',
+        type: 'Temperature Sensor',
+        simulationEnabled: false,
+        noise: 0.5,
+        driftSpeed: 0.02,
+        currentValue: '-- ',
+        unit: '°C',
+        hasAboveBelow: true,
+        noiseRange: { min: 0, max: 5 },
+        driftRange: { min: 0, max: 0.5 },
+        lastUpdated: '',
+        isUpdating: false,
+        updateError: '',
+      },
+      {
+        id: 'distance',
+        name: 'Ultrasonic - Water Level',
+        type: 'Distance Sensor',
+        simulationEnabled: false,
+        noise: 0.5,
+        driftSpeed: 0.02,
+        currentValue: '-- ',
+        unit: 'cm',
+        hasAboveBelow: false,
+        noiseRange: { min: 0, max: 5 },
+        driftRange: { min: 0, max: 0.5 },
+        lastUpdated: '',
+        isUpdating: false,
+        updateError: '',
+      },
+      {
+        id: 'tds',
+        name: 'TDS Meter V1.0',
+        type: 'Water Quality Sensor',
+        simulationEnabled: false,
+        noise: 2,
+        driftSpeed: 0.01,
+        currentValue: '-- ',
+        unit: 'ppm',
+        hasAboveBelow: true,
+        noiseRange: { min: 0, max: 10 },
+        driftRange: { min: 0, max: 0.5 },
+        lastUpdated: '',
+        isUpdating: false,
+        updateError: '',
+      },
+      {
+        id: 'ph',
+        name: 'pH Sensor - 4502C',
+        type: 'pH Sensor',
+        simulationEnabled: false,
+        noise: 0.01,
+        driftSpeed: 0.02,
+        currentValue: '-- ',
+        unit: 'pH',
+        hasAboveBelow: true,
+        noiseRange: { min: 0, max: 0.5 },
+        driftRange: { min: 0, max: 0.5 },
+        lastUpdated: '',
+        isUpdating: false,
+        updateError: '',
+      },
+    ]);
 
-// Utility: calculate ±20% breach range
-const getBreachRange = (min, max, type) => {
-  if (type === 'min') return { min: min * 0.8, max };
-  if (type === 'max') return { min, max: max * 1.2 };
-  return { min, max };
-};
-
-// Fetch all devices live
-onMounted(() => {
-  onValue(devicesRef, (snapshot) => {
-    const data = snapshot.val() || {}
-    for (const id in data) {
-      data[id].selectedSensors = data[id].selectedSensors || []
-      data[id].breachType = data[id].breachType || 'max'
-      data[id].id = id
-      data[id].thresholds = data[id].thresholds || {
-        humidity: { min: 50, max: 70 },
-        airTemp: { min: 18, max: 25 },
-        waterTemp: { min: 18, max: 22 },
-        ph: { min: 5.5, max: 6.5 },
-        tds: { min: 560, max: 840 },
-        distance: { min: 10, max: 25 }
-      }
-      data[id].simulation = data[id].simulation || {}
-    }
-    devices.value = data
-    loading.value = false
-  })
-})
-
-// Simulate selected sensors for a device
-const simulateDevice = async (deviceId, mode) => {
-  try {
-    const device = devices.value[deviceId];
-    if (!device || !device.selectedSensors.length) {
-      alert('Select at least one sensor!');
-      return;
-    }
-
-    for (const sensor of device.selectedSensors) {
-      const thresholds = device.thresholds[sensor];
-      if (!thresholds) continue;
-
-      const range =
-        mode === 'breached'
-          ? getBreachRange(thresholds.min, thresholds.max, device.breachType)
-          : thresholds;
-
-      const sensorRef = dbRef(db, `devices/${deviceId}/simulation/${sensor}`);
-      await set(sensorRef, {
-        normal: mode === 'normal',
-        breached: mode === 'breached',
-        breached_type: mode === 'breached' ? device.breachType : '',
-        minValue: range.min,
-        maxValue: range.max,
-      });
-    }
-
-    // Enable global simulation mode
-    const simModeRef = dbRef(db, `devices/${deviceId}/simulation_mode`);
-    await set(simModeRef, true);
-    device.simulation_mode = true;
-
-    console.log(`✅ ${mode} simulation applied for device ${deviceId}`);
-  } catch (error) {
-    console.error('❌ Simulation failed:', error);
-  }
-};
-
-// Toggle simulation for a specific device
-const toggleDeviceSimulation = async (deviceId) => {
-  try {
-    const device = devices.value[deviceId];
-    if (!device) return;
-
-    const newMode = !device.simulation_mode;
-
-    // Update simulation mode in Firebase
-    const simModeRef = dbRef(db, `devices/${deviceId}/simulation_mode`);
-    await set(simModeRef, newMode);
-    device.simulation_mode = newMode;
-
-    // If disabling, reset all sensors' simulation data
-    if (!newMode) {
-      for (const sensor of sensorList) {
-        const sensorRef = dbRef(db, `devices/${deviceId}/simulation/${sensor.key}`);
-        await set(sensorRef, {
-          normal: false,
-          breached: false,
-          breached_type: '',
-          minValue: null,
-          maxValue: null,
-        });
-      }
-    }
-
-    console.log(`✅ Simulation ${newMode ? 'enabled' : 'disabled'} for device ${deviceId}`);
-  } catch (error) {
-    console.error('❌ Failed to toggle simulation for device:', error);
-  }
-}
-
-// Disable simulation for a device
-const disableSimulation = async (deviceId) => {
-  try {
-    const device = devices.value[deviceId]
-    if (!device) return
-
-    for (const sensor of sensorList) {
-      const sensorRef = dbRef(db, `devices/${deviceId}/simulation/${sensor.key}`)
-      await set(sensorRef, {
-        normal: false,
-        breached: false,
-        breached_type: '',
-        minValue: null,
-        maxValue: null
-      })
-    }
-
-    // Disable global simulation mode
-    const simModeRef = dbRef(db, `devices/${deviceId}/simulation_mode`)
-    await set(simModeRef, false)
-    device.simulation_mode = false
-
-    console.log(`❌ Simulation disabled for ${deviceId}`)
-  } catch (error) {
-    console.error('❌ Failed to disable simulation:', error)
-  }
-}
-
-// Toggle simulation for a specific sensor
-const toggleSensorSimulation = async (deviceId, sensorKey, mode) => {
-  try {
-    const device = devices.value[deviceId];
-    if (!device || !device.thresholds || !device.thresholds[sensorKey]) {
-      console.error(`❌ Invalid thresholds for sensor ${sensorKey} on device ${deviceId}`);
-      return;
-    }
-
-    const thresholds = device.thresholds[sensorKey];
-    if (typeof thresholds.min === 'undefined' || typeof thresholds.max === 'undefined') {
-      console.error(`❌ Missing min or max thresholds for sensor ${sensorKey} on device ${deviceId}`);
-      return;
-    }
-
-    const sensorSim = device.simulation[sensorKey] || { normal: false, breached: false, breachType: 'max' };
-    const newMode = mode === 'normal' ? !sensorSim.normal : !sensorSim.breached;
-
-    // Ensure breachType is defined
-    const breachType = sensorSim.breachType || 'max';
-
-    // Calculate range for breached simulation
-    const range = mode === 'breached' && newMode
-      ? getBreachRange(thresholds.min, thresholds.max, breachType)
-      : thresholds;
-
-    // Update simulation mode for the sensor in Firebase
-    const sensorRef = dbRef(db, `devices/${deviceId}/simulation/${sensorKey}`);
-    await set(sensorRef, {
-      normal: mode === 'normal' ? newMode : sensorSim.normal,
-      breached: mode === 'breached' ? newMode : sensorSim.breached,
-      breached_type: mode === 'breached' ? breachType : '',
-      minValue: newMode ? range.min : null,
-      maxValue: newMode ? range.max : null,
-    });
-
-    // Update local state
-    device.simulation[sensorKey] = {
-      ...sensorSim,
-      [mode]: newMode,
-      minValue: newMode ? range.min : null,
-      maxValue: newMode ? range.max : null,
+    const getSensorIcon = (sensorId) => {
+      const icons = {
+        humidity: '💧',
+        airTemp: '🌡️',
+        waterTemp: '🔥',
+        distance: '📏',
+        tds: '⚗️',
+        ph: '🧪',
+      };
+      return icons[sensorId] || '🔧';
     };
 
-    console.log(`✅ ${mode === 'normal' ? 'Normal' : 'Breached'} simulation ${newMode ? 'enabled' : 'disabled'} for sensor ${sensorKey} on device ${deviceId}`);
-  } catch (error) {
-    console.error(`❌ Failed to toggle ${mode} simulation for sensor ${sensorKey} on device ${deviceId}:`, error);
-  }
-};
+    const buildFirebasePath = (sensorId, type) => {
+      if (!selectedDeviceId.value) return '';
+      const basePath = `/devices/${selectedDeviceId.value}`;
+      
+      switch (type) {
+        case 'mode':
+          return `${basePath}/sim_modes/${sensorId}`;
+        case 'settings':
+          return `${basePath}/sim_settings/${sensorId}`;
+        case 'controls':
+          return `${basePath}/sim_controls/${sensorId}`;
+        default:
+          return '';
+      }
+    };
 
-// Update breach type for a specific sensor
-const updateBreachType = async (deviceId, sensorKey, newValue) => {
-  try {
-    const device = devices.value[deviceId];
-    if (!device || !device.simulation[sensorKey]) return;
+    const toggleSimulation = async (sensor) => {
+      sensor.isUpdating = true;
+      sensor.updateError = '';
+      try {
+        const modePath = buildFirebasePath(sensor.id, 'mode');
+        await set(dbRef(database, modePath), sensor.simulationEnabled);
+        sensor.lastUpdated = new Date().toLocaleTimeString();
+        console.log(`✅ Toggled ${sensor.name} simulation to ${sensor.simulationEnabled}`);
+      } catch (error) {
+        sensor.updateError = error.message;
+        sensor.simulationEnabled = !sensor.simulationEnabled; // Revert on error
+        console.error(`❌ Error toggling simulation for ${sensor.name}:`, error);
+      } finally {
+        sensor.isUpdating = false;
+      }
+    };
 
-    // Update the local state
-    device.simulation[sensorKey].breachType = newValue;
+    const updateNoise = async (sensor) => {
+      sensor.isUpdating = true;
+      sensor.updateError = '';
+      try {
+        const settingsPath = buildFirebasePath(sensor.id, 'settings');
+        await set(dbRef(database, `${settingsPath}/noise`), parseFloat(sensor.noise));
+        sensor.lastUpdated = new Date().toLocaleTimeString();
+        console.log(`✅ Updated ${sensor.name} noise to ${sensor.noise}`);
+      } catch (error) {
+        sensor.updateError = error.message;
+        console.error(`❌ Error updating noise for ${sensor.name}:`, error);
+      } finally {
+        sensor.isUpdating = false;
+      }
+    };
 
-    // Update Firebase
-    const sensorRef = dbRef(db, `devices/${deviceId}/simulation/${sensorKey}/breached_type`);
-    await set(sensorRef, newValue);
+    const updateDriftSpeed = async (sensor) => {
+      sensor.isUpdating = true;
+      sensor.updateError = '';
+      try {
+        const settingsPath = buildFirebasePath(sensor.id, 'settings');
+        await set(dbRef(database, `${settingsPath}/drift_speed`), parseFloat(sensor.driftSpeed));
+        sensor.lastUpdated = new Date().toLocaleTimeString();
+        console.log(`✅ Updated ${sensor.name} drift speed to ${sensor.driftSpeed}`);
+      } catch (error) {
+        sensor.updateError = error.message;
+        console.error(`❌ Error updating drift speed for ${sensor.name}:`, error);
+      } finally {
+        sensor.isUpdating = false;
+      }
+    };
 
-    console.log(`✅ Breach type updated to ${newValue} for sensor ${sensorKey} on device ${deviceId}`);
-  } catch (error) {
-    console.error(`❌ Failed to update breach type for sensor ${sensorKey} on device ${deviceId}:`, error);
-  }
+    const simulateMode = async (sensor, mode) => {
+      sensor.isUpdating = true;
+      sensor.updateError = '';
+      try {
+        const controlsPath = buildFirebasePath(sensor.id, 'controls');
+        const controlKey = `set_${mode}`;
+        await set(dbRef(database, `${controlsPath}/${controlKey}`), true);
+        sensor.lastUpdated = new Date().toLocaleTimeString();
+        console.log(`✅ Triggered ${sensor.name} ${mode} mode`);
+      } catch (error) {
+        sensor.updateError = error.message;
+        console.error(`❌ Error triggering ${mode} mode for ${sensor.name}:`, error);
+      } finally {
+        sensor.isUpdating = false;
+      }
+    };
+
+    const subscribeToDeviceStatus = () => {
+      if (!selectedDeviceId.value) return;
+      const basePath = `/devices/${selectedDeviceId.value}/sensor_readings/latest`;
+      const unsubscribe = onValue(
+        dbRef(database, basePath),
+        (snapshot) => {
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            const sensorMap = {
+              humidity: 'humidity',
+              airTemp: 'airTemp',
+              waterTemp: 'waterTemp',
+              distance: 'distance',
+              tds: 'tds',
+              ph: 'ph',
+            };
+            for (const [firebaseKey, sensorKey] of Object.entries(sensorMap)) {
+              const sensor = sensors.find(s => s.id === sensorKey);
+              if (sensor && data[firebaseKey] !== undefined) {
+                sensor.currentValue = data[firebaseKey].toFixed(2);
+              }
+            }
+            console.log('✅ Device status synced in real-time');
+          }
+        },
+        (error) => {
+          console.error('❌ Error syncing device status:', error);
+        }
+      );
+      unsubscribers.value.push(unsubscribe);
+    };
+
+    const loadDeviceStatus = async () => {
+      if (!selectedDeviceId.value) return;
+      try {
+        const basePath = `/devices/${selectedDeviceId.value}/sensor_readings/latest`;
+        const snapshot = await get(child(dbRef(database), basePath));
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          // Update current values
+          const sensorMap = {
+            humidity: 'humidity',
+            airTemp: 'airTemp',
+            waterTemp: 'waterTemp',
+            distance: 'distance',
+            tds: 'tds',
+            ph: 'ph',
+          };
+          for (const [firebaseKey, sensorKey] of Object.entries(sensorMap)) {
+            const sensor = sensors.find(s => s.id === sensorKey);
+            if (sensor && data[firebaseKey] !== undefined) {
+              sensor.currentValue = data[firebaseKey].toFixed(2);
+            }
+          }
+          console.log('✅ Device status loaded');
+        }
+      } catch (error) {
+        console.error('❌ Error loading device status:', error);
+      }
+    };
+
+    const subscribeToSimulationStates = () => {
+      if (!selectedDeviceId.value) return;
+      const basePath = `/devices/${selectedDeviceId.value}/sim_modes`;
+      const unsubscribe = onValue(
+        dbRef(database, basePath),
+        (snapshot) => {
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            const stateMap = {
+              humidity: 'humidity',
+              airTemp: 'airTemp',
+              waterTemp: 'waterTemp',
+              distance: 'distance',
+              tds: 'tds',
+              ph: 'ph',
+            };
+            for (const [firebaseKey, sensorKey] of Object.entries(stateMap)) {
+              const sensor = sensors.find(s => s.id === sensorKey);
+              if (sensor && data[firebaseKey] !== undefined) {
+                sensor.simulationEnabled = data[firebaseKey];
+              }
+            }
+            console.log('✅ Simulation states synced from Firebase (real-time)');
+          }
+        },
+        (error) => {
+          console.error('❌ Error syncing simulation states:', error);
+        }
+      );
+      unsubscribers.value.push(unsubscribe);
+    };
+
+    const subscribeToSimulationSettings = () => {
+      if (!selectedDeviceId.value) return;
+      const basePath = `/devices/${selectedDeviceId.value}/sim_settings`;
+      const unsubscribe = onValue(
+        dbRef(database, basePath),
+        (snapshot) => {
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            const settingsMap = {
+              humidity: 'humidity',
+              airTemp: 'airTemp',
+              waterTemp: 'waterTemp',
+              distance: 'distance',
+              tds: 'tds',
+              ph: 'ph',
+            };
+            for (const [firebaseKey, sensorKey] of Object.entries(settingsMap)) {
+              const sensor = sensors.find(s => s.id === sensorKey);
+              if (sensor && data[firebaseKey]) {
+                const settings = data[firebaseKey];
+                if (settings.noise !== undefined) sensor.noise = settings.noise;
+                if (settings.drift_speed !== undefined) sensor.driftSpeed = settings.drift_speed;
+                if (settings.target_value !== undefined) sensor.targetValue = settings.target_value;
+              }
+            }
+            console.log('✅ Simulation settings synced from Firebase (real-time)');
+          }
+        },
+        (error) => {
+          console.error('❌ Error syncing simulation settings:', error);
+        }
+      );
+      unsubscribers.value.push(unsubscribe);
+    };
+
+    const cleanupSubscriptions = () => {
+      unsubscribers.value.forEach(unsubscribe => {
+        if (typeof unsubscribe === 'function') {
+          unsubscribe();
+        }
+      });
+      unsubscribers.value = [];
+      console.log('✅ Cleaned up old Firebase subscriptions');
+    };
+
+    const onDeviceChange = async () => {
+      // Cleanup old subscriptions
+      cleanupSubscriptions();
+      
+      // Clear sensor states when device changes
+      sensors.forEach(sensor => {
+        sensor.simulationEnabled = false;
+        sensor.currentValue = '-- ';
+        sensor.lastUpdated = '';
+        sensor.updateError = '';
+      });
+      
+      // Subscribe to real-time updates
+      subscribeToSimulationStates();
+      subscribeToSimulationSettings();
+      subscribeToDeviceStatus();
+    };
+
+    const loadDevices = async () => {
+      try {
+        const devicesRef = dbRef(database, '/devices');
+        onValue(devicesRef, (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            devices.value = Object.entries(data).map(([id, device]) => ({
+              id,
+              name: device.devicename || `Device-${id}`,
+            }));
+            console.log('✅ Devices loaded:', devices.value);
+          }
+        });
+      } catch (error) {
+        console.error('❌ Error loading devices:', error);
+      }
+    };
+
+    onMounted(() => {
+      loadDevices();
+    });
+
+    onBeforeUnmount(() => {
+      cleanupSubscriptions();
+    });
+
+    return {
+      selectedDeviceId,
+      devices,
+      sensors,
+      getSensorIcon,
+      toggleSimulation,
+      updateNoise,
+      updateDriftSpeed,
+      simulateMode,
+      loadDeviceStatus,
+      onDeviceChange,
+    };
+  },
 };
 </script>
+
+<style scoped>
+* {
+  box-sizing: border-box;
+}
+
+.eco-admin-super-admin {
+  padding: 30px 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  border-radius: 12px;
+}
+
+/* Header Section */
+.header-section {
+  text-align: center;
+  margin-bottom: 40px;
+  animation: slideDown 0.6s ease-out;
+}
+
+.header-section h1 {
+  font-size: 2.5em;
+  color: #1a3a52;
+  margin: 0 0 10px 0;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  font-size: 1.1em;
+  color: #666;
+  margin: 0 0 15px 0;
+  font-weight: 300;
+}
+
+.info-text {
+  font-size: 0.95em;
+  color: #555;
+  background: rgba(102, 126, 234, 0.1);
+  padding: 12px 16px;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+  margin: 0;
+  text-align: left;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Control Panel */
+.control-panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.device-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.device-selector label {
+  font-weight: 600;
+  color: #333;
+}
+
+.device-input {
+  padding: 10px 14px;
+  border: 2px solid #667eea;
+  border-radius: 8px;
+  font-size: 1em;
+  background: white;
+  color: #333;
+  cursor: pointer;
+  min-width: 250px;
+  transition: all 0.3s ease;
+}
+
+.device-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+.refresh-btn {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.refresh-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Sensors Grid */
+.sensors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 25px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Sensor Card */
+.sensor-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-left: 4px solid #e0e0e0;
+}
+
+.sensor-card:hover {
+  box-shadow: 0 12px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.sensor-card.active {
+  border-left-color: #4CAF50;
+  box-shadow: 0 8px 16px rgba(76, 175, 80, 0.15);
+}
+
+/* Sensor Header */
+.sensor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.sensor-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.sensor-icon {
+  font-size: 2em;
+  display: inline-block;
+  animation: pulse 2s infinite;
+}
+
+.title-info h2 {
+  font-size: 1.3em;
+  color: #1a3a52;
+  margin: 0;
+  font-weight: 600;
+}
+
+.sensor-type {
+  font-size: 0.8em;
+  color: #999;
+  margin-top: 4px;
+  display: block;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+  cursor: pointer;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: all 0.4s ease;
+  border-radius: 28px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: all 0.4s ease;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input:checked + .slider {
+  background-color: #4CAF50;
+}
+
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+/* Sensor Controls */
+.sensor-controls {
+  animation: expandIn 0.3s ease-out;
+}
+
+.current-value {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 10px;
+  background: #f5f5f5;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95em;
+}
+
+.value-display {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+
+.control-group {
+  margin-bottom: 20px;
+}
+
+.control-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.95em;
+  font-weight: 600;
+  color: #333;
+}
+
+.label-text {
+  flex: 1;
+}
+
+.label-value {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.85em;
+  font-weight: 700;
+  min-width: 60px;
+  text-align: center;
+}
+
+.range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75em;
+  color: #999;
+  margin-top: 4px;
+}
+
+/* Slider Input */
+.slider-input {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #e0e0e0 0%, #e0e0e0 100%);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  margin: 8px 0;
+}
+
+.slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.4);
+  transition: all 0.2s ease;
+}
+
+.slider-input::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+}
+
+.slider-input::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.4);
+  transition: all 0.2s ease;
+}
+
+.slider-input::-moz-range-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+}
+
+/* Number Input */
+.number-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 1em;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.number-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Simulation Modes */
+.simulation-modes {
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 2px solid #f0f0f0;
+}
+
+.modes-title {
+  font-size: 0.95em;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 12px 0;
+}
+
+.modes-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mode-button {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.mode-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.mode-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.mode-button.safe {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+}
+
+.mode-button.safe:hover {
+  background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
+}
+
+.mode-button.above {
+  background: linear-gradient(135deg, #FF6B6B 0%, #ee5a52 100%);
+  color: white;
+}
+
+.mode-button.above:hover {
+  background: linear-gradient(135deg, #ee5a52 0%, #da4c44 100%);
+}
+
+.mode-button.below {
+  background: linear-gradient(135deg, #FFA500 0%, #ff9600 100%);
+  color: white;
+}
+
+.mode-button.below:hover {
+  background: linear-gradient(135deg, #ff9600 0%, #e88800 100%);
+}
+
+/* Status Indicator */
+.status-indicator {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 12px;
+  font-size: 0.85em;
+}
+
+.last-updated {
+  color: #666;
+}
+
+.updating {
+  color: #FF9800;
+  font-weight: 600;
+}
+
+.error {
+  color: #F44336;
+  font-weight: 600;
+}
+
+/* No Device Selected */
+.no-device-selected {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  color: #999;
+  font-size: 1.1em;
+}
+
+/* Animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes expandIn {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: scaleY(0.95);
+  }
+  to {
+    opacity: 1;
+    max-height: 600px;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.expand-enter-active,
+.expand-leave-active {
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.expand-enter-from,
+.expand-leave-to {
+  opacity: 0;
+  max-height: 0;
+}
+
+.expand-enter-to,
+.expand-leave-from {
+  opacity: 1;
+  max-height: 600px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .sensors-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .eco-admin-super-admin {
+    padding: 20px 15px;
+  }
+
+  .header-section h1 {
+    font-size: 2em;
+  }
+
+  .control-panel {
+    flex-direction: column;
+  }
+
+  .device-selector {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .device-input {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .refresh-btn {
+    width: 100%;
+  }
+
+  .sensors-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .sensor-card {
+    padding: 15px;
+  }
+
+  .modes-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .mode-button {
+    flex: 1;
+    min-width: 100px;
+    padding: 10px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-section h1 {
+    font-size: 1.6em;
+  }
+
+  .subtitle {
+    font-size: 0.95em;
+  }
+
+  .info-text {
+    font-size: 0.85em;
+  }
+
+  .sensor-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .toggle-switch {
+    align-self: flex-end;
+  }
+
+  .modes-buttons {
+    flex-direction: column;
+  }
+
+  .mode-button {
+    width: 100%;
+  }
+}
+</style>

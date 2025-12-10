@@ -199,6 +199,11 @@
             </div>
           </div>
         </div>
+
+        <!-- Controller Modes Section -->
+        <div class="mt-8">
+          <ControllerModes :deviceId="deviceId" />
+        </div>
       </div>
     </div>
   </div>
@@ -207,7 +212,9 @@
 <script>
 import { getDatabase, ref, onValue, set, update } from "firebase/database";
 import SensorGraph from "./SensorGraph.vue";
+import ControllerModes from "./ControllerModes.vue";
 import { useToast } from "vue-toastification";
+import { getAuth } from "firebase/auth";
 
 const SENSOR_ORDER = [
   { key: "humidity", label: "Humidity (%)", min: "humidity_min", max: "humidity_max" },
@@ -226,9 +233,11 @@ const THRESHOLD_PAIRS = [
   ["tds_min", "tds_max"]
 ];
 
+const NOTIFICATION_COOLDOWN_MS = 1 * 60 * 1000; // 1 minute
+
 export default {
   props: ["deviceId"],
-  components: { SensorGraph },
+  components: { SensorGraph, ControllerModes },
   data() {
     return {
       thresholds: {},
@@ -246,8 +255,14 @@ export default {
         const value = this.latestReading?.[s.key];
         let isAlert = false;
         if (value !== null && value !== undefined) {
-          if (s.min && this.thresholds[s.min] !== undefined && value < this.thresholds[s.min]) isAlert = true;
-          if (s.max && this.thresholds[s.max] !== undefined && value > this.thresholds[s.max]) isAlert = true;
+          // Water level (distance) uses inverted logic: alert if distance > threshold (low water)
+          if (s.key === 'distance') {
+            if (s.min && this.thresholds[s.min] !== undefined && value > this.thresholds[s.min]) isAlert = true;
+          } else {
+            // Other sensors: alert if outside min/max range
+            if (s.min && this.thresholds[s.min] !== undefined && value < this.thresholds[s.min]) isAlert = true;
+            if (s.max && this.thresholds[s.max] !== undefined && value > this.thresholds[s.max]) isAlert = true;
+          }
         }
         return { key: s.key, label: s.label, value, isAlert };
       });
@@ -355,18 +370,53 @@ export default {
         .catch(() => this.showToast("❌ Failed to request restore.", "error"));
     },
 
-    checkThresholdBreaches() {
+    async checkThresholdBreaches() {
+      const auth = getAuth();
+      const idToken = await auth.currentUser.getIdToken();
+      const now = Date.now();
+
       for (const sensor of SENSOR_ORDER) {
         const key = sensor.key;
         const value = this.latestReading?.[key];
         if (value === null || value === undefined) continue;
+
         const min = this.thresholds[sensor.min];
         const max = this.thresholds[sensor.max];
-        const breached =
-          (min !== undefined && value < min) || (max !== undefined && value > max);
+        
+        // Water level (distance) uses inverted logic: breach if distance > threshold (low water)
+        let breached = false;
+        if (key === 'distance') {
+          breached = min !== undefined && value > min;
+        } else {
+          // Other sensors: breach if outside min/max range
+          breached = (min !== undefined && value < min) || (max !== undefined && value > max);
+        }
+
         if (breached && !this.alertedSensors.has(key)) {
           this.showToast(`⚠️ ${sensor.label} breached threshold: ${value}`, "error");
           this.alertedSensors.add(key);
+
+          // Send email notification
+          try {
+            const thresholdValue = (key === 'distance') ? min : (value < min ? min : max);
+            await fetch('http://192.168.1.12:5000/breach-email', {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${idToken}`,
+              },
+              body: JSON.stringify({
+                device_id: this.deviceId || "unknown-id",
+                device_name: "Real-time Device",
+                sensor_name: sensor.label,
+                value: value,
+                threshold: thresholdValue || 0,
+              }),
+            });
+            console.log(`🔔 Email notification sent for ${sensor.label}`);
+          } catch (err) {
+            console.error("❌ Failed to send email notification:", err);
+          }
         } else if (!breached && this.alertedSensors.has(key)) {
           this.alertedSensors.delete(key);
         }

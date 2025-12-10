@@ -48,6 +48,7 @@
   :deviceId="currentDeviceId"
   :deviceName="selectedDeviceName"
   @select-device="handleDeviceSelect"
+  @open-wifi-tab="handleOpenWiFiTab"
 />       
       </div>
     </main>
@@ -144,7 +145,13 @@ export default {
     this.currentDeviceId = id;
     this.selectedDeviceName = name;
   });
-}
+},
+    
+    handleOpenWiFiTab({ id, name }) {
+      this.currentDeviceId = id;
+      this.selectedDeviceName = name;
+      this.currentTab = 'EcoDeviceWifi';
+    }
 
   }
 };

@@ -35,13 +35,10 @@
         <div class="mt-2 flex flex-wrap gap-2">
           <input v-model="device.newName" placeholder="Enter new name" class="border px-2 py-1 rounded" />
           <button @click="renameDevice(device.id, device.newName)" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
-            Rename
+            ✏️ Rename
           </button>
-          <button @click="sendCommand(device.id, 'reconnect')" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
-            🔄 Reconnect
-          </button>
-          <button @click="sendCommand(device.id, 'disconnect')" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
-            🔌 Disconnect
+          <button @click="openWiFiTab(device.id)" class="bg-yellow-600 text-white px-3 py-1 rounded hover:bg-yellow-700">
+            🌐 WiFi Settings
           </button>
           <button @click="selectDevice(device.id)" class="bg-emerald-600 text-white px-3 py-1 rounded hover:bg-emerald-700">
             🎯 Select
@@ -64,7 +61,7 @@ import { getAuth } from 'firebase/auth';
 
 export default {
   name: 'UserRegisteredDevices',
-  emits: ['select-device'],
+  emits: ['select-device', 'open-wifi-tab'],
   data() {
     return {
       devices: [],
@@ -122,21 +119,19 @@ export default {
       const deviceRef = ref(db, `devices/${deviceId}`);
       try {
         await update(deviceRef, { devicename: newName });
-        this.showToast('Device name updated successfully.', 'success');
+        this.showToast('✅ Device name updated successfully.', 'success');
       } catch (err) {
         console.error('Rename failed:', err);
-        this.showToast('Failed to rename device.', 'error');
+        this.showToast('❌ Failed to rename device.', 'error');
       }
     },
-    async sendCommand(deviceId, action) {
-      const db = getDatabase();
-      const updates = {};
-      updates[`devices/${deviceId}/state/${action}`] = true;
-      try {
-        await update(ref(db), updates);
-        this.showToast(`${action} command sent to device.`, 'success');
-      } catch (err) {
-        this.showToast(`Failed to send ${action} command: ${err.message}`, 'error');
+    openWiFiTab(deviceId) {
+      const device = this.devices.find(d => d.id === deviceId);
+      if (device) {
+        this.$emit('open-wifi-tab', {
+          id: deviceId,
+          name: device.devicename || ''
+        });
       }
     },
     selectDevice(deviceId) {
@@ -162,9 +157,17 @@ export default {
 
       onValue(devicesRef, (snapshot) => {
         const allDevices = snapshot.val() || {};
+        // Filter devices that are registered and owned by the current user
+        // Firmware structure: devices/{deviceId}/owner and devices/{deviceId}/registered
         this.devices = Object.entries(allDevices)
-          .filter(([id, dev]) => dev.owner === user.uid && dev.registered)
-          .map(([id, dev]) => ({ id, newName: '', ...dev }));
+          .filter(([id, dev]) => dev.registered === true && dev.owner === user.uid)
+          .map(([id, dev]) => ({ 
+            id, 
+            newName: '', 
+            ...dev,
+            last_online: dev.last_online || 0,
+            state: dev.state || {}
+          }));
         this.loading = false;
       });
     }

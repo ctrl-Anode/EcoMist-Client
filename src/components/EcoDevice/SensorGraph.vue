@@ -147,19 +147,22 @@ export default {
       return this.sensorReadings?.latest?.[this.selectedSensor] ?? null
     },
     latestTimestamp() {
-      return Date.now()
+      // Firmware stores timestamp in seconds, convert to milliseconds
+      const ts = this.sensorReadings?.latest?.timestamp
+      return ts ? ts * 1000 : Date.now()
     }
   },
   methods: {
     getSensorData() {
       const history = this.sensorReadings?.history || {}
-      const timestamps = Object.keys(history).sort()
+      const timestamps = Object.keys(history).sort((a, b) => parseInt(a) - parseInt(b))
       const labels = []
       const values = []
       timestamps.forEach(ts => {
         const entry = history[ts]
         if (entry && entry[this.selectedSensor] !== undefined) {
-          labels.push(new Date(parseInt(ts)))
+          // Firmware stores timestamps in seconds, convert to milliseconds for JavaScript
+          labels.push(new Date(parseInt(ts) * 1000))
           values.push(entry[this.selectedSensor])
         }
       })
@@ -167,8 +170,9 @@ export default {
     },
     getAllSensorData() {
       const history = this.sensorReadings?.history || {}
-      const timestamps = Object.keys(history).sort()
-      const labels = timestamps.map(ts => new Date(parseInt(ts)))
+      const timestamps = Object.keys(history).sort((a, b) => parseInt(a) - parseInt(b))
+      // Firmware stores timestamps in seconds, convert to milliseconds for JavaScript
+      const labels = timestamps.map(ts => new Date(parseInt(ts) * 1000))
       const datasets = SENSOR_CONFIG.map(sensor => ({
         label: sensor.label,
         data: timestamps.map(ts => history[ts]?.[sensor.key] ?? null),
